@@ -1,0 +1,1 @@
+C:\Dev\retroassembler\retroassembler.exe -d -D=$0000 -C=8080 MEMORY.BIN MEMORY.LST

@@ -576,6 +576,7 @@ $02bf 02         stax b
 $02c0 cd 84 09   call $0984
 $02c3 46         mov b,m
 $02c4 34         inr m
+
 $02c5 03         inx b
 $02c6 54         mov d,h
 $02c7 49         mov c,c
@@ -595,6 +596,8 @@ $02d6 42         mov b,d
 $02d7 44         mov b,h
 $02d8 78         mov a,b
 $02d9 3d         dcr a
+
+;COLD
 $02da 04         inr b
 $02db 43         mov b,e
 $02dc 4f         mov c,a

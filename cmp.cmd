@@ -1,0 +1,1 @@
+fc /b forth.bin memory.bin

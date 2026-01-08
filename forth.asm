@@ -3,14 +3,13 @@
 .target "8080"
 .format "bin"
 .org 0x0000
-    nop
-.align 0x0100,0x00
+.storage 0x0100,0x00
 
    jmp l0106     ; $0100 c3 06 01
    jmp l0140     ; $0103 c3 40 01
 l0106:
    lxi d,l019e   ; $0106 11 9e 01
-   lxi h,$3448   ; $0109 21 48 34
+   lxi h,l3448   ; $0109 21 48 34
    mvi b,$11     ; $010c 06 11   
 l010e:
    ldax d        ; $010e 1a      
@@ -18,14 +17,15 @@ l010e:
    inx h         ; $0110 23      
    inx d         ; $0111 13      
    dcr b         ; $0112 05      
-   jnz $010e     ; $0113 c2 0e 01
+   jnz l010e     ; $0113 c2 0e 01
    mvi b,$1a     ; $0116 06 1a   
    lxi h,$3400   ; $0118 21 00 34
    sub a         ; $011b 97      
+l011c:
    mov m,a       ; $011c 77      
    inx h         ; $011d 23      
    dcr b         ; $011e 05      
-   jnz $011c     ; $011f c2 1c 01
+   jnz l011c     ; $011f c2 1c 01
    lhld $02d0    ; $0122 2a d0 02
    shld $341a    ; $0125 22 1a 34
    lhld $02d2    ; $0128 2a d2 02
@@ -43,6 +43,7 @@ l0140:
    shld $341e    ; $0147 22 1e 34
    lxi b,$015a   ; $014a 01 5a 01
    jmp $02ef     ; $014d c3 ef 02
+
    stax b        ; $0150 02      
    nop           ; $0151 00      
    add b         ; $0152 80      
@@ -76,7 +77,7 @@ l0140:
    dad b         ; $0173 09      
    sub h         ; $0174 94      
    mvi d,$a4     ; $0175 16 a4   
-   ???           ; $0177 10      
+   .byte 0x10    ; $0177 10      
    dcx h         ; $0178 2b      
    ldax b        ; $0179 0a      
    mov m,h       ; $017a 74      
@@ -96,9 +97,9 @@ l0140:
    mov e,d       ; $018c 5a      
    lxi b,$2086   ; $018d 01 86 20
    add m         ; $0190 86      
-   ???           ; $0191 20      
+   .byte 0x20    ; $0191 20      
    add m         ; $0192 86      
-   ???           ; $0193 20      
+   .byte 0x20    ; $0193 20      
    ani $0e       ; $0194 e6 0e   
    rnz           ; $0196 c0      
    stax b        ; $0197 02      
@@ -106,15 +107,10 @@ l0140:
    dad b         ; $0199 09      
    sub h         ; $019a 94      
    mvi d,$a4     ; $019b 16 a4   
-   ???           ; $019d 10      
-   dcr b         ; $019e 05      
-   mov b,m       ; $019f 46      
-   mov c,a       ; $01a0 4f      
-   mov d,d       ; $01a1 52      
-   mov d,h       ; $01a2 54      
-   mov c,b       ; $01a3 48      
-   nop           ; $01a4 00      
-   nop           ; $01a5 00      
+   .byte 0x10    ; $019d 10      
+l019e:
+   .byte 5, "FORTH"
+   .word 0x0000
    call $1b95    ; $01a6 cd 95 1b
    lxi b,$8680   ; $01a9 01 80 86
    mov b,e       ; $01ac 43      
@@ -122,7 +118,7 @@ l0140:
    nop           ; $01ae 00      
    stax b        ; $01af 02      
    mov d,d       ; $01b0 52      
-   ???           ; $01b1 30      
+   .byte 0x30    ; $01b1 30      
    mov c,b       ; $01b2 48      
    inr m         ; $01b3 34      
    call $0984    ; $01b4 cd 84 09
@@ -130,7 +126,7 @@ l0140:
    inr m         ; $01b8 34      
    stax b        ; $01b9 02      
    mov d,e       ; $01ba 53      
-   ???           ; $01bb 30      
+   .byte 0x30    ; $01bb 30      
    xra a         ; $01bc af      
    lxi b,$84cd   ; $01bd 01 cd 84
    dad b         ; $01c0 09      
@@ -146,39 +142,24 @@ l0140:
    lxi b,$c348   ; $01cd 01 48 c3
    lxi b,$84cd   ; $01d0 01 cd 84
    dad b         ; $01d3 09      
-   ???           ; $01d4 20      
+   .byte 0x20    ; $01d4 20      
    inr m         ; $01d5 34      
-   ???           ; $01d6 08      
-   mov d,m       ; $01d7 56      
-   mov c,a       ; $01d8 4f      
-   mov b,e       ; $01d9 43      
-   dcr l         ; $01da 2d      
-   mov c,h       ; $01db 4c      
-   mov c,c       ; $01dc 49      
-   mov c,m       ; $01dd 4e      
-   mov c,e       ; $01de 4b      
-   call $cd01    ; $01df cd 01 cd
-   add h         ; $01e2 84      
-   dad b         ; $01e3 09      
-   shld $0534    ; $01e4 22 34 05
-   mov b,m       ; $01e7 46      
-   mov b,l       ; $01e8 45      
-   mov c,m       ; $01e9 4e      
-   mov b,e       ; $01ea 43      
-   mov b,l       ; $01eb 45      
-   sui $01       ; $01ec d6 01   
+l01d6:
+   .byte 8,"VOC-LINK"
+   .word 0x01cd
+   call $0984
+   .word $3422
+
+   .byte 5,"FENCE"
+   .word $01d6
    call $0984    ; $01ee cd 84 09
-   inr h         ; $01f1 24      
-   inr m         ; $01f2 34      
-   mvi b,$57     ; $01f3 06 57   
-   dcr l         ; $01f5 2d      
-   mov c,h       ; $01f6 4c      
-   mov c,c       ; $01f7 49      
-   mov c,m       ; $01f8 4e      
-   mov c,e       ; $01f9 4b      
-   ani $01       ; $01fa e6 01   
+   .word $3424
+
+   .byte 6,"W-LINK"
+   .word $01e6
    call $0984    ; $01fc cd 84 09
-   mvi h,$34     ; $01ff 26 34   
+   .word $3426
+
    inr b         ; $0201 04      
    mov b,d       ; $0202 42      
    mov b,c       ; $0203 41      
@@ -186,7 +167,7 @@ l0140:
    mov b,l       ; $0205 45      
    ani $01       ; $0206 e6 01   
    call $0984    ; $0208 cd 84 09
-   ???           ; $020b 28      
+   .byte 0x28    ; $020b 28      
    inr m         ; $020c 34      
    dcr b         ; $020d 05      
    mov d,e       ; $020e 53      
@@ -229,13 +210,13 @@ l0140:
    dad h         ; $023c 29      
    stax b        ; $023d 02      
    call $0984    ; $023e cd 84 09
-   ???           ; $0241 30      
+   .byte 0x30    ; $0241 30      
    inr m         ; $0242 34      
    inx b         ; $0243 03      
    mov c,b       ; $0244 48      
    mov c,h       ; $0245 4c      
    mov b,h       ; $0246 44      
-   ???           ; $0247 38      
+   .byte 0x38    ; $0247 38      
    stax b        ; $0248 02      
    call $0984    ; $0249 cd 84 09
    sta $0334     ; $024c 32 34 03
@@ -263,7 +244,7 @@ l0140:
    mov c,m       ; $0269 4e      
    stax b        ; $026a 02      
    call $0984    ; $026b cd 84 09
-   ???           ; $026e 38      
+   .byte 0x38    ; $026e 38      
    inr m         ; $026f 34      
    inx b         ; $0270 03      
    mvi a,$49     ; $0271 3e 49   
@@ -350,7 +331,7 @@ l0140:
    mov b,h       ; $02d7 44      
    mov a,b       ; $02d8 78      
    dcr a         ; $02d9 3d      
-$02da 04         inr b         ; ;COLD
+   inr b         ; $02da 04 ;COLD
 
    mov b,e       ; $02db 43      
    mov c,a       ; $02dc 4f      
@@ -359,6 +340,7 @@ $02da 04         inr b         ; ;COLD
    push b        ; $02df c5      
    stax b        ; $02e0 02      
    jmp $0106     ; $02e1 c3 06 01
+l02e4:
    lhld $341e    ; $02e4 2a 1e 34
    dcx h         ; $02e7 2b      
    mov m,b       ; $02e8 70      
@@ -373,28 +355,18 @@ $02da 04         inr b         ; ;COLD
    mov h,a       ; $02f3 67      
    inx b         ; $02f4 03      
    pchl          ; $02f5 e9      
-   inr b         ; $02f6 04      
-   mov c,m       ; $02f7 4e      
-   mov b,l       ; $02f8 45      
-   mov e,b       ; $02f9 58      
-   mov d,h       ; $02fa 54      
-   jc $cd02      ; $02fb da 02 cd
-   add h         ; $02fe 84      
-   dad b         ; $02ff 09      
-   rst 5         ; $0300 ef      
-   stax b        ; $0301 02      
-   inr b         ; $0302 04      
-   mov b,e       ; $0303 43      
-   mov b,c       ; $0304 41      
-   mov c,h       ; $0305 4c      
-   mov c,h       ; $0306 4c      
-   ori $02       ; $0307 f6 02   
+l02f6:
+   .byte 4,"NEXT"
+   .word 0x02da
+   call $0984
+   .word $02ef
+l0302:
+   .byte 4,"CALL"
+   .word $02f6
    call $0984    ; $0309 cd 84 09
-   cpo $0402     ; $030c e4 02 04
-   mov b,l       ; $030f 45      
-   mov e,b       ; $0310 58      
-   mov c,c       ; $0311 49      
-   mov d,h       ; $0312 54      
+   .word $02e4
+
+   .byte 4,"EXIT"
    stax b        ; $0313 02      
    inx b         ; $0314 03      
    lhld $341e    ; $0315 2a 1e 34
@@ -404,24 +376,12 @@ $02da 04         inr b         ; ;COLD
    inx h         ; $031b 23      
    shld $341e    ; $031c 22 1e 34
    jmp $02ef     ; $031f c3 ef 02
-   rlc           ; $0322 07      
-   mov b,l       ; $0323 45      
-   mov e,b       ; $0324 58      
-   mov b,l       ; $0325 45      
-   mov b,e       ; $0326 43      
-   mov d,l       ; $0327 55      
-   mov d,h       ; $0328 54      
-   mov b,l       ; $0329 45      
+
+   .byte 7,"EXECUTE"
    mvi c,$03     ; $032a 0e 03   
    ret           ; $032c c9      
-   rlc           ; $032d 07      
-   mov b,c       ; $032e 41      
-   mov d,e       ; $032f 53      
-   mov c,l       ; $0330 4d      
-   mov b,e       ; $0331 43      
-   mov b,c       ; $0332 41      
-   mov c,h       ; $0333 4c      
-   mov c,h       ; $0334 4c      
+
+   .byte 7,"ASMCALL"
    shld $2a03    ; $0335 22 03 2a
    mvi e,$34     ; $0338 1e 34   
    dcx h         ; $033a 2b      
@@ -442,29 +402,24 @@ $02da 04         inr b         ; ;COLD
    push h        ; $034f e5      
    lhld $3543    ; $0350 2a 43 35
    ret           ; $0353 c9      
+
    push psw      ; $0354 f5      
    push h        ; $0355 e5      
    push d        ; $0356 d5      
    push b        ; $0357 c5      
    jmp $0315     ; $0358 c3 15 03
-   inr b         ; $035b 04      
-   mov c,a       ; $035c 4f      
-   mov d,m       ; $035d 56      
-   mov b,l       ; $035e 45      
-   mov d,d       ; $035f 52      
-   shld $e103    ; $0360 22 03 e1
+
+   .byte 4,"OVER"
+   .word $0322
+   pop h
    pop d         ; $0363 d1      
    push d        ; $0364 d5      
    push h        ; $0365 e5      
    push d        ; $0366 d5      
    jmp $02ef     ; $0367 c3 ef 02
-   inr b         ; $036a 04      
-   mov d,b       ; $036b 50      
-   mov c,c       ; $036c 49      
-   mov b,e       ; $036d 43      
-   mov c,e       ; $036e 4b      
-   mov e,e       ; $036f 5b      
-   inx b         ; $0370 03      
+
+   .byte 4,"PICK"
+   .word $035b
    pop h         ; $0371 e1      
    dad h         ; $0372 29      
    dad sp        ; $0373 39      
@@ -473,32 +428,34 @@ $02da 04         inr b         ; ;COLD
    mov d,m       ; $0376 56      
    push d        ; $0377 d5      
    jmp $02ef     ; $0378 c3 ef 02
-   inr b         ; $037b 04      
-   mov b,h       ; $037c 44      
-   mov d,d       ; $037d 52      
-   mov c,a       ; $037e 4f      
-   mov d,b       ; $037f 50      
-   mov l,d       ; $0380 6a      
-   inx b         ; $0381 03      
+
+   .byte 4,"DROP"
+   .word $036a
    pop h         ; $0382 e1      
    jmp $02ef     ; $0383 c3 ef 02
-   inr b         ; $0386 04      
-   mov d,e       ; $0387 53      
-   mov d,a       ; $0388 57      
-   mov b,c       ; $0389 41      
-   mov d,b       ; $038a 50      
-   mov a,e       ; $038b 7b      
-   inx b         ; $038c 03      
+
+   .byte 4,"SWAP"
+   .word $037b
+;   inr b         ; $0386 04      
+;   mov d,e       ; $0387 53      
+;   mov d,a       ; $0388 57      
+;   mov b,c       ; $0389 41      
+;   mov d,b       ; $038a 50      
+;   mov a,e       ; $038b 7b      
+;   inx b         ; $038c 03      
    pop h         ; $038d e1      
    xthl          ; $038e e3      
    push h        ; $038f e5      
    jmp $02ef     ; $0390 c3 ef 02
-   dcr b         ; $0393 05      
-   sta $5753     ; $0394 32 53 57
-   mov b,c       ; $0397 41      
-   mov d,b       ; $0398 50      
-   add m         ; $0399 86      
-   inx b         ; $039a 03      
+
+   .byte 5,"2SWAP"
+   .word $0386
+;   dcr b         ; $0393 05      
+;   sta $5753     ; $0394 32 53 57
+;   mov b,c       ; $0397 41      
+;   mov d,b       ; $0398 50      
+;   add m         ; $0399 86      
+;   inx b         ; $039a 03      
    pop h         ; $039b e1      
    pop d         ; $039c d1      
    xthl          ; $039d e3      
@@ -516,31 +473,25 @@ $02da 04         inr b         ; ;COLD
    push d        ; $03ab d5      
    push h        ; $03ac e5      
    jmp $02ef     ; $03ad c3 ef 02
-   inx b         ; $03b0 03      
-   mov d,d       ; $03b1 52      
-   mov c,a       ; $03b2 4f      
-   mov d,h       ; $03b3 54      
-   sub e         ; $03b4 93      
-   inx b         ; $03b5 03      
+
+   .byte 3,"ROT"
+   .word $0393
    pop d         ; $03b6 d1      
    pop h         ; $03b7 e1      
    xthl          ; $03b8 e3      
    push d        ; $03b9 d5      
    push h        ; $03ba e5      
    jmp $02ef     ; $03bb c3 ef 02
-   inr b         ; $03be 04      
-   dcr l         ; $03bf 2d      
-   mov d,d       ; $03c0 52      
-   mov c,a       ; $03c1 4f      
-   mov d,h       ; $03c2 54      
-   ora b         ; $03c3 b0      
-   inx b         ; $03c4 03      
+
+   .byte 4,"-ROT"
+   .word $03b0
    pop h         ; $03c5 e1      
    pop d         ; $03c6 d1      
    xthl          ; $03c7 e3      
    push h        ; $03c8 e5      
    push d        ; $03c9 d5      
    jmp $02ef     ; $03ca c3 ef 02
+
    inx b         ; $03cd 03      
    mov b,h       ; $03ce 44      
    mov d,l       ; $03cf 55      
@@ -566,7 +517,7 @@ $02da 04         inr b         ; ;COLD
    inr b         ; $03eb 04      
    sta $5544     ; $03ec 32 44 55
    mov d,b       ; $03ef 50      
-   ???           ; $03f0 d9      
+   .byte 0xd9    ; $03f0 d9      
    inx b         ; $03f1 03      
    pop h         ; $03f2 e1      
    pop d         ; $03f3 d1      
@@ -599,7 +550,7 @@ $02da 04         inr b         ; ;COLD
    sta $564f     ; $0416 32 4f 56
    mov b,l       ; $0419 45      
    mov d,d       ; $041a 52      
-   ???           ; $041b 08      
+   .byte 0x08    ; $041b 08      
    inr b         ; $041c 04      
    lxi h,$0007   ; $041d 21 07 00
    dad sp        ; $0420 39      
@@ -794,7 +745,7 @@ $02da 04         inr b         ; ;COLD
    pop h         ; $0534 e1      
    jmp $0511     ; $0535 c3 11 05
    stax b        ; $0538 02      
-   ???           ; $0539 30      
+   .byte 0x30    ; $0539 30      
    inr a         ; $053a 3c      
    cma           ; $053b 2f      
    dcr b         ; $053c 05      
@@ -807,7 +758,7 @@ $02da 04         inr b         ; ;COLD
    push h        ; $0547 e5      
    jmp $02ef     ; $0548 c3 ef 02
    stax b        ; $054b 02      
-   ???           ; $054c 30      
+   .byte 0x30    ; $054c 30      
    mvi a,$38     ; $054d 3e 38   
    dcr b         ; $054f 05      
    pop d         ; $0550 d1      
@@ -836,7 +787,7 @@ $02da 04         inr b         ; ;COLD
    push h        ; $0575 e5      
    jmp $02ef     ; $0576 c3 ef 02
    stax b        ; $0579 02      
-   ???           ; $057a 30      
+   .byte 0x30    ; $057a 30      
    dcr a         ; $057b 3d      
    mov h,d       ; $057c 62      
    dcr b         ; $057d 05      
@@ -1337,7 +1288,7 @@ $02da 04         inr b         ; ;COLD
    mov d,d       ; $083b 52      
    mov b,h       ; $083c 44      
    inx h         ; $083d 23      
-   ???           ; $083e 08      
+   .byte 0x08    ; $083e 08      
    pop h         ; $083f e1      
    pop d         ; $0840 d1      
    push b        ; $0841 c5      
@@ -1396,7 +1347,7 @@ $02da 04         inr b         ; ;COLD
    mov c,c       ; $088f 49      
    mov d,h       ; $0890 54      
    inx h         ; $0891 23      
-   ???           ; $0892 08      
+   .byte 0x08    ; $0892 08      
    pop d         ; $0893 d1      
    pop h         ; $0894 e1      
    mov a,l       ; $0895 7d      
@@ -1425,7 +1376,7 @@ $02da 04         inr b         ; ;COLD
    mov c,m       ; $08c4 4e      
    mov b,h       ; $08c5 44      
    adc e         ; $08c6 8b      
-   ???           ; $08c7 08      
+   .byte 0x08    ; $08c7 08      
    pop h         ; $08c8 e1      
    pop d         ; $08c9 d1      
    mov a,e       ; $08ca 7b      
@@ -1468,7 +1419,7 @@ $02da 04         inr b         ; ;COLD
    mov c,a       ; $08f9 4f      
    mov d,h       ; $08fa 54      
    push h        ; $08fb e5      
-   ???           ; $08fc 08      
+   .byte 0x08    ; $08fc 08      
    pop h         ; $08fd e1      
    mov a,h       ; $08fe 7c      
    cma           ; $08ff 2f      
@@ -1481,7 +1432,7 @@ $02da 04         inr b         ; ;COLD
    stax b        ; $0908 02      
    mvi a,$52     ; $0909 3e 52   
    rst 6         ; $090b f7      
-   ???           ; $090c 08      
+   .byte 0x08    ; $090c 08      
    pop d         ; $090d d1      
    lhld $341e    ; $090e 2a 1e 34
    dcx h         ; $0911 2b      
@@ -1648,7 +1599,7 @@ $02da 04         inr b         ; ;COLD
    mov m,a       ; $09f3 77      
    jmp $02ef     ; $09f4 c3 ef 02
    stax b        ; $09f7 02      
-   ???           ; $09f8 30      
+   .byte 0x30    ; $09f8 30      
    lxi h,$09e6   ; $09f9 21 e6 09
    sub a         ; $09fc 97      
    pop h         ; $09fd e1      
@@ -1716,7 +1667,7 @@ $02da 04         inr b         ; ;COLD
    push d        ; $0a49 d5      
    jmp $02ef     ; $0a4a c3 ef 02
    inx b         ; $0a4d 03      
-   ???           ; $0a4e 28      
+   .byte 0x28    ; $0a4e 28      
    shld $3529    ; $0a4f 22 29 35
    ldax b        ; $0a52 0a      
    push b        ; $0a53 c5      
@@ -1759,7 +1710,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $0a80 03      
    inx b         ; $0a81 03      
    jmp $02ef     ; $0a82 c3 ef 02
-   ???           ; $0a85 08      
+   .byte 0x08    ; $0a85 08      
    mov c,m       ; $0a86 4e      
    cmc           ; $0a87 3f      
    mov b,d       ; $0a88 42      
@@ -1820,7 +1771,7 @@ $02da 04         inr b         ; ;COLD
    mov m,a       ; $0ada 77      
    jmp $02ef     ; $0adb c3 ef 02
    inr b         ; $0ade 04      
-   ???           ; $0adf 28      
+   .byte 0x28    ; $0adf 28      
    mov b,h       ; $0ae0 44      
    mov c,a       ; $0ae1 4f      
    dad h         ; $0ae2 29      
@@ -1850,7 +1801,7 @@ $02da 04         inr b         ; ;COLD
    shld $341e    ; $0afe 22 1e 34
    jmp $02ef     ; $0b01 c3 ef 02
    dcr b         ; $0b04 05      
-   ???           ; $0b05 28      
+   .byte 0x28    ; $0b05 28      
    cmc           ; $0b06 3f      
    mov b,h       ; $0b07 44      
    mov c,a       ; $0b08 4f      
@@ -1915,7 +1866,7 @@ $02da 04         inr b         ; ;COLD
    mov b,m       ; $0b55 46      
    jmp $02ef     ; $0b56 c3 ef 02
    rlc           ; $0b59 07      
-   ???           ; $0b5a 28      
+   .byte 0x28    ; $0b5a 28      
    dcx h         ; $0b5b 2b      
    mov c,h       ; $0b5c 4c      
    mov c,a       ; $0b5d 4f      
@@ -2050,7 +2001,7 @@ $02da 04         inr b         ; ;COLD
    pop b         ; $0c0d c1      
    jmp $02ef     ; $0c0e c3 ef 02
    inr b         ; $0c11 04      
-   ???           ; $0c12 30      
+   .byte 0x30    ; $0c12 30      
    mvi a,$42     ; $0c13 3e 42   
    mov c,h       ; $0c15 4c      
    xri $0b       ; $0c16 ee 0b   
@@ -2148,7 +2099,7 @@ $02da 04         inr b         ; ;COLD
    pop b         ; $0c91 c1      
    jmp $02ef     ; $0c92 c3 ef 02
    dcr b         ; $0c95 05      
-   ???           ; $0c96 28      
+   .byte 0x28    ; $0c96 28      
    mov c,e       ; $0c97 4b      
    mov b,l       ; $0c98 45      
    mov e,c       ; $0c99 59      
@@ -2163,7 +2114,7 @@ $02da 04         inr b         ; ;COLD
    push h        ; $0ca5 e5      
    jmp $02ef     ; $0ca6 c3 ef 02
    inr b         ; $0ca9 04      
-   ???           ; $0caa 28      
+   .byte 0x28    ; $0caa 28      
    mov b,e       ; $0cab 43      
    mov d,d       ; $0cac 52      
    dad h         ; $0cad 29      
@@ -2270,7 +2221,7 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $0d2d 15      
    inx b         ; $0d2e 03      
    rlc           ; $0d2f 07      
-   ???           ; $0d30 28      
+   .byte 0x28    ; $0d30 28      
    mov c,h       ; $0d31 4c      
    mov b,l       ; $0d32 45      
    mov c,l       ; $0d33 4d      
@@ -2345,7 +2296,7 @@ $02da 04         inr b         ; ;COLD
    mov h,l       ; $0d8f 65      
    mov l,l       ; $0d90 6d      
    mov h,c       ; $0d91 61      
-   ???           ; $0d92 20      
+   .byte 0x20    ; $0d92 20      
    mov l,h       ; $0d93 6c      
    mov m,e       ; $0d94 73      
    dcr l         ; $0d95 2d      
@@ -2362,18 +2313,18 @@ $02da 04         inr b         ; ;COLD
    mov h,c       ; $0da3 61      
    mov m,d       ; $0da4 72      
    mov m,h       ; $0da5 74      
-   ???           ; $0da6 20      
+   .byte 0x20    ; $0da6 20      
    mov b,m       ; $0da7 46      
    mov c,a       ; $0da8 4f      
    mov d,d       ; $0da9 52      
    mov d,h       ; $0daa 54      
    mov c,b       ; $0dab 48      
    dcr l         ; $0dac 2d      
-   ???           ; $0dad 38      
+   .byte 0x38    ; $0dad 38      
    inx sp        ; $0dae 33      
-   ???           ; $0daf 20      
+   .byte 0x20    ; $0daf 20      
    mov l,c       ; $0db0 69      
-   ???           ; $0db1 20      
+   .byte 0x20    ; $0db1 20      
    mov h,c       ; $0db2 61      
    mov m,e       ; $0db3 73      
    mov m,e       ; $0db4 73      
@@ -2383,11 +2334,11 @@ $02da 04         inr b         ; ;COLD
    mov l,h       ; $0db8 6c      
    mov h,l       ; $0db9 65      
    mov m,d       ; $0dba 72      
-   ???           ; $0dbb 20      
-   ???           ; $0dbc 28      
+   .byte 0x20    ; $0dbb 20      
+   .byte 0x28    ; $0dbc 28      
    mov b,e       ; $0dbd 43      
    dad h         ; $0dbe 29      
-   ???           ; $0dbf 20      
+   .byte 0x20    ; $0dbf 20      
    mov l,m       ; $0dc0 6e      
    mov l,c       ; $0dc1 69      
    mov l,c       ; $0dc2 69      
@@ -2398,12 +2349,12 @@ $02da 04         inr b         ; ;COLD
    mov l,l       ; $0dc7 6d      
    mov h,c       ; $0dc8 61      
    mov a,e       ; $0dc9 7b      
-   ???           ; $0dca 20      
+   .byte 0x20    ; $0dca 20      
    mov l,h       ; $0dcb 6c      
    mov h,a       ; $0dcc 67      
    mov m,l       ; $0dcd 75      
    inr l         ; $0dce 2c      
-   ???           ; $0dcf 20      
+   .byte 0x20    ; $0dcf 20      
    lxi sp,$3839  ; $0dd0 31 39 38
    mvi m,$2e     ; $0dd3 36 2e   
    mov h,m       ; $0dd5 66      
@@ -2419,7 +2370,7 @@ $02da 04         inr b         ; ;COLD
    mov l,a       ; $0de0 6f      
    mov m,d       ; $0de1 72      
    inr l         ; $0de2 2c      
-   ???           ; $0de3 20      
+   .byte 0x20    ; $0de3 20      
    mov h,m       ; $0de4 66      
    mov h,c       ; $0de5 61      
    mov l,d       ; $0de6 6a      
@@ -2428,7 +2379,7 @@ $02da 04         inr b         ; ;COLD
    mov m,a       ; $0de9 77      
    mov h,c       ; $0dea 61      
    mov m,c       ; $0deb 71      
-   ???           ; $0dec 20      
+   .byte 0x20    ; $0dec 20      
    mov m,e       ; $0ded 73      
    mov l,c       ; $0dee 69      
    mov m,e       ; $0def 73      
@@ -2437,7 +2388,7 @@ $02da 04         inr b         ; ;COLD
    mov l,l       ; $0df2 6d      
    mov h,c       ; $0df3 61      
    inr l         ; $0df4 2c      
-   ???           ; $0df5 20      
+   .byte 0x20    ; $0df5 20      
    mov m,b       ; $0df6 70      
    mov m,e       ; $0df7 73      
    mov h,l       ; $0df8 65      
@@ -2451,9 +2402,9 @@ $02da 04         inr b         ; ;COLD
    mov l,c       ; $0e00 69      
    mov l,e       ; $0e01 6b      
    mov h,c       ; $0e02 61      
-   ???           ; $0e03 20      
+   .byte 0x20    ; $0e03 20      
    mov l,c       ; $0e04 69      
-   ???           ; $0e05 20      
+   .byte 0x20    ; $0e05 20      
    mov a,d       ; $0e06 7a      
    mov h,c       ; $0e07 61      
    mov h,a       ; $0e08 67      
@@ -2463,29 +2414,29 @@ $02da 04         inr b         ; ;COLD
    mov a,m       ; $0e0c 7e      
    mov l,c       ; $0e0d 69      
    mov l,e       ; $0e0e 6b      
-   ???           ; $0e0f 20      
+   .byte 0x20    ; $0e0f 20      
    dcr l         ; $0e10 2d      
    mov h,m       ; $0e11 66      
    dcr d         ; $0e12 15      
    mvi a,$18     ; $0e13 3e 18   
    stc           ; $0e15 37      
-   ???           ; $0e16 28      
+   .byte 0x28    ; $0e16 28      
    mov b,e       ; $0e17 43      
    dad h         ; $0e18 29      
-   ???           ; $0e19 20      
+   .byte 0x20    ; $0e19 20      
    mov l,h       ; $0e1a 6c      
    mov h,l       ; $0e1b 65      
    mov l,d       ; $0e1c 6a      
    mov h,h       ; $0e1d 64      
    mov l,c       ; $0e1e 69      
-   ???           ; $0e1f 20      
+   .byte 0x20    ; $0e1f 20      
    mov m,e       ; $0e20 73      
    ral           ; $0e21 17      
    mov h,m       ; $0e22 66      
    mov m,h       ; $0e23 74      
    inr l         ; $0e24 2c      
-   ???           ; $0e25 20      
-   ???           ; $0e26 20      
+   .byte 0x20    ; $0e25 20      
+   .byte 0x20    ; $0e26 20      
    mov l,l       ; $0e27 6d      
    mov l,a       ; $0e28 6f      
    mov m,e       ; $0e29 73      
@@ -2493,9 +2444,9 @@ $02da 04         inr b         ; ;COLD
    mov m,a       ; $0e2b 77      
    mov h,c       ; $0e2c 61      
    inr l         ; $0e2d 2c      
-   ???           ; $0e2e 20      
-   ???           ; $0e2f 20      
-   ???           ; $0e30 20      
+   .byte 0x20    ; $0e2e 20      
+   .byte 0x20    ; $0e2f 20      
+   .byte 0x20    ; $0e30 20      
    mov m,d       ; $0e31 72      
    mov h,l       ; $0e32 65      
    mov h,a       ; $0e33 67      
@@ -2513,7 +2464,7 @@ $02da 04         inr b         ; ;COLD
    mov l,m       ; $0e40 6e      
    mov l,c       ; $0e41 69      
    mov h,l       ; $0e42 65      
-   ???           ; $0e43 20      
+   .byte 0x20    ; $0e43 20      
    mov b,c       ; $0e44 41      
    cma           ; $0e45 2f      
    sta $3532     ; $0e46 32 32 35
@@ -2525,23 +2476,23 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $0e50 15      
    mvi a,$18     ; $0e51 3e 18   
    stc           ; $0e53 37      
-   ???           ; $0e54 28      
+   .byte 0x28    ; $0e54 28      
    mov b,e       ; $0e55 43      
    dad h         ; $0e56 29      
-   ???           ; $0e57 20      
+   .byte 0x20    ; $0e57 20      
    mov l,h       ; $0e58 6c      
    mov h,l       ; $0e59 65      
    mov l,d       ; $0e5a 6a      
    mov h,h       ; $0e5b 64      
    mov l,c       ; $0e5c 69      
-   ???           ; $0e5d 20      
+   .byte 0x20    ; $0e5d 20      
    mov b,e       ; $0e5e 43      
    ral           ; $0e5f 17      
    mov h,m       ; $0e60 66      
    mov m,h       ; $0e61 74      
    inr l         ; $0e62 2c      
-   ???           ; $0e63 20      
-   ???           ; $0e64 20      
+   .byte 0x20    ; $0e63 20      
+   .byte 0x20    ; $0e64 20      
    mov l,l       ; $0e65 6d      
    mov l,a       ; $0e66 6f      
    mov m,e       ; $0e67 73      
@@ -2549,9 +2500,9 @@ $02da 04         inr b         ; ;COLD
    mov m,a       ; $0e69 77      
    mov h,c       ; $0e6a 61      
    inr l         ; $0e6b 2c      
-   ???           ; $0e6c 20      
-   ???           ; $0e6d 20      
-   ???           ; $0e6e 20      
+   .byte 0x20    ; $0e6c 20      
+   .byte 0x20    ; $0e6d 20      
+   .byte 0x20    ; $0e6e 20      
    mov m,h       ; $0e6f 74      
    mov h,l       ; $0e70 65      
    mov l,h       ; $0e71 6c      
@@ -2563,21 +2514,21 @@ $02da 04         inr b         ; ;COLD
    lxi sp,$2d31  ; $0e78 31 31 2d
    dcr m         ; $0e7b 35      
    lxi sp,$202c  ; $0e7c 31 2c 20
-   ???           ; $0e7f 20      
-   ???           ; $0e80 20      
+   .byte 0x20    ; $0e7f 20      
+   .byte 0x20    ; $0e80 20      
    mov l,c       ; $0e81 69      
    mov h,b       ; $0e82 60      
    mov l,m       ; $0e83 6e      
    mov a,b       ; $0e84 78      
-   ???           ; $0e85 20      
+   .byte 0x20    ; $0e85 20      
    lxi sp,$3839  ; $0e86 31 39 38
-   ???           ; $0e89 38      
+   .byte 0x38    ; $0e89 38      
    mvi l,$66     ; $0e8a 2e 66   
    dcr d         ; $0e8c 15      
    dcr d         ; $0e8d 15      
    inx b         ; $0e8e 03      
    mvi d,$3e     ; $0e8f 16 3e   
-   ???           ; $0e91 18      
+   .byte 0x18    ; $0e91 18      
    dcr d         ; $0e92 15      
    jpo $e2e9     ; $0e93 e2 e9 e2
    cpe $4fe9     ; $0e96 ec e9 4f
@@ -2586,7 +2537,7 @@ $02da 04         inr b         ; ;COLD
    cpi $48       ; $0e9b fe 48   
    mov b,c       ; $0e9d 41      
    pop psw       ; $0e9e f1      
-   ???           ; $0e9f 20      
+   .byte 0x20    ; $0e9f 20      
    rp            ; $0ea0 f0      
    cpe $202e     ; $0ea1 ec 2e 20
    cpo $202e     ; $0ea4 e4 2e 20
@@ -2708,7 +2659,7 @@ $02da 04         inr b         ; ;COLD
    mov m,a       ; $0f4a 77      
    inr b         ; $0f4b 04      
    out $03       ; $0f4c d3 03   
-   ???           ; $0f4e 10      
+   .byte 0x10    ; $0f4e 10      
    rrc           ; $0f4f 0f      
    mov a,h       ; $0f50 7c      
    dcx b         ; $0f51 0b      
@@ -2756,7 +2707,7 @@ $02da 04         inr b         ; ;COLD
    mov h,a       ; $0f81 67      
    rrc           ; $0f82 0f      
    call $02e4    ; $0f83 cd e4 02
-   ???           ; $0f86 20      
+   .byte 0x20    ; $0f86 20      
    dad b         ; $0f87 09      
    out $03       ; $0f88 d3 03   
    add d         ; $0f8a 82      
@@ -2785,7 +2736,7 @@ $02da 04         inr b         ; ;COLD
    lhld $0f94    ; $0fa5 2a 94 0f
    call $02e4    ; $0fa8 cd e4 02
    jp $eb03      ; $0fab f2 03 eb
-   ???           ; $0fae 08      
+   .byte 0x08    ; $0fae 08      
    dcr c         ; $0faf 0d      
    dad b         ; $0fb0 09      
    ora c         ; $0fb1 b1      
@@ -2836,7 +2787,7 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $0ff0 0a      
    push psw      ; $0ff1 f5      
    rrc           ; $0ff2 0f      
-   ???           ; $0ff3 20      
+   .byte 0x20    ; $0ff3 20      
    mvi b,$15     ; $0ff4 06 15   
    inx b         ; $0ff6 03      
    stax b        ; $0ff7 02      
@@ -2846,8 +2797,8 @@ $02da 04         inr b         ; ;COLD
    rrc           ; $0ffb 0f      
    call $02e4    ; $0ffc cd e4 02
    dcx h         ; $0fff 2b      
-   ???           ; $1000 08      
-   ???           ; $1001 10      
+   .byte 0x08    ; $1000 08      
+   .byte 0x10    ; $1001 10      
    inr b         ; $1002 04      
    dcr d         ; $1003 15      
    inx b         ; $1004 03      
@@ -2864,7 +2815,7 @@ $02da 04         inr b         ; ;COLD
    mvi c,$f9     ; $1012 0e f9   
    mvi b,$82     ; $1014 06 82   
    inx b         ; $1016 03      
-   ???           ; $1017 10      
+   .byte 0x10    ; $1017 10      
    inr b         ; $1018 04      
    dcr d         ; $1019 15      
    inx b         ; $101a 03      
@@ -2875,19 +2826,19 @@ $02da 04         inr b         ; ;COLD
    mov c,a       ; $101f 4f      
    mov b,h       ; $1020 44      
    dcr b         ; $1021 05      
-   ???           ; $1022 10      
+   .byte 0x10    ; $1022 10      
    call $02e4    ; $1023 cd e4 02
    rpo           ; $1026 e0      
    inx b         ; $1027 03      
    mov a,d       ; $1028 7a      
    ldax b        ; $1029 0a      
    mov l,d       ; $102a 6a      
-   ???           ; $102b 10      
+   .byte 0x10    ; $102b 10      
    out $03       ; $102c d3 03   
    dcr c         ; $102e 0d      
    dad b         ; $102f 09      
    jp $eb03      ; $1030 f2 03 eb
-   ???           ; $1033 08      
+   .byte 0x08    ; $1033 08      
    dcr c         ; $1034 0d      
    dad b         ; $1035 09      
    dcr c         ; $1036 0d      
@@ -2901,26 +2852,26 @@ $02da 04         inr b         ; ;COLD
    mvi c,$10     ; $103e 0e 10   
    adc l         ; $1040 8d      
    inx b         ; $1041 03      
-   ???           ; $1042 20      
+   .byte 0x20    ; $1042 20      
    dad b         ; $1043 09      
    dcr a         ; $1044 3d      
    dcr b         ; $1045 05      
    mov a,d       ; $1046 7a      
    ldax b        ; $1047 0a      
    mov c,h       ; $1048 4c      
-   ???           ; $1049 10      
+   .byte 0x10    ; $1049 10      
    mov l,d       ; $104a 6a      
    inr b         ; $104b 04      
    adc l         ; $104c 8d      
    inx b         ; $104d 03      
-   ???           ; $104e 20      
+   .byte 0x20    ; $104e 20      
    dad b         ; $104f 09      
    dcr a         ; $1050 3d      
    dcr b         ; $1051 05      
    mov a,d       ; $1052 7a      
    ldax b        ; $1053 0a      
    mov l,b       ; $1054 68      
-   ???           ; $1055 10      
+   .byte 0x10    ; $1055 10      
    mov l,d       ; $1056 6a      
    inr b         ; $1057 04      
    mov h,d       ; $1058 62      
@@ -2928,7 +2879,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $105a 7a      
    ldax b        ; $105b 0a      
    mov l,b       ; $105c 68      
-   ???           ; $105d 10      
+   .byte 0x10    ; $105d 10      
    adc m         ; $105e 8e      
    inr b         ; $105f 04      
    inx sp        ; $1060 33      
@@ -2948,32 +2899,32 @@ $02da 04         inr b         ; ;COLD
    mov c,a       ; $1070 4f      
    mov b,h       ; $1071 44      
    dcx d         ; $1072 1b      
-   ???           ; $1073 10      
+   .byte 0x10    ; $1073 10      
    call $02e4    ; $1074 cd e4 02
    dcr c         ; $1077 0d      
    dad b         ; $1078 09      
    xra b         ; $1079 a8      
    rrc           ; $107a 0f      
-   ???           ; $107b 20      
+   .byte 0x20    ; $107b 20      
    dad b         ; $107c 09      
    inx h         ; $107d 23      
-   ???           ; $107e 10      
+   .byte 0x10    ; $107e 10      
    dcr d         ; $107f 15      
    inx b         ; $1080 03      
    stax b        ; $1081 02      
    lhld $6c2f    ; $1082 2a 2f 6c
-   ???           ; $1085 10      
+   .byte 0x10    ; $1085 10      
    call $02e4    ; $1086 cd e4 02
    mov m,h       ; $1089 74      
-   ???           ; $108a 10      
-   ???           ; $108b 10      
+   .byte 0x10    ; $108a 10      
+   .byte 0x10    ; $108b 10      
    inr b         ; $108c 04      
    dcr d         ; $108d 15      
    inx b         ; $108e 03      
    stax b        ; $108f 02      
    inr a         ; $1090 3c      
    mvi a,$81     ; $1091 3e 81   
-   ???           ; $1093 10      
+   .byte 0x10    ; $1093 10      
    call $02e4    ; $1094 cd e4 02
    mov h,m       ; $1097 66      
    dcr b         ; $1098 05      
@@ -2987,7 +2938,7 @@ $02da 04         inr b         ; ;COLD
    mov c,c       ; $10a0 49      
    mov d,h       ; $10a1 54      
    adc a         ; $10a2 8f      
-   ???           ; $10a3 10      
+   .byte 0x10    ; $10a3 10      
    call $02e4    ; $10a4 cd e4 02
    dcx h         ; $10a7 2b      
    ldax b        ; $10a8 0a      
@@ -3000,7 +2951,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $10af 7a      
    ldax b        ; $10b0 0a      
    ora l         ; $10b1 b5      
-   ???           ; $10b2 10      
+   .byte 0x10    ; $10b2 10      
    inr l         ; $10b3 2c      
    inx b         ; $10b4 03      
    ora h         ; $10b5 b4      
@@ -3028,7 +2979,7 @@ $02da 04         inr b         ; ;COLD
    mov d,d       ; $10d1 52      
    mov d,h       ; $10d2 54      
    sbb l         ; $10d3 9d      
-   ???           ; $10d4 10      
+   .byte 0x10    ; $10d4 10      
    call $02e4    ; $10d5 cd e4 02
    dcx h         ; $10d8 2b      
    ldax b        ; $10d9 0a      
@@ -3063,7 +3014,7 @@ $02da 04         inr b         ; ;COLD
    mov d,b       ; $10ff 50      
    mov b,c       ; $1100 41      
    mov c,b       ; $1101 48      
-   ???           ; $1102 20      
+   .byte 0x20    ; $1102 20      
    cpi $12       ; $1103 fe 12   
    mvi a,$18     ; $1105 3e 18   
    rlc           ; $1107 07      
@@ -3073,7 +3024,7 @@ $02da 04         inr b         ; ;COLD
    mov c,a       ; $110b 4f      
    mov c,e       ; $110c 4b      
    mov b,c       ; $110d 41      
-   ???           ; $110e 20      
+   .byte 0x20    ; $110e 20      
    hlt           ; $110f 76      
    stax b        ; $1110 02      
    add h         ; $1111 84      
@@ -3091,7 +3042,7 @@ $02da 04         inr b         ; ;COLD
    stax b        ; $1120 02      
    add h         ; $1121 84      
    dad b         ; $1122 09      
-   ???           ; $1123 fd      
+   .byte 0xfd    ; $1123 fd      
    inr l         ; $1124 2c      
    adc l         ; $1125 8d      
    inx b         ; $1126 03      
@@ -3113,30 +3064,30 @@ $02da 04         inr b         ; ;COLD
    mov b,c       ; $1139 41      
    inr b         ; $113a 04      
    ana h         ; $113b a4      
-   ???           ; $113c 10      
+   .byte 0x10    ; $113c 10      
    dcr d         ; $113d 15      
    inx b         ; $113e 03      
-   ???           ; $113f 08      
-   ???           ; $1140 28      
+   .byte 0x08    ; $113f 08      
+   .byte 0x28    ; $1140 28      
    mov b,c       ; $1141 41      
    mov b,d       ; $1142 42      
    mov c,a       ; $1143 4f      
    mov d,d       ; $1144 52      
    mov d,h       ; $1145 54      
    shld $cd29    ; $1146 22 29 cd
-   ???           ; $1149 10      
+   .byte 0x10    ; $1149 10      
    call $02e4    ; $114a cd e4 02
    mov a,d       ; $114d 7a      
    ldax b        ; $114e 0a      
    mov h,c       ; $114f 61      
    lxi d,$0eff   ; $1150 11 ff 0e
-   ???           ; $1153 ed      
+   .byte 0xed    ; $1153 ed      
    mvi d,$c4     ; $1154 16 c4   
    mvi d,$20     ; $1156 16 20   
    dad b         ; $1158 09      
-   ???           ; $1159 ed      
+   .byte 0xed    ; $1159 ed      
    mvi d,$d5     ; $115a 16 d5   
-   ???           ; $115c 10      
+   .byte 0x10    ; $115c 10      
    mov l,b       ; $115d 68      
    ldax b        ; $115e 0a      
    mov l,l       ; $115f 6d      
@@ -3236,7 +3187,7 @@ $02da 04         inr b         ; ;COLD
    dcr b         ; $11d2 05      
    mov a,d       ; $11d3 7a      
    ldax b        ; $11d4 0a      
-   ???           ; $11d5 dd      
+   .byte 0xdd    ; $11d5 dd      
    lxi d,$0a2b   ; $11d6 11 2b 0a
    dcr l         ; $11d9 2d      
    nop           ; $11da 00      
@@ -3257,7 +3208,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $11ee 03      
    jm $7a04      ; $11ef fa 04 7a
    ldax b        ; $11f2 0a      
-   ???           ; $11f3 fd      
+   .byte 0xfd    ; $11f3 fd      
    lxi d,$0a2b   ; $11f4 11 2b 0a
    stc           ; $11f7 37      
    nop           ; $11f8 00      
@@ -3265,7 +3216,7 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $11fa 0a      
    lxi b,$2b12   ; $11fb 01 12 2b
    ldax b        ; $11fe 0a      
-   ???           ; $11ff 30      
+   .byte 0x30    ; $11ff 30      
    nop           ; $1200 00      
    mov c,d       ; $1201 4a      
    inr b         ; $1202 04      
@@ -3274,7 +3225,7 @@ $02da 04         inr b         ; ;COLD
    lxi b,$df23   ; $1205 01 23 df
    lxi d,$e4cd   ; $1208 11 cd e4
    stax b        ; $120b 02      
-   ???           ; $120c 08      
+   .byte 0x08    ; $120c 08      
    stax b        ; $120d 02      
    add h         ; $120e 84      
    dad b         ; $120f 09      
@@ -3294,12 +3245,12 @@ $02da 04         inr b         ; ;COLD
    mvi l,$05     ; $1222 2e 05   
    stax d        ; $1224 12      
    call $02e4    ; $1225 cd e4 02
-   ???           ; $1228 08      
+   .byte 0x08    ; $1228 08      
    stax b        ; $1229 02      
    add h         ; $122a 84      
    dad b         ; $122b 09      
    dcx h         ; $122c 2b      
-   ???           ; $122d 08      
+   .byte 0x08    ; $122d 08      
    adc l         ; $122e 8d      
    inx b         ; $122f 03      
    ani $11       ; $1230 e6 11   
@@ -3308,7 +3259,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $1236 03      
    inx h         ; $1237 23      
    mvi l,$53     ; $1238 2e 53   
-   ???           ; $123a 20      
+   .byte 0x20    ; $123a 20      
    stax d        ; $123b 12      
    call $02e4    ; $123c cd e4 02
    dcr h         ; $123f 25      
@@ -3330,7 +3281,7 @@ $02da 04         inr b         ; ;COLD
    dad b         ; $1253 09      
    stax d        ; $1254 12      
    jp $d903      ; $1255 f2 03 d9
-   ???           ; $1258 08      
+   .byte 0x08    ; $1258 08      
    mov a,m       ; $1259 7e      
    dcr b         ; $125a 05      
    mov a,d       ; $125b 7a      
@@ -3354,7 +3305,7 @@ $02da 04         inr b         ; ;COLD
    rrc           ; $1271 0f      
    ana m         ; $1272 a6      
    lxi d,$1250   ; $1273 11 50 12
-   ???           ; $1276 20      
+   .byte 0x20    ; $1276 20      
    dad b         ; $1277 09      
    aci $11       ; $1278 ce 11   
    sub b         ; $127a 90      
@@ -3380,7 +3331,7 @@ $02da 04         inr b         ; ;COLD
    rrc           ; $1295 0f      
    ana m         ; $1296 a6      
    lxi d,$1250   ; $1297 11 50 12
-   ???           ; $129a 20      
+   .byte 0x20    ; $129a 20      
    dad b         ; $129b 09      
    aci $11       ; $129c ce 11   
    sub b         ; $129e 90      
@@ -3401,7 +3352,7 @@ $02da 04         inr b         ; ;COLD
    inr b         ; $12b5 04      
    ana m         ; $12b6 a6      
    lxi d,$123c   ; $12b7 11 3c 12
-   ???           ; $12ba 20      
+   .byte 0x20    ; $12ba 20      
    dad b         ; $12bb 09      
    aci $11       ; $12bc ce 11   
    rz            ; $12be c8      
@@ -3438,7 +3389,7 @@ $02da 04         inr b         ; ;COLD
    ori $12       ; $12ea f6 12   
    dcx h         ; $12ec 2b      
    ldax b        ; $12ed 0a      
-   ???           ; $12ee 30      
+   .byte 0x30    ; $12ee 30      
    nop           ; $12ef 00      
    dcr a         ; $12f0 3d      
    dcr d         ; $12f1 15      
@@ -3457,7 +3408,7 @@ $02da 04         inr b         ; ;COLD
    inr b         ; $1306 04      
    ana m         ; $1307 a6      
    lxi d,$123c   ; $1308 11 3c 12
-   ???           ; $130b 20      
+   .byte 0x20    ; $130b 20      
    dad b         ; $130c 09      
    aci $11       ; $130d ce 11   
    rz            ; $130f c8      
@@ -3551,7 +3502,7 @@ $02da 04         inr b         ; ;COLD
    cmc           ; $1382 3f      
    nop           ; $1383 00      
    rz            ; $1384 c8      
-   ???           ; $1385 08      
+   .byte 0x08    ; $1385 08      
    mov c,d       ; $1386 4a      
    inr b         ; $1387 04      
    dcr d         ; $1388 15      
@@ -3580,7 +3531,7 @@ $02da 04         inr b         ; ;COLD
    call $02e4    ; $13a4 cd e4 02
    dcx h         ; $13a7 2b      
    ldax b        ; $13a8 0a      
-   ???           ; $13a9 20      
+   .byte 0x20    ; $13a9 20      
    nop           ; $13aa 00      
    jc $e50e      ; $13ab da 0e e5
    ldax b        ; $13ae 0a      
@@ -3597,7 +3548,7 @@ $02da 04         inr b         ; ;COLD
    mov a,a       ; $13bb 7f      
    nop           ; $13bc 00      
    rz            ; $13bd c8      
-   ???           ; $13be 08      
+   .byte 0x08    ; $13be 08      
    mov m,a       ; $13bf 77      
    inr b         ; $13c0 04      
    sbb a         ; $13c1 9f      
@@ -3665,7 +3616,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $1406 7a      
    ldax b        ; $1407 0a      
    mvi d,$14     ; $1408 16 14   
-   ???           ; $140a fd      
+   .byte 0xfd    ; $140a fd      
    inr l         ; $140b 2c      
    out $03       ; $140c d3 03   
    mov e,a       ; $140e 5f      
@@ -3674,9 +3625,9 @@ $02da 04         inr b         ; ;COLD
    dad b         ; $1411 09      
    mov l,b       ; $1412 68      
    ldax b        ; $1413 0a      
-   ???           ; $1414 18      
+   .byte 0x18    ; $1414 18      
    inr d         ; $1415 14      
-   ???           ; $1416 cb      
+   .byte 0xcb    ; $1416 cb      
    stax b        ; $1417 02      
    hlt           ; $1418 76      
    stax b        ; $1419 02      
@@ -3777,7 +3728,7 @@ $02da 04         inr b         ; ;COLD
    mov m,e       ; $1484 73      
    inr d         ; $1485 14      
    call $0984    ; $1486 cd 84 09
-   ???           ; $1489 08      
+   .byte 0x08    ; $1489 08      
    nop           ; $148a 00      
    inx b         ; $148b 03      
    mov b,e       ; $148c 43      
@@ -3786,7 +3737,7 @@ $02da 04         inr b         ; ;COLD
    mov a,a       ; $148f 7f      
    inr d         ; $1490 14      
    call $0984    ; $1491 cd 84 09
-   ???           ; $1494 08      
+   .byte 0x08    ; $1494 08      
    nop           ; $1495 00      
    mvi b,$45     ; $1496 06 45   
    mov e,b       ; $1498 58      
@@ -3799,7 +3750,7 @@ $02da 04         inr b         ; ;COLD
    call $02e4    ; $149f cd e4 02
    dcx h         ; $14a2 2b      
    ldax b        ; $14a3 0a      
-   ???           ; $14a4 08      
+   .byte 0x08    ; $14a4 08      
    inr m         ; $14a5 34      
    add h         ; $14a6 84      
    dad b         ; $14a7 09      
@@ -3833,8 +3784,8 @@ $02da 04         inr b         ; ;COLD
    inr d         ; $14c7 14      
    mov h,m       ; $14c8 66      
    dcr b         ; $14c9 05      
-   ???           ; $14ca d9      
-   ???           ; $14cb 08      
+   .byte 0xd9    ; $14ca d9      
+   .byte 0x08    ; $14cb 08      
    mov a,d       ; $14cc 7a      
    ldax b        ; $14cd 0a      
    cpi $14       ; $14ce fe 14   
@@ -3856,7 +3807,7 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $14e5 15      
    adc m         ; $14e6 8e      
    inr b         ; $14e7 04      
-   ???           ; $14e8 20      
+   .byte 0x20    ; $14e8 20      
    dad b         ; $14e9 09      
    adc m         ; $14ea 8e      
    inr b         ; $14eb 04      
@@ -3866,7 +3817,7 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $14ef 0a      
    cp $7514      ; $14f0 f4 14 75
    dad b         ; $14f3 09      
-   ???           ; $14f4 20      
+   .byte 0x20    ; $14f4 20      
    dad b         ; $14f5 09      
    adc m         ; $14f6 8e      
    inr b         ; $14f7 04      
@@ -3969,7 +3920,7 @@ $02da 04         inr b         ; ;COLD
    call $02e4    ; $1566 cd e4 02
    dcx h         ; $1569 2b      
    ldax b        ; $156a 0a      
-   ???           ; $156b 10      
+   .byte 0x10    ; $156b 10      
    inr m         ; $156c 34      
    add h         ; $156d 84      
    dad b         ; $156e 09      
@@ -4022,14 +3973,14 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $15a4 03      
    dcr d         ; $15a5 15      
    inx b         ; $15a6 03      
-   ???           ; $15a7 08      
+   .byte 0x08    ; $15a7 08      
    mov b,m       ; $15a8 46      
    mov c,a       ; $15a9 4f      
    mov d,d       ; $15aa 52      
    mov d,h       ; $15ab 54      
    mov c,b       ; $15ac 48      
    dcr l         ; $15ad 2d      
-   ???           ; $15ae 38      
+   .byte 0x38    ; $15ae 38      
    inx sp        ; $15af 33      
    mov m,a       ; $15b0 77      
    dcr d         ; $15b1 15      
@@ -4044,21 +3995,21 @@ $02da 04         inr b         ; ;COLD
    mov b,c       ; $15bf 41      
    mov d,b       ; $15c0 50      
    mov d,h       ; $15c1 54      
-   ???           ; $15c2 20      
+   .byte 0x20    ; $15c2 20      
    mov b,m       ; $15c3 46      
    mov c,a       ; $15c4 4f      
    mov d,d       ; $15c5 52      
    mov d,h       ; $15c6 54      
    mov c,b       ; $15c7 48      
    dcr l         ; $15c8 2d      
-   ???           ; $15c9 38      
+   .byte 0x38    ; $15c9 38      
    inx sp        ; $15ca 33      
    dcr d         ; $15cb 15      
    inx b         ; $15cc 03      
-   ???           ; $15cd fd      
-   ???           ; $15ce 08      
-   ???           ; $15cf d9      
-   ???           ; $15d0 08      
+   .byte 0xfd    ; $15cd fd      
+   .byte 0x08    ; $15ce 08      
+   .byte 0xd9    ; $15cf d9      
+   .byte 0x08    ; $15d0 08      
    mov a,d       ; $15d1 7a      
    ldax b        ; $15d2 0a      
    in $15        ; $15d3 db 15   
@@ -4097,7 +4048,7 @@ $02da 04         inr b         ; ;COLD
    mvi a,$00     ; $15f8 3e 00   
    dcr a         ; $15fa 3d      
    dcr d         ; $15fb 15      
-   ???           ; $15fc cb      
+   .byte 0xcb    ; $15fc cb      
    stax b        ; $15fd 02      
    mov l,m       ; $15fe 6e      
    inr d         ; $15ff 14      
@@ -4182,7 +4133,7 @@ $02da 04         inr b         ; ;COLD
    inr c         ; $1658 0c      
    dcx h         ; $1659 2b      
    ldax b        ; $165a 0a      
-   ???           ; $165b 10      
+   .byte 0x10    ; $165b 10      
    inr m         ; $165c 34      
    sbb l         ; $165d 9d      
    dad b         ; $165e 09      
@@ -4212,9 +4163,9 @@ $02da 04         inr b         ; ;COLD
    mvi d,$cd     ; $167c 16 cd   
    cpo $2b02     ; $167e e4 02 2b
    ldax b        ; $1681 0a      
-   ???           ; $1682 10      
+   .byte 0x10    ; $1682 10      
    nop           ; $1683 00      
-   ???           ; $1684 08      
+   .byte 0x08    ; $1684 08      
    stax b        ; $1685 02      
    sbb l         ; $1686 9d      
    dad b         ; $1687 09      
@@ -4234,7 +4185,7 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $1698 0a      
    ldax b        ; $1699 0a      
    nop           ; $169a 00      
-   ???           ; $169b 08      
+   .byte 0x08    ; $169b 08      
    stax b        ; $169c 02      
    sbb l         ; $169d 9d      
    dad b         ; $169e 09      
@@ -4247,7 +4198,7 @@ $02da 04         inr b         ; ;COLD
    mvi d,$cd     ; $16a5 16 cd   
    add h         ; $16a7 84      
    dad b         ; $16a8 09      
-   ???           ; $16a9 20      
+   .byte 0x20    ; $16a9 20      
    nop           ; $16aa 00      
    dcr b         ; $16ab 05      
    mov b,d       ; $16ac 42      
@@ -4305,7 +4256,7 @@ $02da 04         inr b         ; ;COLD
    cmc           ; $16f4 3f      
    nop           ; $16f5 00      
    rz            ; $16f6 c8      
-   ???           ; $16f7 08      
+   .byte 0x08    ; $16f7 08      
    mov a,m       ; $16f8 7e      
    dcr d         ; $16f9 15      
    dcr d         ; $16fa 15      
@@ -4367,7 +4318,7 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $1740 15      
    inx b         ; $1741 03      
    rlc           ; $1742 07      
-   ???           ; $1743 28      
+   .byte 0x28    ; $1743 28      
    lxi h,$4f43   ; $1744 21 43 4f
    mov b,h       ; $1747 44      
    mov b,l       ; $1748 45      
@@ -4375,7 +4326,7 @@ $02da 04         inr b         ; ;COLD
    ral           ; $174a 17      
    ral           ; $174b 17      
    call $02e4    ; $174c cd e4 02
-   ???           ; $174f 20      
+   .byte 0x20    ; $174f 20      
    ral           ; $1750 17      
    sub d         ; $1751 92      
    inx d         ; $1752 13      
@@ -4390,7 +4341,7 @@ $02da 04         inr b         ; ;COLD
    ral           ; $175e 17      
    ral           ; $175f 17      
    call $02e4    ; $1760 cd e4 02
-   ???           ; $1763 20      
+   .byte 0x20    ; $1763 20      
    ral           ; $1764 17      
    dcx h         ; $1765 2b      
    ldax b        ; $1766 0a      
@@ -4446,7 +4397,7 @@ $02da 04         inr b         ; ;COLD
    add h         ; $17a5 84      
    dad b         ; $17a6 09      
    cmc           ; $17a7 3f      
-   ???           ; $17a8 08      
+   .byte 0x08    ; $17a8 08      
    mov a,d       ; $17a9 7a      
    ldax b        ; $17aa 0a      
    ora e         ; $17ab b3      
@@ -4470,7 +4421,7 @@ $02da 04         inr b         ; ;COLD
    ret           ; $17c1 c9      
    ral           ; $17c2 17      
    cmc           ; $17c3 3f      
-   ???           ; $17c4 08      
+   .byte 0x08    ; $17c4 08      
    mov l,b       ; $17c5 68      
    ldax b        ; $17c6 0a      
    call $8217    ; $17c7 cd 17 82
@@ -4492,7 +4443,7 @@ $02da 04         inr b         ; ;COLD
    add b         ; $17db 80      
    nop           ; $17dc 00      
    rz            ; $17dd c8      
-   ???           ; $17de 08      
+   .byte 0x08    ; $17de 08      
    mov a,d       ; $17df 7a      
    ldax b        ; $17e0 0a      
    pchl          ; $17e1 e9      
@@ -4545,7 +4496,7 @@ $02da 04         inr b         ; ;COLD
    ral           ; $1817 17      
    call $02e4    ; $1818 cd e4 02
    cmc           ; $181b 3f      
-   ???           ; $181c 08      
+   .byte 0x08    ; $181c 08      
    mov a,d       ; $181d 7a      
    ldax b        ; $181e 0a      
    lxi sp,$7b18  ; $181f 31 18 7b
@@ -4560,14 +4511,14 @@ $02da 04         inr b         ; ;COLD
    mov l,b       ; $182d 68      
    ldax b        ; $182e 0a      
    dcr m         ; $182f 35      
-   ???           ; $1830 18      
+   .byte 0x18    ; $1830 18      
    add d         ; $1831 82      
    inx b         ; $1832 03      
    di            ; $1833 f3      
    mvi c,$15     ; $1834 0e 15   
    inx b         ; $1836 03      
    inr b         ; $1837 04      
-   ???           ; $1838 28      
+   .byte 0x28    ; $1838 28      
    mvi l,$22     ; $1839 2e 22   
    dad h         ; $183b 29      
    adc c         ; $183c 89      
@@ -4580,7 +4531,7 @@ $02da 04         inr b         ; ;COLD
    out $03       ; $1845 d3 03   
    mov m,a       ; $1847 77      
    inr b         ; $1848 04      
-   ???           ; $1849 20      
+   .byte 0x20    ; $1849 20      
    dad b         ; $184a 09      
    mov c,d       ; $184b 4a      
    inr b         ; $184c 04      
@@ -4597,7 +4548,7 @@ $02da 04         inr b         ; ;COLD
    mov d,e       ; $1857 53      
    mov b,l       ; $1858 45      
    stc           ; $1859 37      
-   ???           ; $185a 18      
+   .byte 0x18    ; $185a 18      
    call $02e4    ; $185b cd e4 02
    rz            ; $185e c8      
    mvi c,$f5     ; $185f 0e f5   
@@ -4605,7 +4556,7 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $1862 15      
    inx b         ; $1863 03      
    lxi b,$5327   ; $1864 01 27 53
-   ???           ; $1867 18      
+   .byte 0x18    ; $1867 18      
    call $02e4    ; $1868 cd e4 02
    ana m         ; $186b a6      
    mvi d,$ed     ; $186c 16 ed   
@@ -4617,7 +4568,7 @@ $02da 04         inr b         ; ;COLD
    mov c,d       ; $1873 4a      
    lxi d,$2d03   ; $1874 11 03 2d
    cmc           ; $1877 3f      
-   ???           ; $1878 20      
+   .byte 0x20    ; $1878 20      
    dcr d         ; $1879 15      
    inx b         ; $187a 03      
    add e         ; $187b 83      
@@ -4625,12 +4576,12 @@ $02da 04         inr b         ; ;COLD
    daa           ; $187d 27      
    mov e,l       ; $187e 5d      
    mov h,h       ; $187f 64      
-   ???           ; $1880 18      
+   .byte 0x18    ; $1880 18      
    call $02e4    ; $1881 cd e4 02
    mov l,b       ; $1884 68      
-   ???           ; $1885 18      
+   .byte 0x18    ; $1885 18      
    sub h         ; $1886 94      
-   ???           ; $1887 18      
+   .byte 0x18    ; $1887 18      
    dcr d         ; $1888 15      
    inx b         ; $1889 03      
    add a         ; $188a 87      
@@ -4642,7 +4593,7 @@ $02da 04         inr b         ; ;COLD
    mov b,c       ; $1890 41      
    mov c,h       ; $1891 4c      
    mov a,e       ; $1892 7b      
-   ???           ; $1893 18      
+   .byte 0x18    ; $1893 18      
    call $02e4    ; $1894 cd e4 02
    dcr d         ; $1897 15      
    stax b        ; $1898 02      
@@ -4651,7 +4602,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $189b 7a      
    ldax b        ; $189c 0a      
    ana l         ; $189d a5      
-   ???           ; $189e 18      
+   .byte 0x18    ; $189e 18      
    add e         ; $189f 83      
    rrc           ; $18a0 0f      
    dcx h         ; $18a1 2b      
@@ -4670,7 +4621,7 @@ $02da 04         inr b         ; ;COLD
    mov b,c       ; $18ae 41      
    mov c,h       ; $18af 4c      
    adc d         ; $18b0 8a      
-   ???           ; $18b1 18      
+   .byte 0x18    ; $18b1 18      
    call $02e4    ; $18b2 cd e4 02
    dcr d         ; $18b5 15      
    stax b        ; $18b6 02      
@@ -4679,7 +4630,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $18b9 7a      
    ldax b        ; $18ba 0a      
    push b        ; $18bb c5      
-   ???           ; $18bc 18      
+   .byte 0x18    ; $18bc 18      
    add e         ; $18bd 83      
    rrc           ; $18be 0f      
    inr a         ; $18bf 3c      
@@ -4701,10 +4652,10 @@ $02da 04         inr b         ; ;COLD
    mov b,l       ; $18cf 45      
    mov e,l       ; $18d0 5d      
    ana a         ; $18d1 a7      
-   ???           ; $18d2 18      
+   .byte 0x18    ; $18d2 18      
    call $02e4    ; $18d3 cd e4 02
    mov l,b       ; $18d6 68      
-   ???           ; $18d7 18      
+   .byte 0x18    ; $18d7 18      
    dcr e         ; $18d8 1d      
    rrc           ; $18d9 0f      
    dcr d         ; $18da 15      
@@ -4718,7 +4669,7 @@ $02da 04         inr b         ; ;COLD
    mov d,d       ; $18e2 52      
    mov d,h       ; $18e3 54      
    rst 0         ; $18e4 c7      
-   ???           ; $18e5 18      
+   .byte 0x18    ; $18e5 18      
    call $02e4    ; $18e6 cd e4 02
    mov m,a       ; $18e9 77      
    inr b         ; $18ea 04      
@@ -4727,24 +4678,24 @@ $02da 04         inr b         ; ;COLD
    dad b         ; $18ee 09      
    sub c         ; $18ef 91      
    dad b         ; $18f0 09      
-   ???           ; $18f1 08      
+   .byte 0x08    ; $18f1 08      
    stax b        ; $18f2 02      
    add h         ; $18f3 84      
    dad b         ; $18f4 09      
    sub e         ; $18f5 93      
-   ???           ; $18f6 08      
+   .byte 0x08    ; $18f6 08      
    mov a,d       ; $18f7 7a      
    ldax b        ; $18f8 0a      
    lxi h,$8d19   ; $18f9 21 19 8d
    inx b         ; $18fc 03      
-   ???           ; $18fd 08      
+   .byte 0x08    ; $18fd 08      
    stax b        ; $18fe 02      
    add h         ; $18ff 84      
    dad b         ; $1900 09      
    sbb e         ; $1901 9b      
    mvi b,$b6     ; $1902 06 b6   
    inx b         ; $1904 03      
-   ???           ; $1905 08      
+   .byte 0x08    ; $1905 08      
    stax b        ; $1906 02      
    add h         ; $1907 84      
    dad b         ; $1908 09      
@@ -4763,13 +4714,13 @@ $02da 04         inr b         ; ;COLD
    mvi a,$02     ; $1917 3e 02   
    ldax b        ; $1919 0a      
    ldax b        ; $191a 0a      
-   ???           ; $191b 20      
+   .byte 0x20    ; $191b 20      
    dad b         ; $191c 09      
    mov l,b       ; $191d 68      
    ldax b        ; $191e 0a      
    pchl          ; $191f e9      
-   ???           ; $1920 18      
-   ???           ; $1921 20      
+   .byte 0x18    ; $1920 18      
+   .byte 0x20    ; $1921 20      
    dad b         ; $1922 09      
    dcr d         ; $1923 15      
    inx b         ; $1924 03      
@@ -4812,7 +4763,7 @@ $02da 04         inr b         ; ;COLD
    dad b         ; $1956 09      
    ana m         ; $1957 a6      
    mvi d,$94     ; $1958 16 94   
-   ???           ; $195a 10      
+   .byte 0x10    ; $195a 10      
    adc l         ; $195b 8d      
    inx b         ; $195c 03      
    mov a,m       ; $195d 7e      
@@ -4820,7 +4771,7 @@ $02da 04         inr b         ; ;COLD
    mov a,m       ; $195f 7e      
    dcr b         ; $1960 05      
    rz            ; $1961 c8      
-   ???           ; $1962 08      
+   .byte 0x08    ; $1962 08      
    mov a,d       ; $1963 7a      
    ldax b        ; $1964 0a      
    mov a,m       ; $1965 7e      
@@ -4832,12 +4783,12 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $196c 0a      
    mvi l,$00     ; $196d 2e 00   
    sub h         ; $196f 94      
-   ???           ; $1970 10      
+   .byte 0x10    ; $1970 10      
    mov c,d       ; $1971 4a      
    lxi d,$2004   ; $1972 11 04 20
    dcr l         ; $1975 2d      
    cmc           ; $1976 3f      
-   ???           ; $1977 20      
+   .byte 0x20    ; $1977 20      
    rz            ; $1978 c8      
    mvi c,$68     ; $1979 0e 68   
    ldax b        ; $197b 0a      
@@ -4845,13 +4796,13 @@ $02da 04         inr b         ; ;COLD
    dad d         ; $197d 19      
    add d         ; $197e 82      
    inx b         ; $197f 03      
-   ???           ; $1980 20      
+   .byte 0x20    ; $1980 20      
    dad b         ; $1981 09      
    mov a,d       ; $1982 7a      
    ldax b        ; $1983 0a      
    adc b         ; $1984 88      
    dad d         ; $1985 19      
-   ???           ; $1986 20      
+   .byte 0x20    ; $1986 20      
    mvi b,$15     ; $1987 06 15   
    inx b         ; $1989 03      
    mvi b,$3f     ; $198a 06 3f   
@@ -4879,7 +4830,7 @@ $02da 04         inr b         ; ;COLD
    mov c,b       ; $19aa 48      
    pchl          ; $19ab e9      
    mov b,l       ; $19ac 45      
-   ???           ; $19ad 20      
+   .byte 0x20    ; $19ad 20      
    mov b,e       ; $19ae 43      
    mov d,h       ; $19af 54      
    mov b,l       ; $19b0 45      
@@ -4931,7 +4882,7 @@ $02da 04         inr b         ; ;COLD
    add h         ; $19e4 84      
    dad b         ; $19e5 09      
    rz            ; $19e6 c8      
-   ???           ; $19e7 08      
+   .byte 0x08    ; $19e7 08      
    mov a,d       ; $19e8 7a      
    ldax b        ; $19e9 0a      
    jp $1d19      ; $19ea f2 19 1d
@@ -4942,7 +4893,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $19f3 03      
    mov l,b       ; $19f4 68      
    ldax b        ; $19f5 0a      
-   ???           ; $19f6 10      
+   .byte 0x10    ; $19f6 10      
    ldax d        ; $19f7 1a      
    add d         ; $19f8 82      
    inx b         ; $19f9 03      
@@ -4957,15 +4908,15 @@ $02da 04         inr b         ; ;COLD
    inr c         ; $1a04 0c      
    ldax d        ; $1a05 1a      
    ora d         ; $1a06 b2      
-   ???           ; $1a07 18      
+   .byte 0x18    ; $1a07 18      
    mov l,b       ; $1a08 68      
    ldax b        ; $1a09 0a      
-   ???           ; $1a0a 10      
+   .byte 0x10    ; $1a0a 10      
    ldax d        ; $1a0b 1a      
    add d         ; $1a0c 82      
    inx b         ; $1a0d 03      
    sub h         ; $1a0e 94      
-   ???           ; $1a0f 18      
+   .byte 0x18    ; $1a0f 18      
    sub e         ; $1a10 93      
    dad d         ; $1a11 19      
    mov l,b       ; $1a12 68      
@@ -4995,21 +4946,21 @@ $02da 04         inr b         ; ;COLD
    out $03       ; $1a30 d3 03   
    sub b         ; $1a32 90      
    ral           ; $1a33 17      
-   ???           ; $1a34 10      
+   .byte 0x10    ; $1a34 10      
    inr b         ; $1a35 04      
    mov a,d       ; $1a36 7a      
    ldax b        ; $1a37 0a      
    mov d,d       ; $1a38 52      
    ldax d        ; $1a39 1a      
    out $03       ; $1a3a d3 03   
-   ???           ; $1a3c ed      
+   .byte 0xed    ; $1a3c ed      
    mvi d,$3e     ; $1a3d 16 3e   
-   ???           ; $1a3f 18      
+   .byte 0x18    ; $1a3f 18      
    rrc           ; $1a40 0f      
-   ???           ; $1a41 20      
+   .byte 0x20    ; $1a41 20      
    push psw      ; $1a42 f5      
    ori $45       ; $1a43 f6 45   
-   ???           ; $1a45 20      
+   .byte 0x20    ; $1a45 20      
    mov c,a       ; $1a46 4f      
    rp            ; $1a47 f0      
    mov d,b       ; $1a48 50      
@@ -5017,7 +4968,7 @@ $02da 04         inr b         ; ;COLD
    cpo $ec45     ; $1a4a e4 45 ec
    mov b,l       ; $1a4d 45      
    mov c,b       ; $1a4e 48      
-   ???           ; $1a4f 20      
+   .byte 0x20    ; $1a4f 20      
    mov h,m       ; $1a50 66      
    dcr d         ; $1a51 15      
    inx sp        ; $1a52 33      
@@ -5028,9 +4979,9 @@ $02da 04         inr b         ; ;COLD
    ral           ; $1a57 17      
    dcr l         ; $1a58 2d      
    inx d         ; $1a59 13      
-   ???           ; $1a5a 10      
+   .byte 0x10    ; $1a5a 10      
    rrc           ; $1a5b 0f      
-   ???           ; $1a5c fd      
+   .byte 0xfd    ; $1a5c fd      
    stax b        ; $1a5d 02      
    mov c,h       ; $1a5e 4c      
    ral           ; $1a5f 17      
@@ -5044,13 +4995,13 @@ $02da 04         inr b         ; ;COLD
    mov c,h       ; $1a67 4c      
    mov b,h       ; $1a68 44      
    mov d,e       ; $1a69 53      
-   ???           ; $1a6a 18      
+   .byte 0x18    ; $1a6a 18      
    ldax d        ; $1a6b 1a      
    call $02e4    ; $1a6c cd e4 02
    lxi h,$151a   ; $1a6f 21 1a 15
    inx b         ; $1a72 03      
    rlc           ; $1a73 07      
-   ???           ; $1a74 28      
+   .byte 0x28    ; $1a74 28      
    mov b,h       ; $1a75 44      
    mov c,a       ; $1a76 4f      
    mov b,l       ; $1a77 45      
@@ -5059,7 +5010,7 @@ $02da 04         inr b         ; ;COLD
    mov h,d       ; $1a7b 62      
    ldax d        ; $1a7c 1a      
    call $02e4    ; $1a7d cd e4 02
-   ???           ; $1a80 20      
+   .byte 0x20    ; $1a80 20      
    dad b         ; $1a81 09      
    mov c,h       ; $1a82 4c      
    ral           ; $1a83 17      
@@ -5084,11 +5035,11 @@ $02da 04         inr b         ; ;COLD
    ral           ; $1a9a 17      
    dcr l         ; $1a9b 2d      
    inx d         ; $1a9c 13      
-   ???           ; $1a9d 10      
+   .byte 0x10    ; $1a9d 10      
    rrc           ; $1a9e 0f      
    dcr d         ; $1a9f 15      
    inx b         ; $1aa0 03      
-   ???           ; $1aa1 08      
+   .byte 0x08    ; $1aa1 08      
    mov b,e       ; $1aa2 43      
    mov c,a       ; $1aa3 4f      
    mov c,m       ; $1aa4 4e      
@@ -5128,7 +5079,7 @@ $02da 04         inr b         ; ;COLD
    dcx h         ; $1acb 2b      
    mov m,e       ; $1acc 73      
    jmp $02ef     ; $1acd c3 ef 02
-   ???           ; $1ad0 08      
+   .byte 0x08    ; $1ad0 08      
    mov b,b       ; $1ad1 40      
    mov b,l       ; $1ad2 45      
    mov e,b       ; $1ad3 58      
@@ -5161,7 +5112,7 @@ $02da 04         inr b         ; ;COLD
    cnz $ff1a     ; $1af1 c4 1a ff
    mvi c,$2d     ; $1af4 0e 2d   
    inx d         ; $1af6 13      
-   ???           ; $1af7 10      
+   .byte 0x10    ; $1af7 10      
    rrc           ; $1af8 0f      
    lxi sp,$1517  ; $1af9 31 17 15
    inx b         ; $1afc 03      
@@ -5185,7 +5136,7 @@ $02da 04         inr b         ; ;COLD
    add d         ; $1b11 82      
    mov d,h       ; $1b12 54      
    mov c,a       ; $1b13 4f      
-   ???           ; $1b14 fd      
+   .byte 0xfd    ; $1b14 fd      
    ldax d        ; $1b15 1a      
    call $02e4    ; $1b16 cd e4 02
    ana m         ; $1b19 a6      
@@ -5208,7 +5159,7 @@ $02da 04         inr b         ; ;COLD
    add h         ; $1b2d 84      
    dad b         ; $1b2e 09      
    rz            ; $1b2f c8      
-   ???           ; $1b30 08      
+   .byte 0x08    ; $1b30 08      
    mov a,d       ; $1b31 7a      
    ldax b        ; $1b32 0a      
    cmc           ; $1b33 3f      
@@ -5227,7 +5178,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $1b44 03      
    dcr d         ; $1b45 15      
    inx b         ; $1b46 03      
-   ???           ; $1b47 08      
+   .byte 0x08    ; $1b47 08      
    mov d,m       ; $1b48 56      
    mov b,c       ; $1b49 41      
    mov d,d       ; $1b4a 52      
@@ -5242,7 +5193,7 @@ $02da 04         inr b         ; ;COLD
    rz            ; $1b57 c8      
    mvi c,$1d     ; $1b58 0e 1d   
    rrc           ; $1b5a 0f      
-   ???           ; $1b5b fd      
+   .byte 0xfd    ; $1b5b fd      
    stax b        ; $1b5c 02      
    mov c,h       ; $1b5d 4c      
    ral           ; $1b5e 17      
@@ -5289,6 +5240,7 @@ $02da 04         inr b         ; ;COLD
    lxi b,$099d   ; $1b90 01 9d 09
    mov a,l       ; $1b93 7d      
    ldax d        ; $1b94 1a      
+l1b95:
    call $02e4    ; $1b95 cd e4 02
    add d         ; $1b98 82      
    inr b         ; $1b99 04      
@@ -5298,18 +5250,13 @@ $02da 04         inr b         ; ;COLD
    dad b         ; $1b9d 09      
    dcr d         ; $1b9e 15      
    inx b         ; $1b9f 03      
-   mvi b,$53     ; $1ba0 06 53   
-   mov d,h       ; $1ba2 54      
-   mov d,d       ; $1ba3 52      
-   mov c,c       ; $1ba4 49      
-   mov c,m       ; $1ba5 4e      
-   mov b,a       ; $1ba6 47      
-   mov h,c       ; $1ba7 61      
-   dcx d         ; $1ba8 1b      
+l1ba0:
+   .byte 6,"STRING"
+   .word 0x1b61
    call $02e4    ; $1ba9 cd e4 02
    lxi h,$411a   ; $1bac 21 1a 41
    rrc           ; $1baf 0f      
-   ???           ; $1bb0 fd      
+   .byte 0xfd    ; $1bb0 fd      
    stax b        ; $1bb1 02      
    mov c,h       ; $1bb2 4c      
    ral           ; $1bb3 17      
@@ -5344,20 +5291,20 @@ $02da 04         inr b         ; ;COLD
    add h         ; $1bd6 84      
    dad b         ; $1bd7 09      
    xchg          ; $1bd8 eb      
-   ???           ; $1bd9 08      
+   .byte 0x08    ; $1bd9 08      
    mov c,d       ; $1bda 4a      
    lxi d,$4311   ; $1bdb 11 11 43
    jpo $ea4f     ; $1bde e2 4f ea
-   ???           ; $1be1 20      
+   .byte 0x20    ; $1be1 20      
    mov b,e       ; $1be2 43      
    mov d,h       ; $1be3 54      
    mov b,l       ; $1be4 45      
    mov c,e       ; $1be5 4b      
    mov b,c       ; $1be6 41      
-   ???           ; $1be7 20      
+   .byte 0x20    ; $1be7 20      
    rp            ; $1be8 f0      
    mov c,a       ; $1be9 4f      
-   ???           ; $1bea 20      
+   .byte 0x20    ; $1bea 20      
    mov b,e       ; $1beb 43      
    mov d,e       ; $1bec 53      
    mov d,b       ; $1bed 50      
@@ -5383,13 +5330,13 @@ $02da 04         inr b         ; ;COLD
    mov b,l       ; $1c05 45      
    jpo $45f5     ; $1c06 e2 f5 45
    mov d,h       ; $1c09 54      
-   ???           ; $1c0a 20      
+   .byte 0x20    ; $1c0a 20      
    mov d,b       ; $1c0b 50      
    mov b,l       ; $1c0c 45      
    ori $e9       ; $1c0d f6 e9   
    mov c,l       ; $1c0f 4d      
    mov b,c       ; $1c10 41      
-   ???           ; $1c11 20      
+   .byte 0x20    ; $1c11 20      
    mov b,d       ; $1c12 42      
    mov a,c       ; $1c13 79      
    mov m,b       ; $1c14 70      
@@ -5426,14 +5373,14 @@ $02da 04         inr b         ; ;COLD
    mov m,l       ; $1c37 75      
    mov b,l       ; $1c38 45      
    mov d,h       ; $1c39 54      
-   ???           ; $1c3a 20      
+   .byte 0x20    ; $1c3a 20      
    mov d,b       ; $1c3b 50      
    mov b,l       ; $1c3c 45      
    hlt           ; $1c3d 76      
    mov l,c       ; $1c3e 69      
    mov c,l       ; $1c3f 4d      
    mov b,c       ; $1c40 41      
-   ???           ; $1c41 20      
+   .byte 0x20    ; $1c41 20      
    mov c,e       ; $1c42 4b      
    mov c,a       ; $1c43 4f      
    mov c,l       ; $1c44 4d      
@@ -5455,7 +5402,7 @@ $02da 04         inr b         ; ;COLD
    mvi e,$1c     ; $1c55 1e 1c   
    call $02e4    ; $1c57 cd e4 02
    xchg          ; $1c5a eb      
-   ???           ; $1c5b 08      
+   .byte 0x08    ; $1c5b 08      
    mov c,d       ; $1c5c 4a      
    lxi d,$2010   ; $1c5d 11 10 20
    mov c,b       ; $1c60 48      
@@ -5466,7 +5413,7 @@ $02da 04         inr b         ; ;COLD
    mov c,b       ; $1c65 48      
    mov b,c       ; $1c66 41      
    pop psw       ; $1c67 f1      
-   ???           ; $1c68 20      
+   .byte 0x20    ; $1c68 20      
    mov b,e       ; $1c69 43      
    mov c,e       ; $1c6a 4b      
    mov c,a       ; $1c6b 4f      
@@ -5546,7 +5493,7 @@ $02da 04         inr b         ; ;COLD
    ana e         ; $1cc2 a3      
    inr e         ; $1cc3 1c      
    call $02e4    ; $1cc4 cd e4 02
-   ???           ; $1cc7 20      
+   .byte 0x20    ; $1cc7 20      
    ral           ; $1cc8 17      
    dcx h         ; $1cc9 2b      
    ldax b        ; $1cca 0a      
@@ -5591,7 +5538,7 @@ $02da 04         inr b         ; ;COLD
    sub c         ; $1cfc 91      
    dad b         ; $1cfd 09      
    sub h         ; $1cfe 94      
-   ???           ; $1cff 18      
+   .byte 0x18    ; $1cff 18      
    dcr d         ; $1d00 15      
    inx b         ; $1d01 03      
    add d         ; $1d02 82      
@@ -5662,7 +5609,7 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $1d56 0a      
    dad h         ; $1d57 29      
    nop           ; $1d58 00      
-   ???           ; $1d59 ed      
+   .byte 0xed    ; $1d59 ed      
    inx d         ; $1d5a 13      
    mov l,a       ; $1d5b 6f      
    rrc           ; $1d5c 0f      
@@ -5684,7 +5631,7 @@ $02da 04         inr b         ; ;COLD
    rrc           ; $1d71 0f      
    dcr d         ; $1d72 15      
    inx b         ; $1d73 03      
-   ???           ; $1d74 08      
+   .byte 0x08    ; $1d74 08      
    mvi a,$52     ; $1d75 3e 52   
    mov b,l       ; $1d77 45      
    mov d,e       ; $1d78 53      
@@ -5714,7 +5661,7 @@ $02da 04         inr b         ; ;COLD
    rst 7         ; $1d95 ff      
    mvi c,$15     ; $1d96 0e 15   
    inx b         ; $1d98 03      
-   ???           ; $1d99 08      
+   .byte 0x08    ; $1d99 08      
    inr a         ; $1d9a 3c      
    mov d,d       ; $1d9b 52      
    mov b,l       ; $1d9c 45      
@@ -5820,7 +5767,7 @@ $02da 04         inr b         ; ;COLD
    mov b,c       ; $1e1e 41      
    mov c,c       ; $1e1f 49      
    mov c,m       ; $1e20 4e      
-   ???           ; $1e21 08      
+   .byte 0x08    ; $1e21 08      
    mvi e,$cd     ; $1e22 1e cd   
    cpo $2602     ; $1e24 e4 02 26
    inr e         ; $1e27 1c      
@@ -5987,7 +5934,7 @@ $02da 04         inr b         ; ;COLD
    inx h         ; $1ee2 23      
    mvi e,$20     ; $1ee3 1e 20   
    dad b         ; $1ee5 09      
-   ???           ; $1ee6 20      
+   .byte 0x20    ; $1ee6 20      
    dad b         ; $1ee7 09      
    sbb c         ; $1ee8 99      
    inr b         ; $1ee9 04      
@@ -6078,7 +6025,7 @@ $02da 04         inr b         ; ;COLD
    mov c,d       ; $1f50 4a      
    lxi d,$200a   ; $1f51 11 0a 20
    dcr l         ; $1f54 2d      
-   ???           ; $1f55 20      
+   .byte 0x20    ; $1f55 20      
    rp            ; $1f56 f0      
    mov d,b       ; $1f57 50      
    mov b,l       ; $1f58 45      
@@ -6104,7 +6051,7 @@ $02da 04         inr b         ; ;COLD
    inr b         ; $1f6e 04      
    dcx h         ; $1f6f 2b      
    ldax b        ; $1f70 0a      
-   ???           ; $1f71 08      
+   .byte 0x08    ; $1f71 08      
    nop           ; $1f72 00      
    cm $c80f      ; $1f73 fc 0f c8
    mvi c,$0c     ; $1f76 0e 0c   
@@ -6115,7 +6062,7 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $1f7c 15      
    dcr m         ; $1f7d 35      
    rar           ; $1f7e 1f      
-   ???           ; $1f7f 08      
+   .byte 0x08    ; $1f7f 08      
    stax b        ; $1f80 02      
    add h         ; $1f81 84      
    dad b         ; $1f82 09      
@@ -6134,7 +6081,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $1f94 03      
    dcx h         ; $1f95 2b      
    ldax b        ; $1f96 0a      
-   ???           ; $1f97 08      
+   .byte 0x08    ; $1f97 08      
    nop           ; $1f98 00      
    rz            ; $1f99 c8      
    mvi c,$e5     ; $1f9a 0e e5   
@@ -6155,13 +6102,13 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $1fb0 03      
    dcx h         ; $1fb1 2b      
    ldax b        ; $1fb2 0a      
-   ???           ; $1fb3 08      
+   .byte 0x08    ; $1fb3 08      
    nop           ; $1fb4 00      
    stax d        ; $1fb5 12      
    rar           ; $1fb6 1f      
    adc l         ; $1fb7 8d      
    inx b         ; $1fb8 03      
-   ???           ; $1fb9 08      
+   .byte 0x08    ; $1fb9 08      
    stax b        ; $1fba 02      
    sbb l         ; $1fbb 9d      
    dad b         ; $1fbc 09      
@@ -6206,7 +6153,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $1fe9 7a      
    ldax b        ; $1fea 0a      
    dcx h         ; $1feb 2b      
-   ???           ; $1fec 20      
+   .byte 0x20    ; $1fec 20      
    out $03       ; $1fed d3 03   
    mov l,a       ; $1fef 6f      
    rrc           ; $1ff0 0f      
@@ -6215,19 +6162,19 @@ $02da 04         inr b         ; ;COLD
    cmc           ; $1ff3 3f      
    nop           ; $1ff4 00      
    rz            ; $1ff5 c8      
-   ???           ; $1ff6 08      
+   .byte 0x08    ; $1ff6 08      
    call $621f    ; $1ff7 cd 1f 62
    inx b         ; $1ffa 03      
    jm $7a04      ; $1ffb fa 04 7a
    ldax b        ; $1ffe 0a      
    inx b         ; $1fff 03      
-   ???           ; $2000 20      
+   .byte 0x20    ; $2000 20      
    mov h,m       ; $2001 66      
    dcr d         ; $2002 15      
    out $03       ; $2003 d3 03   
    dcx h         ; $2005 2b      
    ldax b        ; $2006 0a      
-   ???           ; $2007 08      
+   .byte 0x08    ; $2007 08      
    nop           ; $2008 00      
    mov c,d       ; $2009 4a      
    inr b         ; $200a 04      
@@ -6236,7 +6183,7 @@ $02da 04         inr b         ; ;COLD
    rm            ; $200d f8      
    rst 7         ; $200e ff      
    rz            ; $200f c8      
-   ???           ; $2010 08      
+   .byte 0x08    ; $2010 08      
    mov h,d       ; $2011 62      
    inx b         ; $2012 03      
    mov d,l       ; $2013 55      
@@ -6285,17 +6232,17 @@ $02da 04         inr b         ; ;COLD
    mov d,e       ; $2046 53      
    mov d,h       ; $2047 54      
    cma           ; $2048 2f      
-   ???           ; $2049 20      
+   .byte 0x20    ; $2049 20      
    call $02e4    ; $204a cd e4 02
    stc           ; $204d 37      
-   ???           ; $204e 20      
+   .byte 0x20    ; $204e 20      
    dcr d         ; $204f 15      
    inx b         ; $2050 03      
    add d         ; $2051 82      
    dcr l         ; $2052 2d      
    dcr l         ; $2053 2d      
    mov b,d       ; $2054 42      
-   ???           ; $2055 20      
+   .byte 0x20    ; $2055 20      
    call $02e4    ; $2056 cd e4 02
    ora c         ; $2059 b1      
    stax b        ; $205a 02      
@@ -6304,7 +6251,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $205d 7a      
    ldax b        ; $205e 0a      
    mov m,l       ; $205f 75      
-   ???           ; $2060 20      
+   .byte 0x20    ; $2060 20      
    hlt           ; $2061 76      
    stax b        ; $2062 02      
    add h         ; $2063 84      
@@ -6320,11 +6267,11 @@ $02da 04         inr b         ; ;COLD
    rnz           ; $206d c0      
    rst 7         ; $206e ff      
    rz            ; $206f c8      
-   ???           ; $2070 08      
+   .byte 0x08    ; $2070 08      
    mov l,b       ; $2071 68      
    ldax b        ; $2072 0a      
    mov a,c       ; $2073 79      
-   ???           ; $2074 20      
+   .byte 0x20    ; $2074 20      
    mov l,e       ; $2075 6b      
    stax b        ; $2076 02      
    add h         ; $2077 84      
@@ -6341,30 +6288,30 @@ $02da 04         inr b         ; ;COLD
    mov c,a       ; $2082 4f      
    mov d,b       ; $2083 50      
    mov d,c       ; $2084 51      
-   ???           ; $2085 20      
+   .byte 0x20    ; $2085 20      
    call $02e4    ; $2086 cd e4 02
    dcr d         ; $2089 15      
    inx b         ; $208a 03      
    stax b        ; $208b 02      
    mov d,e       ; $208c 53      
    mvi l,$7f     ; $208d 2e 7f   
-   ???           ; $208f 20      
+   .byte 0x20    ; $208f 20      
    call $02e4    ; $2090 cd e4 02
-   ???           ; $2093 d9      
+   .byte 0xd9    ; $2093 d9      
    inr e         ; $2094 1c      
    rpo           ; $2095 e0      
    inx b         ; $2096 03      
    mov a,d       ; $2097 7a      
    ldax b        ; $2098 0a      
    cmp c         ; $2099 b9      
-   ???           ; $209a 20      
+   .byte 0x20    ; $209a 20      
    mov m,a       ; $209b 77      
    inr b         ; $209c 04      
    pop d         ; $209d d1      
    mvi c,$e5     ; $209e 0e e5   
    ldax b        ; $20a0 0a      
    ora l         ; $20a1 b5      
-   ???           ; $20a2 20      
+   .byte 0x20    ; $20a2 20      
    cmp m         ; $20a3 be      
    lxi b,$0984   ; $20a4 01 84 09
    sbb a         ; $20a7 9f      
@@ -6378,18 +6325,18 @@ $02da 04         inr b         ; ;COLD
    cpi $12       ; $20af fe 12   
    mvi l,$0b     ; $20b1 2e 0b   
    ana e         ; $20b3 a3      
-   ???           ; $20b4 20      
+   .byte 0x20    ; $20b4 20      
    mov l,b       ; $20b5 68      
    ldax b        ; $20b6 0a      
    push b        ; $20b7 c5      
-   ???           ; $20b8 20      
+   .byte 0x20    ; $20b8 20      
    mvi a,$18     ; $20b9 3e 18   
    dad b         ; $20bb 09      
    mov b,e       ; $20bc 43      
    mov d,h       ; $20bd 54      
    mov b,l       ; $20be 45      
    mov c,e       ; $20bf 4b      
-   ???           ; $20c0 20      
+   .byte 0x20    ; $20c0 20      
    rp            ; $20c1 f0      
    push psw      ; $20c2 f5      
    mov b,e       ; $20c3 43      
@@ -6397,21 +6344,21 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $20c5 15      
    inx b         ; $20c6 03      
    add c         ; $20c7 81      
-   ???           ; $20c8 28      
+   .byte 0x28    ; $20c8 28      
    adc e         ; $20c9 8b      
-   ???           ; $20ca 20      
+   .byte 0x20    ; $20ca 20      
    call $02e4    ; $20cb cd e4 02
    dcx h         ; $20ce 2b      
    ldax b        ; $20cf 0a      
    dad h         ; $20d0 29      
    nop           ; $20d1 00      
-   ???           ; $20d2 ed      
+   .byte 0xed    ; $20d2 ed      
    inx d         ; $20d3 13      
    add d         ; $20d4 82      
    inx b         ; $20d5 03      
    dcr d         ; $20d6 15      
    inx b         ; $20d7 03      
-   ???           ; $20d8 08      
+   .byte 0x08    ; $20d8 08      
    cmc           ; $20d9 3f      
    mov b,e       ; $20da 43      
    mov d,l       ; $20db 55      
@@ -6421,20 +6368,20 @@ $02da 04         inr b         ; ;COLD
    mov c,m       ; $20df 4e      
    mov d,h       ; $20e0 54      
    rst 0         ; $20e1 c7      
-   ???           ; $20e2 20      
+   .byte 0x20    ; $20e2 20      
    call $02e4    ; $20e3 cd e4 02
    inx sp        ; $20e6 33      
    stax b        ; $20e7 02      
    add h         ; $20e8 84      
    dad b         ; $20e9 09      
    cmc           ; $20ea 3f      
-   ???           ; $20eb 08      
+   .byte 0x08    ; $20eb 08      
    mov a,m       ; $20ec 7e      
    dcr b         ; $20ed 05      
    mov c,d       ; $20ee 4a      
    lxi d,$2004   ; $20ef 11 04 20
    dcr l         ; $20f2 2d      
-   ???           ; $20f3 20      
+   .byte 0x20    ; $20f3 20      
    cmc           ; $20f4 3f      
    dcr d         ; $20f5 15      
    inx b         ; $20f6 03      
@@ -6447,7 +6394,7 @@ $02da 04         inr b         ; ;COLD
    mov b,e       ; $20fd 43      
    mov c,b       ; $20fe 48      
    rst 0         ; $20ff c7      
-   ???           ; $2100 20      
+   .byte 0x20    ; $2100 20      
    call $02e4    ; $2101 cd e4 02
    rm            ; $2104 f8      
    dcx d         ; $2105 1b      
@@ -6458,14 +6405,14 @@ $02da 04         inr b         ; ;COLD
    stax b        ; $210b 02      
    add h         ; $210c 84      
    dad b         ; $210d 09      
-   ???           ; $210e 18      
-   ???           ; $210f 18      
+   .byte 0x18    ; $210e 18      
+   .byte 0x18    ; $210f 18      
    mov a,m       ; $2110 7e      
    dcr b         ; $2111 05      
    mov c,d       ; $2112 4a      
    lxi d,$2004   ; $2113 11 04 20
    dcr l         ; $2116 2d      
-   ???           ; $2117 20      
+   .byte 0x20    ; $2117 20      
    cmc           ; $2118 3f      
    dcr d         ; $2119 15      
    inx b         ; $211a 03      
@@ -6475,7 +6422,7 @@ $02da 04         inr b         ; ;COLD
    mov c,c       ; $211e 49      
    mov c,m       ; $211f 4e      
    rst 6         ; $2120 f7      
-   ???           ; $2121 20      
+   .byte 0x20    ; $2121 20      
    call $02e4    ; $2122 cd e4 02
    rm            ; $2125 f8      
    dcx d         ; $2126 1b      
@@ -6483,12 +6430,12 @@ $02da 04         inr b         ; ;COLD
    mvi d,$ed     ; $2128 16 ed   
    inx d         ; $212a 13      
    xthl          ; $212b e3      
-   ???           ; $212c 20      
+   .byte 0x20    ; $212c 20      
    mov a,e       ; $212d 7b      
    inx d         ; $212e 13      
    add h         ; $212f 84      
    dad b         ; $2130 09      
-   ???           ; $2131 20      
+   .byte 0x20    ; $2131 20      
    ral           ; $2132 17      
    mov a,e       ; $2133 7b      
    inx d         ; $2134 13      
@@ -6510,7 +6457,7 @@ $02da 04         inr b         ; ;COLD
    inx d         ; $2147 13      
    out $03       ; $2148 d3 03   
    xthl          ; $214a e3      
-   ???           ; $214b 20      
+   .byte 0x20    ; $214b 20      
    inx sp        ; $214c 33      
    stax b        ; $214d 02      
    add h         ; $214e 84      
@@ -6529,7 +6476,7 @@ $02da 04         inr b         ; ;COLD
    adc l         ; $215c 8d      
    inx b         ; $215d 03      
    xthl          ; $215e e3      
-   ???           ; $215f 20      
+   .byte 0x20    ; $215f 20      
    sub d         ; $2160 92      
    inx d         ; $2161 13      
    dcx h         ; $2162 2b      
@@ -6542,7 +6489,7 @@ $02da 04         inr b         ; ;COLD
    inr b         ; $216b 04      
    sbb l         ; $216c 9d      
    dad b         ; $216d 09      
-   ???           ; $216e 20      
+   .byte 0x20    ; $216e 20      
    dad b         ; $216f 09      
    inx sp        ; $2170 33      
    stax b        ; $2171 02      
@@ -6563,7 +6510,7 @@ $02da 04         inr b         ; ;COLD
    mvi d,$ed     ; $2183 16 ed   
    inx d         ; $2185 13      
    xthl          ; $2186 e3      
-   ???           ; $2187 20      
+   .byte 0x20    ; $2187 20      
    out $03       ; $2188 d3 03   
    xri $01       ; $218a ee 01   
    add h         ; $218c 84      
@@ -6575,7 +6522,7 @@ $02da 04         inr b         ; ;COLD
    mov c,a       ; $2196 4f      
    cpo $fa20     ; $2197 e4 20 fa
    mov b,c       ; $219a 41      
-   ???           ; $219b 20      
+   .byte 0x20    ; $219b 20      
    mov b,m       ; $219c 46      
    mov b,l       ; $219d 45      
    mov c,m       ; $219e 4e      
@@ -6796,7 +6743,7 @@ $02da 04         inr b         ; ;COLD
    mov b,e       ; $22d4 43      
    mov d,h       ; $22d5 54      
    rm            ; $22d6 f8      
-   ???           ; $22d7 20      
+   .byte 0x20    ; $22d7 20      
    mov c,b       ; $22d8 48      
    mov b,l       ; $22d9 45      
    mov d,b       ; $22da 50      
@@ -6808,12 +6755,12 @@ $02da 04         inr b         ; ;COLD
    mov c,b       ; $22e2 48      
    mov b,c       ; $22e3 41      
    pop psw       ; $22e4 f1      
-   ???           ; $22e5 20      
+   .byte 0x20    ; $22e5 20      
    mov b,e       ; $22e6 43      
    mov b,e       ; $22e7 43      
    sphl          ; $22e8 f9      
    cpe $414b     ; $22e9 ec 4b 41
-   ???           ; $22ec 20      
+   .byte 0x20    ; $22ec 20      
    mov b,d       ; $22ed 42      
    rp            ; $22ee f0      
    mov b,l       ; $22ef 45      
@@ -6830,7 +6777,7 @@ $02da 04         inr b         ; ;COLD
    ana l         ; $2302 a5      
    inr b         ; $2303 04      
    mov e,e       ; $2304 5b      
-   ???           ; $2305 18      
+   .byte 0x18    ; $2305 18      
    ora h         ; $2306 b4      
    shld $22af    ; $2307 22 af 22
    mov m,a       ; $230a 77      
@@ -6838,7 +6785,7 @@ $02da 04         inr b         ; ;COLD
    ana l         ; $230c a5      
    inr b         ; $230d 04      
    mov e,e       ; $230e 5b      
-   ???           ; $230f 18      
+   .byte 0x18    ; $230f 18      
    dcr d         ; $2310 15      
    inx b         ; $2311 03      
    call $02e4    ; $2312 cd e4 02
@@ -6902,18 +6849,18 @@ $02da 04         inr b         ; ;COLD
    mov c,e       ; $2363 4b      
    mov c,a       ; $2364 4f      
    mov c,l       ; $2365 4d      
-   ???           ; $2366 20      
+   .byte 0x20    ; $2366 20      
    mov c,l       ; $2367 4d      
    mov c,b       ; $2368 48      
    mov c,a       ; $2369 4f      
    rst 4         ; $236a e7      
    mov c,a       ; $236b 4f      
-   ???           ; $236c 20      
+   .byte 0x20    ; $236c 20      
    mov b,e       ; $236d 43      
    mov b,e       ; $236e 43      
    sphl          ; $236f f9      
    cpe $4b4f     ; $2370 ec 4f 4b
-   ???           ; $2373 20      
+   .byte 0x20    ; $2373 20      
    mov b,d       ; $2374 42      
    rp            ; $2375 f0      
    mov b,l       ; $2376 45      
@@ -7055,11 +7002,11 @@ $02da 04         inr b         ; ;COLD
    rlc           ; $243b 07      
    nop           ; $243c 00      
    inx b         ; $243d 03      
-   ???           ; $243e 38      
+   .byte 0x38    ; $243e 38      
    inx h         ; $243f 23      
    lda $2432     ; $2440 3a 32 24
    call $23b3    ; $2443 cd b3 23
-   ???           ; $2446 08      
+   .byte 0x08    ; $2446 08      
    nop           ; $2447 00      
    inx b         ; $2448 03      
    dad sp        ; $2449 39      
@@ -7123,12 +7070,12 @@ $02da 04         inr b         ; ;COLD
    rlc           ; $24a3 07      
    nop           ; $24a4 00      
    stax b        ; $24a5 02      
-   ???           ; $24a6 38      
+   .byte 0x38    ; $24a6 38      
    inx h         ; $24a7 23      
    sbb e         ; $24a8 9b      
    inr h         ; $24a9 24      
    call $23d1    ; $24aa cd d1 23
-   ???           ; $24ad 08      
+   .byte 0x08    ; $24ad 08      
    nop           ; $24ae 00      
    stax b        ; $24af 02      
    dad sp        ; $24b0 39      
@@ -7204,7 +7151,7 @@ $02da 04         inr b         ; ;COLD
    mov b,e       ; $2514 43      
    mov c,b       ; $2515 48      
    mov c,h       ; $2516 4c      
-   ???           ; $2517 08      
+   .byte 0x08    ; $2517 08      
    dcr h         ; $2518 25      
    call $226c    ; $2519 cd 6c 22
    pchl          ; $251c e9      
@@ -7231,7 +7178,7 @@ $02da 04         inr b         ; ;COLD
    mov b,e       ; $2535 43      
    mov c,b       ; $2536 48      
    mov b,a       ; $2537 47      
-   ???           ; $2538 28      
+   .byte 0x28    ; $2538 28      
    dcr h         ; $2539 25      
    call $226c    ; $253a cd 6c 22
    xchg          ; $253d eb      
@@ -7434,7 +7381,7 @@ $02da 04         inr b         ; ;COLD
    mov b,c       ; $263b 41      
    mov b,e       ; $263c 43      
    mov c,c       ; $263d 49      
-   ???           ; $263e 30      
+   .byte 0x30    ; $263e 30      
    mvi h,$cd     ; $263f 26 cd   
    adc a         ; $2641 8f      
    shld $03ce    ; $2642 22 ce 03
@@ -7563,7 +7510,7 @@ $02da 04         inr b         ; ;COLD
    mov b,c       ; $26f8 41      
    mov c,h       ; $26f9 4c      
    mov c,h       ; $26fa 4c      
-   ???           ; $26fb ed      
+   .byte 0xed    ; $26fb ed      
    mvi h,$cd     ; $26fc 26 cd   
    sbb d         ; $26fe 9a      
    shld $03cd    ; $26ff 22 cd 03
@@ -7605,7 +7552,7 @@ $02da 04         inr b         ; ;COLD
    stax b        ; $2732 02      
    mov d,d       ; $2733 52      
    mov b,e       ; $2734 43      
-   ???           ; $2735 28      
+   .byte 0x28    ; $2735 28      
    daa           ; $2736 27      
    call $226c    ; $2737 cd 6c 22
    rc            ; $273a d8      
@@ -7741,7 +7688,7 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $27f4 15      
    inx b         ; $27f5 03      
    stax b        ; $27f6 02      
-   ???           ; $27f7 30      
+   .byte 0x30    ; $27f7 30      
    dcr a         ; $27f8 3d      
    rst 3         ; $27f9 df      
    daa           ; $27fa 27      
@@ -7755,24 +7702,24 @@ $02da 04         inr b         ; ;COLD
    mov d,b       ; $280b 50      
    mov b,l       ; $280c 45      
    nop           ; $280d 00      
-   ???           ; $280e 28      
+   .byte 0x28    ; $280e 28      
    call $0984    ; $280f cd 84 09
    jpo $0200     ; $2812 e2 00 02
-   ???           ; $2815 30      
+   .byte 0x30    ; $2815 30      
    inr a         ; $2816 3c      
    ldax b        ; $2817 0a      
-   ???           ; $2818 28      
+   .byte 0x28    ; $2818 28      
    call $0984    ; $2819 cd 84 09
    jp $0300      ; $281c f2 00 03
    mov c,m       ; $281f 4e      
    mov c,a       ; $2820 4f      
    mov d,h       ; $2821 54      
    inr d         ; $2822 14      
-   ???           ; $2823 28      
+   .byte 0x28    ; $2823 28      
    call $02e4    ; $2824 cd e4 02
    dcx h         ; $2827 2b      
    ldax b        ; $2828 0a      
-   ???           ; $2829 08      
+   .byte 0x08    ; $2829 08      
    nop           ; $282a 00      
    mov c,d       ; $282b 4a      
    inr b         ; $282c 04      
@@ -7798,7 +7745,7 @@ $02da 04         inr b         ; ;COLD
    mov c,c       ; $2846 49      
    mov b,m       ; $2847 46      
    cma           ; $2848 2f      
-   ???           ; $2849 28      
+   .byte 0x28    ; $2849 28      
    call $02e4    ; $284a cd e4 02
    cma           ; $284d 2f      
    rrc           ; $284e 0f      
@@ -7814,14 +7761,14 @@ $02da 04         inr b         ; ;COLD
    mov d,e       ; $285c 53      
    mov b,l       ; $285d 45      
    mov b,l       ; $285e 45      
-   ???           ; $285f 28      
+   .byte 0x28    ; $285f 28      
    call $02e4    ; $2860 cd e4 02
    jc $570e      ; $2863 da 0e 57
    inr e         ; $2866 1c      
    dcx h         ; $2867 2b      
    ldax b        ; $2868 0a      
    jmp $4a00     ; $2869 c3 00 4a
-   ???           ; $286c 28      
+   .byte 0x28    ; $286c 28      
    ora m         ; $286d b6      
    inx b         ; $286e 03      
    adc l         ; $286f 8d      
@@ -7836,7 +7783,7 @@ $02da 04         inr b         ; ;COLD
    mov c,c       ; $287b 49      
    mov c,m       ; $287c 4e      
    mov e,c       ; $287d 59      
-   ???           ; $287e 28      
+   .byte 0x28    ; $287e 28      
    call $02e4    ; $287f cd e4 02
    rst 7         ; $2882 ff      
    mvi c,$d1     ; $2883 0e d1   
@@ -7849,7 +7796,7 @@ $02da 04         inr b         ; ;COLD
    mov c,c       ; $288c 49      
    mov c,h       ; $288d 4c      
    mov m,a       ; $288e 77      
-   ???           ; $288f 28      
+   .byte 0x28    ; $288f 28      
    call $02e4    ; $2890 cd e4 02
    adc l         ; $2893 8d      
    inx b         ; $2894 03      
@@ -7869,7 +7816,7 @@ $02da 04         inr b         ; ;COLD
    mov c,c       ; $28a3 49      
    mov c,m       ; $28a4 4e      
    adc b         ; $28a5 88      
-   ???           ; $28a6 28      
+   .byte 0x28    ; $28a6 28      
    call $02e4    ; $28a7 cd e4 02
    pop d         ; $28aa d1      
    mvi c,$57     ; $28ab 0e 57   
@@ -7883,10 +7830,10 @@ $02da 04         inr b         ; ;COLD
    mov c,h       ; $28b6 4c      
    mov b,l       ; $28b7 45      
    sbb a         ; $28b8 9f      
-   ???           ; $28b9 28      
+   .byte 0x28    ; $28b9 28      
    call $02e4    ; $28ba cd e4 02
    mov c,d       ; $28bd 4a      
-   ???           ; $28be 28      
+   .byte 0x28    ; $28be 28      
    jc $4a0e      ; $28bf da 0e 4a
    inr b         ; $28c2 04      
    dcr d         ; $28c3 15      
@@ -7898,17 +7845,17 @@ $02da 04         inr b         ; ;COLD
    mov b,c       ; $28ca 41      
    mov d,h       ; $28cb 54      
    ora d         ; $28cc b2      
-   ???           ; $28cd 28      
+   .byte 0x28    ; $28cd 28      
    call $02e4    ; $28ce cd e4 02
    dcr c         ; $28d1 0d      
    dad b         ; $28d2 09      
    dcr c         ; $28d3 0d      
    dad b         ; $28d4 09      
    ana a         ; $28d5 a7      
-   ???           ; $28d6 28      
-   ???           ; $28d7 20      
+   .byte 0x28    ; $28d6 28      
+   .byte 0x20    ; $28d7 20      
    dad b         ; $28d8 09      
-   ???           ; $28d9 20      
+   .byte 0x20    ; $28d9 20      
    dad b         ; $28da 09      
    jc $550e      ; $28db da 0e 55
    inr b         ; $28de 04      
@@ -7941,7 +7888,7 @@ $02da 04         inr b         ; ;COLD
    mov d,e       ; $28fe 53      
    mov c,l       ; $28ff 4d      
    xthl          ; $2900 e3      
-   ???           ; $2901 28      
+   .byte 0x28    ; $2901 28      
    call $02e4    ; $2902 cd e4 02
    cmp c         ; $2905 b9      
    shld $1bcf    ; $2906 22 cf 1b
@@ -7961,7 +7908,7 @@ $02da 04         inr b         ; ;COLD
    mov b,h       ; $2916 44      
    mov b,l       ; $2917 45      
    rm            ; $2918 f8      
-   ???           ; $2919 28      
+   .byte 0x28    ; $2919 28      
    call $02e4    ; $291a cd e4 02
    lxi h,$601a   ; $291d 21 1a 60
    ral           ; $2920 17      
@@ -7969,10 +7916,10 @@ $02da 04         inr b         ; ;COLD
    inx d         ; $2922 13      
    mov l,d       ; $2923 6a      
    inr b         ; $2924 04      
-   ???           ; $2925 10      
+   .byte 0x10    ; $2925 10      
    rrc           ; $2926 0f      
-   ???           ; $2927 ed      
-   ???           ; $2928 28      
+   .byte 0xed    ; $2927 ed      
+   .byte 0x28    ; $2928 28      
    dcr d         ; $2929 15      
    inx b         ; $292a 03      
    add l         ; $292b 85      
@@ -7989,13 +7936,13 @@ $02da 04         inr b         ; ;COLD
    rrc           ; $2939 0f      
    mov a,l       ; $293a 7d      
    ldax d        ; $293b 1a      
-   ???           ; $293c ed      
-   ???           ; $293d 28      
+   .byte 0xed    ; $293c ed      
+   .byte 0x28    ; $293d 28      
    mov m,c       ; $293e 71      
    ral           ; $293f 17      
    dcr d         ; $2940 15      
    inx b         ; $2941 03      
-   ???           ; $2942 08      
+   .byte 0x08    ; $2942 08      
    mov b,l       ; $2943 45      
    mov c,m       ; $2944 4e      
    mov b,h       ; $2945 44      
@@ -8027,12 +7974,12 @@ $02da 04         inr b         ; ;COLD
    dcx h         ; $2963 2b      
    ldax b        ; $2964 0a      
    cpi $ff       ; $2965 fe ff   
-   ???           ; $2967 10      
+   .byte 0x10    ; $2967 10      
    rrc           ; $2968 0f      
    mov h,b       ; $2969 60      
    ral           ; $296a 17      
-   ???           ; $296b ed      
-   ???           ; $296c 28      
+   .byte 0xed    ; $296b ed      
+   .byte 0x28    ; $296c 28      
    dcr d         ; $296d 15      
    inx b         ; $296e 03      
    dcr b         ; $296f 05      
@@ -8042,16 +7989,16 @@ $02da 04         inr b         ; ;COLD
    mov d,h       ; $2973 54      
    dcx sp        ; $2974 3b      
    push b        ; $2975 c5      
-   ???           ; $2976 28      
+   .byte 0x28    ; $2976 28      
    call $02e4    ; $2977 cd e4 02
-   ???           ; $297a fd      
+   .byte 0xfd    ; $297a fd      
    stax b        ; $297b 02      
    lxi d,$4d27   ; $297c 11 27 4d
    dad h         ; $297f 29      
    dcr d         ; $2980 15      
    inx b         ; $2981 03      
    dcr b         ; $2982 05      
-   ???           ; $2983 28      
+   .byte 0x28    ; $2983 28      
    mov c,a       ; $2984 4f      
    mov d,l       ; $2985 55      
    mov d,h       ; $2986 54      
@@ -8116,13 +8063,13 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $29df 03      
    call $02e4    ; $29e0 cd e4 02
    mvi a,$18     ; $29e3 3e 18   
-   ???           ; $29e5 08      
-   ???           ; $29e6 28      
+   .byte 0x08    ; $29e5 08      
+   .byte 0x28    ; $29e6 28      
    mov e,c       ; $29e7 59      
    cma           ; $29e8 2f      
    mvi l,$2e     ; $29e9 2e 2e   
    mvi l,$29     ; $29eb 2e 29   
-   ???           ; $29ed 20      
+   .byte 0x20    ; $29ed 20      
    mov d,h       ; $29ee 54      
    dcr d         ; $29ef 15      
    out $03       ; $29f0 d3 03   
@@ -8147,7 +8094,7 @@ $02da 04         inr b         ; ;COLD
    dad h         ; $2a06 29      
    mov h,d       ; $2a07 62      
    inx b         ; $2a08 03      
-   ???           ; $2a09 20      
+   .byte 0x20    ; $2a09 20      
    dcx h         ; $2a0a 2b      
    sbb l         ; $2a0b 9d      
    dad b         ; $2a0c 09      
@@ -8168,7 +8115,7 @@ $02da 04         inr b         ; ;COLD
    mov l,h       ; $2a1e 6c      
    mov l,a       ; $2a1f 6f      
    mov l,e       ; $2a20 6b      
-   ???           ; $2a21 20      
+   .byte 0x20    ; $2a21 20      
    mov h,d       ; $2a22 62      
    inx b         ; $2a23 03      
    add h         ; $2a24 84      
@@ -8409,7 +8356,7 @@ $02da 04         inr b         ; ;COLD
    mov d,l       ; $2b51 55      
    inr b         ; $2b52 04      
    mov e,e       ; $2b53 5b      
-   ???           ; $2b54 18      
+   .byte 0x18    ; $2b54 18      
    lxi d,$002b   ; $2b55 11 2b 00
    dcx h         ; $2b58 2b      
    push h        ; $2b59 e5      
@@ -8453,7 +8400,7 @@ $02da 04         inr b         ; ;COLD
    mov b,l       ; $2b89 45      
    mov d,d       ; $2b8a 52      
    mov d,e       ; $2b8b 53      
-   ???           ; $2b8c 38      
+   .byte 0x38    ; $2b8c 38      
    dcx h         ; $2b8d 2b      
    call $02e4    ; $2b8e cd e4 02
    lxi d,$002b   ; $2b91 11 2b 00
@@ -8471,7 +8418,7 @@ $02da 04         inr b         ; ;COLD
    nop           ; $2b9f 00      
    add b         ; $2ba0 80      
    rz            ; $2ba1 c8      
-   ???           ; $2ba2 08      
+   .byte 0x08    ; $2ba2 08      
    mov a,d       ; $2ba3 7a      
    ldax b        ; $2ba4 0a      
    jmp $9f2b     ; $2ba5 c3 2b 9f
@@ -8483,9 +8430,9 @@ $02da 04         inr b         ; ;COLD
    rst 7         ; $2bad ff      
    mov a,a       ; $2bae 7f      
    rz            ; $2baf c8      
-   ???           ; $2bb0 08      
+   .byte 0x08    ; $2bb0 08      
    add m         ; $2bb1 86      
-   ???           ; $2bb2 20      
+   .byte 0x20    ; $2bb2 20      
    sbb a         ; $2bb3 9f      
    ldax b        ; $2bb4 0a      
    sbb l         ; $2bb5 9d      
@@ -8493,13 +8440,13 @@ $02da 04         inr b         ; ;COLD
    sbb a         ; $2bb7 9f      
    ldax b        ; $2bb8 0a      
    add m         ; $2bb9 86      
-   ???           ; $2bba 20      
+   .byte 0x20    ; $2bba 20      
    add m         ; $2bbb 86      
-   ???           ; $2bbc 20      
+   .byte 0x20    ; $2bbc 20      
    add m         ; $2bbd 86      
-   ???           ; $2bbe 20      
+   .byte 0x20    ; $2bbe 20      
    add m         ; $2bbf 86      
-   ???           ; $2bc0 20      
+   .byte 0x20    ; $2bc0 20      
    stax b        ; $2bc1 02      
    lhld $2a70    ; $2bc2 2a 70 2a
    mov h,e       ; $2bc5 63      
@@ -8529,7 +8476,7 @@ $02da 04         inr b         ; ;COLD
    mov b,c       ; $2be0 41      
    mov d,h       ; $2be1 54      
    mov b,l       ; $2be2 45      
-   ???           ; $2be3 cb      
+   .byte 0xcb    ; $2be3 cb      
    dcx h         ; $2be4 2b      
    call $02e4    ; $2be5 cd e4 02
    ora d         ; $2be8 b2      
@@ -8541,8 +8488,8 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $2bf1 0a      
    nop           ; $2bf2 00      
    add b         ; $2bf3 80      
-   ???           ; $2bf4 d9      
-   ???           ; $2bf5 08      
+   .byte 0xd9    ; $2bf4 d9      
+   .byte 0x08    ; $2bf5 08      
    adc l         ; $2bf6 8d      
    inx b         ; $2bf7 03      
    sbb l         ; $2bf8 9d      
@@ -8584,26 +8531,26 @@ $02da 04         inr b         ; ;COLD
    rst 7         ; $2c30 ff      
    mov a,a       ; $2c31 7f      
    rz            ; $2c32 c8      
-   ???           ; $2c33 08      
+   .byte 0x08    ; $2c33 08      
    mov h,m       ; $2c34 66      
    dcr b         ; $2c35 05      
    mov a,d       ; $2c36 7a      
    ldax b        ; $2c37 0a      
    mov b,b       ; $2c38 40      
    inr l         ; $2c39 2c      
-   ???           ; $2c3a 10      
+   .byte 0x10    ; $2c3a 10      
    inr b         ; $2c3b 04      
    ani $0e       ; $2c3c e6 0e   
    dcr d         ; $2c3e 15      
    inx b         ; $2c3f 03      
    out $03       ; $2c40 d3 03   
-   ???           ; $2c42 20      
+   .byte 0x20    ; $2c42 20      
    dcx h         ; $2c43 2b      
    add h         ; $2c44 84      
    dad b         ; $2c45 09      
    cmp l         ; $2c46 bd      
    lhld $0984    ; $2c47 2a 84 09
-   ???           ; $2c4a 20      
+   .byte 0x20    ; $2c4a 20      
    dcx h         ; $2c4b 2b      
    add h         ; $2c4c 84      
    dad b         ; $2c4d 09      
@@ -8624,15 +8571,15 @@ $02da 04         inr b         ; ;COLD
    mvi c,$15     ; $2c65 0e 15   
    inx b         ; $2c67 03      
    call $02e4    ; $2c68 cd e4 02
-   ???           ; $2c6b cb      
+   .byte 0xcb    ; $2c6b cb      
    lhld $0984    ; $2c6c 2a 84 09
    ora d         ; $2c6f b2      
    lhld $0984    ; $2c70 2a 84 09
-   ???           ; $2c73 20      
+   .byte 0x20    ; $2c73 20      
    dcx h         ; $2c74 2b      
    sbb l         ; $2c75 9d      
    dad b         ; $2c76 09      
-   ???           ; $2c77 cb      
+   .byte 0xcb    ; $2c77 cb      
    lhld $0a0a    ; $2c78 2a 0a 0a
    dcr d         ; $2c7b 15      
    inx b         ; $2c7c 03      
@@ -8654,7 +8601,7 @@ $02da 04         inr b         ; ;COLD
    rst 7         ; $2c90 ff      
    mov a,a       ; $2c91 7f      
    rz            ; $2c92 c8      
-   ???           ; $2c93 08      
+   .byte 0x08    ; $2c93 08      
    mov h,d       ; $2c94 62      
    inx b         ; $2c95 03      
    sbb l         ; $2c96 9d      
@@ -8662,7 +8609,7 @@ $02da 04         inr b         ; ;COLD
    stax b        ; $2c98 02      
    lhld $0315    ; $2c99 2a 15 03
    add m         ; $2c9c 86      
-   ???           ; $2c9d 20      
+   .byte 0x20    ; $2c9d 20      
    stax b        ; $2c9e 02      
    lhld $038d    ; $2c9f 2a 8d 03
    sbb l         ; $2ca2 9d      
@@ -8699,9 +8646,9 @@ $02da 04         inr b         ; ;COLD
    inr l         ; $2cce 2c      
    mov a,d       ; $2ccf 7a      
    ldax b        ; $2cd0 0a      
-   ???           ; $2cd1 d9      
+   .byte 0xd9    ; $2cd1 d9      
    inr l         ; $2cd2 2c      
-   ???           ; $2cd3 10      
+   .byte 0x10    ; $2cd3 10      
    inr b         ; $2cd4 04      
    mov l,b       ; $2cd5 68      
    ldax b        ; $2cd6 0a      
@@ -8742,7 +8689,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $2d04 7a      
    ldax b        ; $2d05 0a      
    mvi c,$2d     ; $2d06 0e 2d   
-   ???           ; $2d08 10      
+   .byte 0x10    ; $2d08 10      
    inr b         ; $2d09 04      
    mov l,b       ; $2d0a 68      
    ldax b        ; $2d0b 0a      
@@ -8759,15 +8706,15 @@ $02da 04         inr b         ; ;COLD
    dad b         ; $2d1b 09      
    out $03       ; $2d1c d3 03   
    add m         ; $2d1e 86      
-   ???           ; $2d1f 20      
+   .byte 0x20    ; $2d1f 20      
    add m         ; $2d20 86      
-   ???           ; $2d21 20      
+   .byte 0x20    ; $2d21 20      
    mov h,d       ; $2d22 62      
    inx b         ; $2d23 03      
    add h         ; $2d24 84      
    dad b         ; $2d25 09      
    add m         ; $2d26 86      
-   ???           ; $2d27 20      
+   .byte 0x20    ; $2d27 20      
    mov e,c       ; $2d28 59      
    mvi l,$d3     ; $2d29 2e d3   
    inx b         ; $2d2b 03      
@@ -8796,19 +8743,19 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $2d4b 15      
    mvi a,$18     ; $2d4c 3e 18   
    dad b         ; $2d4e 09      
-   ???           ; $2d4f 20      
+   .byte 0x20    ; $2d4f 20      
    cm $504b      ; $2d50 fc 4b 50
    mov b,c       ; $2d53 41      
    mov c,b       ; $2d54 48      
-   ???           ; $2d55 20      
+   .byte 0x20    ; $2d55 20      
    inx h         ; $2d56 23      
-   ???           ; $2d57 20      
+   .byte 0x20    ; $2d57 20      
    cpi $12       ; $2d58 fe 12   
-   ???           ; $2d5a fd      
+   .byte 0xfd    ; $2d5a fd      
    inr l         ; $2d5b 2c      
    dcx h         ; $2d5c 2b      
    ldax b        ; $2d5d 0a      
-   ???           ; $2d5e 10      
+   .byte 0x10    ; $2d5e 10      
    nop           ; $2d5f 00      
    rz            ; $2d60 c8      
    mvi c,$e5     ; $2d61 0e e5   
@@ -8850,7 +8797,7 @@ $02da 04         inr b         ; ;COLD
    mov c,a       ; $2d8c 4f      
    mov b,c       ; $2d8d 41      
    mov b,h       ; $2d8e 44      
-   ???           ; $2d8f 38      
+   .byte 0x38    ; $2d8f 38      
    dcr l         ; $2d90 2d      
    call $02e4    ; $2d91 cd e4 02
    rpo           ; $2d94 e0      
@@ -8862,19 +8809,19 @@ $02da 04         inr b         ; ;COLD
    mov h,m       ; $2d9a 66      
    dcr d         ; $2d9b 15      
    mvi a,$18     ; $2d9c 3e 18   
-   ???           ; $2d9e 10      
+   .byte 0x10    ; $2d9e 10      
    jm $e741      ; $2d9f fa 41 e7
    mov d,b       ; $2da2 50      
    push psw      ; $2da3 f5      
    jm $414b      ; $2da4 fa 4b 41
-   ???           ; $2da7 20      
+   .byte 0x20    ; $2da7 20      
    jpo $4fec     ; $2da8 e2 ec 4f
    mov c,e       ; $2dab 4b      
    mov b,c       ; $2dac 41      
-   ???           ; $2dad 20      
-   ???           ; $2dae 30      
+   .byte 0x20    ; $2dad 20      
+   .byte 0x30    ; $2dae 30      
    push d        ; $2daf d5      
-   ???           ; $2db0 10      
+   .byte 0x10    ; $2db0 10      
    mov l,e       ; $2db1 6b      
    stax b        ; $2db2 02      
    add h         ; $2db3 84      
@@ -8911,25 +8858,25 @@ $02da 04         inr b         ; ;COLD
    dad b         ; $2dd6 09      
    pop b         ; $2dd7 c1      
    dad d         ; $2dd8 19      
-   ???           ; $2dd9 20      
+   .byte 0x20    ; $2dd9 20      
    dad b         ; $2dda 09      
    ora c         ; $2ddb b1      
    stax b        ; $2ddc 02      
    sbb l         ; $2ddd 9d      
    dad b         ; $2dde 09      
-   ???           ; $2ddf 20      
+   .byte 0x20    ; $2ddf 20      
    dad b         ; $2de0 09      
    mov e,a       ; $2de1 5f      
    stax b        ; $2de2 02      
    sbb l         ; $2de3 9d      
    dad b         ; $2de4 09      
-   ???           ; $2de5 20      
+   .byte 0x20    ; $2de5 20      
    dad b         ; $2de6 09      
    hlt           ; $2de7 76      
    stax b        ; $2de8 02      
    sbb l         ; $2de9 9d      
    dad b         ; $2dea 09      
-   ???           ; $2deb 20      
+   .byte 0x20    ; $2deb 20      
    dad b         ; $2dec 09      
    mov l,e       ; $2ded 6b      
    stax b        ; $2dee 02      
@@ -8965,17 +8912,17 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $2e13 03      
    push h        ; $2e14 e5      
    ldax b        ; $2e15 0a      
-   ???           ; $2e16 20      
+   .byte 0x20    ; $2e16 20      
    mvi l,$9f     ; $2e17 2e 9f   
    ldax b        ; $2e19 0a      
    sub c         ; $2e1a 91      
    dcr l         ; $2e1b 2d      
    mvi l,$0b     ; $2e1c 2e 0b   
-   ???           ; $2e1e 18      
+   .byte 0x18    ; $2e1e 18      
    mvi l,$15     ; $2e1f 2e 15   
    inx b         ; $2e21 03      
    inr b         ; $2e22 04      
-   ???           ; $2e23 28      
+   .byte 0x28    ; $2e23 28      
    mov c,c       ; $2e24 49      
    mov c,m       ; $2e25 4e      
    dad h         ; $2e26 29      
@@ -9025,7 +8972,7 @@ $02da 04         inr b         ; ;COLD
    mov l,h       ; $2e67 6c      
    mov l,a       ; $2e68 6f      
    mov l,e       ; $2e69 6b      
-   ???           ; $2e6a 20      
+   .byte 0x20    ; $2e6a 20      
    out $03       ; $2e6b d3 03   
    cpi $12       ; $2e6d fe 12   
    rpo           ; $2e6f e0      
@@ -9043,7 +8990,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $2e82 03      
    mov h,d       ; $2e83 62      
    inx b         ; $2e84 03      
-   ???           ; $2e85 20      
+   .byte 0x20    ; $2e85 20      
    dcx h         ; $2e86 2b      
    jpo $642e     ; $2e87 e2 2e 64
    lhld $2a4c    ; $2e8a 2a 4c 2a
@@ -9064,7 +9011,7 @@ $02da 04         inr b         ; ;COLD
    mov l,h       ; $2e9d 6c      
    mov l,a       ; $2e9e 6f      
    mov l,e       ; $2e9f 6b      
-   ???           ; $2ea0 20      
+   .byte 0x20    ; $2ea0 20      
    cpi $12       ; $2ea1 fe 12   
    mov a,m       ; $2ea3 7e      
    dcr b         ; $2ea4 05      
@@ -9080,20 +9027,20 @@ $02da 04         inr b         ; ;COLD
    dad h         ; $2eb0 29      
    mov h,d       ; $2eb1 62      
    inx b         ; $2eb2 03      
-   ???           ; $2eb3 20      
+   .byte 0x20    ; $2eb3 20      
    dcx h         ; $2eb4 2b      
    add h         ; $2eb5 84      
    dad b         ; $2eb6 09      
    mov h,m       ; $2eb7 66      
    dcr b         ; $2eb8 05      
-   ???           ; $2eb9 10      
+   .byte 0x10    ; $2eb9 10      
    inr b         ; $2eba 04      
    out $03       ; $2ebb d3 03   
    sub b         ; $2ebd 90      
    ldax b        ; $2ebe 0a      
    pop d         ; $2ebf d1      
    mvi l,$3e     ; $2ec0 2e 3e   
-   ???           ; $2ec2 18      
+   .byte 0x18    ; $2ec2 18      
    dcr c         ; $2ec3 0d      
    mov l,a       ; $2ec4 6f      
    mov a,e       ; $2ec5 7b      
@@ -9101,13 +9048,13 @@ $02da 04         inr b         ; ;COLD
    mov h,d       ; $2ec7 62      
    mov l,e       ; $2ec8 6b      
    mov h,c       ; $2ec9 61      
-   ???           ; $2eca 20      
+   .byte 0x20    ; $2eca 20      
    mov m,a       ; $2ecb 77      
    mov m,a       ; $2ecc 77      
    mov l,a       ; $2ecd 6f      
    mov h,h       ; $2ece 64      
    mov h,c       ; $2ecf 61      
-   ???           ; $2ed0 20      
+   .byte 0x20    ; $2ed0 20      
    mov a,d       ; $2ed1 7a      
    ldax b        ; $2ed2 0a      
    mov e,h       ; $2ed3 5c      
@@ -9198,7 +9145,7 @@ $02da 04         inr b         ; ;COLD
    mov b,e       ; $2f4c 43      
    mov d,l       ; $2f4d 55      
    mov d,d       ; $2f4e 52      
-   ???           ; $2f4f 38      
+   .byte 0x38    ; $2f4f 38      
    cma           ; $2f50 2f      
    pop d         ; $2f51 d1      
    pop h         ; $2f52 e1      
@@ -9280,7 +9227,7 @@ $02da 04         inr b         ; ;COLD
    mov m,d       ; $2fb7 72      
    jmp $02ef     ; $2fb8 c3 ef 02
    inr b         ; $2fbb 04      
-   ???           ; $2fbc 28      
+   .byte 0x28    ; $2fbc 28      
    mov b,c       ; $2fbd 41      
    mov d,h       ; $2fbe 54      
    dad h         ; $2fbf 29      
@@ -9316,14 +9263,14 @@ $02da 04         inr b         ; ;COLD
    add h         ; $2fe6 84      
    dad b         ; $2fe7 09      
    rz            ; $2fe8 c8      
-   ???           ; $2fe9 08      
+   .byte 0x08    ; $2fe9 08      
    mov a,d       ; $2fea 7a      
    ldax b        ; $2feb 0a      
    rm            ; $2fec f8      
    cma           ; $2fed 2f      
    dcx h         ; $2fee 2b      
    ldax b        ; $2fef 0a      
-   ???           ; $2ff0 08      
+   .byte 0x08    ; $2ff0 08      
    nop           ; $2ff1 00      
    mov c,d       ; $2ff2 4a      
    inr b         ; $2ff3 04      
@@ -9333,7 +9280,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $2ff7 03      
    dcx h         ; $2ff8 2b      
    ldax b        ; $2ff9 0a      
-   ???           ; $2ffa 08      
+   .byte 0x08    ; $2ffa 08      
    nop           ; $2ffb 00      
    mov c,d       ; $2ffc 4a      
    inr b         ; $2ffd 04      
@@ -9341,7 +9288,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $2fff 03      
    dcr d         ; $3000 15      
    inx b         ; $3001 03      
-   ???           ; $3002 08      
+   .byte 0x08    ; $3002 08      
    mov d,c       ; $3003 51      
    mov d,l       ; $3004 55      
    mov b,c       ; $3005 41      
@@ -9350,7 +9297,7 @@ $02da 04         inr b         ; ;COLD
    mov d,m       ; $3008 56      
    mov b,c       ; $3009 41      
    mov d,d       ; $300a 52      
-   ???           ; $300b cb      
+   .byte 0xcb    ; $300b cb      
    cma           ; $300c 2f      
    call $02e4    ; $300d cd e4 02
    rpe           ; $3010 e8      
@@ -9367,7 +9314,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $301f 03      
    stax b        ; $3020 02      
    sta $025e     ; $3021 32 5e 02
-   ???           ; $3024 30      
+   .byte 0x30    ; $3024 30      
    call $02e4    ; $3025 cd e4 02
    dcx h         ; $3028 2b      
    ldax b        ; $3029 0a      
@@ -9380,35 +9327,35 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $3030 15      
    inx b         ; $3031 03      
    lxi b,$207c   ; $3032 01 7c 20
-   ???           ; $3035 30      
+   .byte 0x30    ; $3035 30      
    call $0984    ; $3036 cd 84 09
    jnz $0177     ; $3039 c2 77 01
    mov c,h       ; $303c 4c      
-   ???           ; $303d 20      
-   ???           ; $303e 30      
+   .byte 0x20    ; $303d 20      
+   .byte 0x30    ; $303e 30      
    call $0984    ; $303f cd 84 09
    mov c,m       ; $3042 4e      
    nop           ; $3043 00      
    lxi b,$2058   ; $3044 01 58 20
-   ???           ; $3047 30      
+   .byte 0x30    ; $3047 30      
    call $0984    ; $3048 cd 84 09
    nop           ; $304b 00      
    nop           ; $304c 00      
    call $1ac4    ; $304d cd c4 1a
    lxi b,$4459   ; $3050 01 59 44
-   ???           ; $3053 30      
+   .byte 0x30    ; $3053 30      
    call $0984    ; $3054 cd 84 09
    nop           ; $3057 00      
    nop           ; $3058 00      
    call $1ac4    ; $3059 cd c4 1a
    lxi b,$5041   ; $305c 01 41 50
-   ???           ; $305f 30      
+   .byte 0x30    ; $305f 30      
    call $0984    ; $3060 cd 84 09
    nop           ; $3063 00      
    nop           ; $3064 00      
    call $1ac4    ; $3065 cd c4 1a
    lxi b,$5054   ; $3068 01 54 50
-   ???           ; $306b 30      
+   .byte 0x30    ; $306b 30      
    call $0984    ; $306c cd 84 09
    rst 7         ; $306f ff      
    rst 7         ; $3070 ff      
@@ -9418,11 +9365,11 @@ $02da 04         inr b         ; ;COLD
    mov b,l       ; $3076 45      
    mov c,m       ; $3077 4e      
    mov d,b       ; $3078 50      
-   ???           ; $3079 30      
+   .byte 0x30    ; $3079 30      
    call $02e4    ; $307a cd e4 02
    ani $0e       ; $307d e6 0e   
    mov m,c       ; $307f 71      
-   ???           ; $3080 30      
+   .byte 0x30    ; $3080 30      
    dcr d         ; $3081 15      
    inx b         ; $3082 03      
    inx b         ; $3083 03      
@@ -9430,23 +9377,23 @@ $02da 04         inr b         ; ;COLD
    mov d,l       ; $3085 55      
    mov c,l       ; $3086 4d      
    mov m,h       ; $3087 74      
-   ???           ; $3088 30      
+   .byte 0x30    ; $3088 30      
    call $02e4    ; $3089 cd e4 02
    di            ; $308c f3      
    mvi c,$71     ; $308d 0e 71   
-   ???           ; $308f 30      
+   .byte 0x30    ; $308f 30      
    dcr d         ; $3090 15      
    inx b         ; $3091 03      
    lxi b,$8347   ; $3092 01 47 83
-   ???           ; $3095 30      
+   .byte 0x30    ; $3095 30      
    call $02e4    ; $3096 cd e4 02
    cmp l         ; $3099 bd      
    dcr b         ; $309a 05      
    cmc           ; $309b 3f      
-   ???           ; $309c 30      
+   .byte 0x30    ; $309c 30      
    sbb e         ; $309d 9b      
    mvi b,$36     ; $309e 06 36   
-   ???           ; $30a0 30      
+   .byte 0x30    ; $30a0 30      
    mov c,d       ; $30a1 4a      
    inr b         ; $30a2 04      
    adc l         ; $30a3 8d      
@@ -9461,7 +9408,7 @@ $02da 04         inr b         ; ;COLD
    cmc           ; $30ac 3f      
    mov d,e       ; $30ad 53      
    add e         ; $30ae 83      
-   ???           ; $30af 30      
+   .byte 0x30    ; $30af 30      
    pop h         ; $30b0 e1      
    pop d         ; $30b1 d1      
    mov a,e       ; $30b2 7b      
@@ -9483,7 +9430,7 @@ $02da 04         inr b         ; ;COLD
    push d        ; $30cc d5      
    jmp $02ef     ; $30cd c3 ef 02
    lxi b,$8379   ; $30d0 01 79 83
-   ???           ; $30d3 30      
+   .byte 0x30    ; $30d3 30      
    pop d         ; $30d4 d1      
    mov a,e       ; $30d5 7b      
    ani $01       ; $30d6 e6 01   
@@ -9498,7 +9445,7 @@ $02da 04         inr b         ; ;COLD
    dcx h         ; $30ea 2b      
    mov m,b       ; $30eb 70      
    add e         ; $30ec 83      
-   ???           ; $30ed 30      
+   .byte 0x30    ; $30ed 30      
    lda $304b     ; $30ee 3a 4b 30
    ana a         ; $30f1 a7      
    jnz $3106     ; $30f2 c2 06 31
@@ -9524,7 +9471,7 @@ $02da 04         inr b         ; ;COLD
    dcr l         ; $311c 2d      
    mov m,b       ; $311d 70      
    add e         ; $311e 83      
-   ???           ; $311f 30      
+   .byte 0x30    ; $311f 30      
    lda $304b     ; $3120 3a 4b 30
    ana a         ; $3123 a7      
    jnz $3138     ; $3124 c2 38 31
@@ -9547,37 +9494,37 @@ $02da 04         inr b         ; ;COLD
    stax d        ; $3149 12      
    jmp $02ef     ; $314a c3 ef 02
    lxi b,$8370   ; $314d 01 70 83
-   ???           ; $3150 30      
+   .byte 0x30    ; $3150 30      
    lda $306f     ; $3151 3a 6f 30
    ora a         ; $3154 b7      
    jnz $30ee     ; $3155 c2 ee 30
    jmp $3120     ; $3158 c3 20 31
    lxi b,$8357   ; $315b 01 57 83
-   ???           ; $315e 30      
+   .byte 0x30    ; $315e 30      
    call $0984    ; $315f cd 84 09
    nop           ; $3162 00      
    nop           ; $3163 00      
    call $1ac4    ; $3164 cd c4 1a
    lxi b,$8362   ; $3167 01 62 83
-   ???           ; $316a 30      
+   .byte 0x30    ; $316a 30      
    call $0984    ; $316b cd 84 09
    nop           ; $316e 00      
    nop           ; $316f 00      
    call $1ac4    ; $3170 cd c4 1a
    lxi b,$8367   ; $3173 01 67 83
-   ???           ; $3176 30      
+   .byte 0x30    ; $3176 30      
    call $0984    ; $3177 cd 84 09
    nop           ; $317a 00      
    nop           ; $317b 00      
    call $1ac4    ; $317c cd c4 1a
    lxi b,$8364   ; $317f 01 64 83
-   ???           ; $3182 30      
+   .byte 0x30    ; $3182 30      
    call $0984    ; $3183 cd 84 09
    nop           ; $3186 00      
    nop           ; $3187 00      
    call $1ac4    ; $3188 cd c4 1a
    lxi b,$8376   ; $318b 01 76 83
-   ???           ; $318e 30      
+   .byte 0x30    ; $318e 30      
    call $0984    ; $318f cd 84 09
    nop           ; $3192 00      
    nop           ; $3193 00      
@@ -9593,21 +9540,21 @@ $02da 04         inr b         ; ;COLD
    inr h         ; $31a5 24      
    sta $3083     ; $31a6 32 83 30
    call $0984    ; $31a9 cd 84 09
-   ???           ; $31ac 20      
+   .byte 0x20    ; $31ac 20      
    sta $c4cd     ; $31ad 32 cd c4
    ldax d        ; $31b0 1a      
    stax b        ; $31b1 02      
    inr h         ; $31b2 24      
    inr m         ; $31b3 34      
    add e         ; $31b4 83      
-   ???           ; $31b5 30      
+   .byte 0x30    ; $31b5 30      
    call $0984    ; $31b6 cd 84 09
    lda $cd32     ; $31b9 3a 32 cd
    cnz $021a     ; $31bc c4 1a 02
    inr h         ; $31bf 24      
    dcr m         ; $31c0 35      
    add e         ; $31c1 83      
-   ???           ; $31c2 30      
+   .byte 0x30    ; $31c2 30      
    call $0984    ; $31c3 cd 84 09
    mov b,b       ; $31c6 40      
    sta $c4cd     ; $31c7 32 cd c4
@@ -9616,7 +9563,7 @@ $02da 04         inr b         ; ;COLD
    mov b,h       ; $31cc 44      
    mov e,b       ; $31cd 58      
    add e         ; $31ce 83      
-   ???           ; $31cf 30      
+   .byte 0x30    ; $31cf 30      
    call $0984    ; $31d0 cd 84 09
    nop           ; $31d3 00      
    nop           ; $31d4 00      
@@ -9625,25 +9572,25 @@ $02da 04         inr b         ; ;COLD
    mov b,h       ; $31d9 44      
    mov e,c       ; $31da 59      
    add e         ; $31db 83      
-   ???           ; $31dc 30      
+   .byte 0x30    ; $31dc 30      
    call $0984    ; $31dd cd 84 09
    nop           ; $31e0 00      
    nop           ; $31e1 00      
    call $1ac4    ; $31e2 cd c4 1a
    lxi b,$8369   ; $31e5 01 69 83
-   ???           ; $31e8 30      
+   .byte 0x30    ; $31e8 30      
    call $0984    ; $31e9 cd 84 09
    nop           ; $31ec 00      
    nop           ; $31ed 00      
    call $1ac4    ; $31ee cd c4 1a
    lxi b,$836a   ; $31f1 01 6a 83
-   ???           ; $31f4 30      
+   .byte 0x30    ; $31f4 30      
    call $0984    ; $31f5 cd 84 09
    nop           ; $31f8 00      
    nop           ; $31f9 00      
    call $1ac4    ; $31fa cd c4 1a
    lxi b,$836c   ; $31fd 01 6c 83
-   ???           ; $3200 30      
+   .byte 0x30    ; $3200 30      
    call $02e4    ; $3201 cd e4 02
    rz            ; $3204 c8      
    mvi c,$64     ; $3205 0e 64   
@@ -9660,13 +9607,13 @@ $02da 04         inr b         ; ;COLD
    mvi m,$32     ; $3218 36 32   
    nop           ; $321a 00      
    nop           ; $321b 00      
-   ???           ; $321c fd      
-   ???           ; $321d 08      
+   .byte 0xfd    ; $321c fd      
+   .byte 0x08    ; $321d 08      
    out $03       ; $321e d3 03   
    nop           ; $3220 00      
    nop           ; $3221 00      
    mov h,b       ; $3222 60      
-   ???           ; $3223 30      
+   .byte 0x30    ; $3223 30      
    adc l         ; $3224 8d      
    inx b         ; $3225 03      
    add e         ; $3226 83      
@@ -9674,7 +9621,7 @@ $02da 04         inr b         ; ;COLD
    mov c,d       ; $322a 4a      
    inr b         ; $322b 04      
    mov h,l       ; $322c 65      
-   ???           ; $322d 30      
+   .byte 0x30    ; $322d 30      
    mov e,a       ; $322e 5f      
    lxi sp,$316b  ; $322f 31 6b 31
    mov d,l       ; $3232 55      
@@ -9683,13 +9630,13 @@ $02da 04         inr b         ; ;COLD
    lxi sp,$3060  ; $3235 31 60 30
    mov d,c       ; $3238 51      
    lxi sp,$0000  ; $3239 31 00 00
-   ???           ; $323c fd      
-   ???           ; $323d 08      
+   .byte 0xfd    ; $323c fd      
+   .byte 0x08    ; $323d 08      
    out $03       ; $323e d3 03   
    nop           ; $3240 00      
    nop           ; $3241 00      
    mov h,b       ; $3242 60      
-   ???           ; $3243 30      
+   .byte 0x30    ; $3243 30      
    adc l         ; $3244 8d      
    inx b         ; $3245 03      
    adc a         ; $3246 8f      
@@ -9697,14 +9644,14 @@ $02da 04         inr b         ; ;COLD
    mov c,d       ; $324a 4a      
    inr b         ; $324b 04      
    mov h,l       ; $324c 65      
-   ???           ; $324d 30      
+   .byte 0x30    ; $324d 30      
    mov e,a       ; $324e 5f      
    lxi sp,$3177  ; $324f 31 77 31
    mov c,d       ; $3252 4a      
    inr b         ; $3253 04      
    mov h,h       ; $3254 64      
    lxi sp,$0b2e  ; $3255 31 2e 0b
-   ???           ; $3258 10      
+   .byte 0x10    ; $3258 10      
    sta $0315     ; $3259 32 15 03
    inr b         ; $325c 04      
    mov c,h       ; $325d 4c      
@@ -9712,7 +9659,7 @@ $02da 04         inr b         ; ;COLD
    mov c,m       ; $325f 4e      
    mov b,l       ; $3260 45      
    add e         ; $3261 83      
-   ???           ; $3262 30      
+   .byte 0x30    ; $3262 30      
    call $02e4    ; $3263 cd e4 02
    jp $2b03      ; $3266 f2 03 2b
    ldax b        ; $3269 0a      
@@ -9725,9 +9672,9 @@ $02da 04         inr b         ; ;COLD
    add b         ; $3272 80      
    nop           ; $3273 00      
    jm $c804      ; $3274 fa 04 c8
-   ???           ; $3277 08      
-   ???           ; $3278 fd      
-   ???           ; $3279 08      
+   .byte 0x08    ; $3277 08      
+   .byte 0xfd    ; $3278 fd      
+   .byte 0x08    ; $3279 08      
    mov c,d       ; $327a 4a      
    lxi d,$2d17   ; $327b 11 17 2d
    mov l,m       ; $327e 6e      
@@ -9738,7 +9685,7 @@ $02da 04         inr b         ; ;COLD
    mov l,m       ; $3283 6e      
    mov a,c       ; $3284 79      
    mov l,d       ; $3285 6a      
-   ???           ; $3286 20      
+   .byte 0x20    ; $3286 20      
    mov h,c       ; $3287 61      
    mov m,d       ; $3288 72      
    mov h,a       ; $3289 67      
@@ -9747,25 +9694,25 @@ $02da 04         inr b         ; ;COLD
    mov h,l       ; $328c 65      
    mov l,m       ; $328d 6e      
    mov m,h       ; $328e 74      
-   ???           ; $328f 20      
+   .byte 0x20    ; $328f 20      
    mov c,h       ; $3290 4c      
    mov c,c       ; $3291 49      
    mov c,m       ; $3292 4e      
    mov b,l       ; $3293 45      
    jp $4803      ; $3294 f2 03 48
-   ???           ; $3297 30      
+   .byte 0x30    ; $3297 30      
    mov d,h       ; $3298 54      
-   ???           ; $3299 30      
+   .byte 0x30    ; $3299 30      
    sub m         ; $329a 96      
-   ???           ; $329b 30      
+   .byte 0x30    ; $329b 30      
    mov h,l       ; $329c 65      
-   ???           ; $329d 30      
+   .byte 0x30    ; $329d 30      
    mov d,h       ; $329e 54      
-   ???           ; $329f 30      
+   .byte 0x30    ; $329f 30      
    mov d,l       ; $32a0 55      
    inr b         ; $32a1 04      
    jpo $4831     ; $32a2 e2 31 48
-   ???           ; $32a5 30      
+   .byte 0x30    ; $32a5 30      
    mov d,l       ; $32a6 55      
    inr b         ; $32a7 04      
    push d        ; $32a8 d5      
@@ -9778,8 +9725,8 @@ $02da 04         inr b         ; ;COLD
    sta $046a     ; $32b3 32 6a 04
    xri $31       ; $32b6 ee 31   
    cmc           ; $32b8 3f      
-   ???           ; $32b9 30      
-   ???           ; $32ba dd      
+   .byte 0x30    ; $32b9 30      
+   .byte 0xdd    ; $32ba dd      
    lxi sp,$0550  ; $32bb 31 50 05
    sub b         ; $32be 90      
    ldax b        ; $32bf 0a      
@@ -9787,7 +9734,7 @@ $02da 04         inr b         ; ;COLD
    inr b         ; $32c3 04      
    jm $d031      ; $32c4 fa 31 d0
    lxi sp,$04b1  ; $32c7 31 b1 04
-   ???           ; $32ca dd      
+   .byte 0xdd    ; $32ca dd      
    lxi sp,$04b1  ; $32cb 31 b1 04
    jp $f203      ; $32ce f2 03 f2
    inx b         ; $32d1 03      
@@ -9798,12 +9745,12 @@ $02da 04         inr b         ; ;COLD
    lxi sp,$0533  ; $32d9 31 33 05
    mov a,d       ; $32dc 7a      
    ldax b        ; $32dd 0a      
-   ???           ; $32de 10      
+   .byte 0x10    ; $32de 10      
    inx sp        ; $32df 33      
    dcx h         ; $32e0 2b      
    ldax b        ; $32e1 0a      
    mov d,h       ; $32e2 54      
-   ???           ; $32e3 30      
+   .byte 0x30    ; $32e3 30      
    out $03       ; $32e4 d3 03   
    sbb h         ; $32e6 9c      
    lxi sp,$099d  ; $32e7 31 9d 09
@@ -9816,7 +9763,7 @@ $02da 04         inr b         ; ;COLD
    dcx h         ; $32f6 2b      
    ldax b        ; $32f7 0a      
    mov c,b       ; $32f8 48      
-   ???           ; $32f9 30      
+   .byte 0x30    ; $32f9 30      
    out $03       ; $32fa d3 03   
    ora m         ; $32fc b6      
    lxi sp,$099d  ; $32fd 31 9d 09
@@ -9833,7 +9780,7 @@ $02da 04         inr b         ; ;COLD
    dcx h         ; $3310 2b      
    ldax b        ; $3311 0a      
    mov c,b       ; $3312 48      
-   ???           ; $3313 30      
+   .byte 0x30    ; $3313 30      
    out $03       ; $3314 d3 03   
    sbb h         ; $3316 9c      
    lxi sp,$099d  ; $3317 31 9d 09
@@ -9846,7 +9793,7 @@ $02da 04         inr b         ; ;COLD
    dcx h         ; $3326 2b      
    ldax b        ; $3327 0a      
    mov d,h       ; $3328 54      
-   ???           ; $3329 30      
+   .byte 0x30    ; $3329 30      
    out $03       ; $332a d3 03   
    ora m         ; $332c b6      
    lxi sp,$099d  ; $332d 31 9d 09
@@ -9857,27 +9804,27 @@ $02da 04         inr b         ; ;COLD
    push psw      ; $3338 f5      
    lxi sp,$3194  ; $3339 31 94 31
    mov c,b       ; $333c 48      
-   ???           ; $333d 30      
+   .byte 0x30    ; $333d 30      
    pop d         ; $333e d1      
    mvi c,$c8     ; $333f 0e c8   
-   ???           ; $3341 08      
+   .byte 0x08    ; $3341 08      
    mov l,d       ; $3342 6a      
    inr b         ; $3343 04      
    mov c,l       ; $3344 4d      
-   ???           ; $3345 30      
+   .byte 0x30    ; $3345 30      
    mov d,h       ; $3346 54      
-   ???           ; $3347 30      
+   .byte 0x30    ; $3347 30      
    pop d         ; $3348 d1      
    mvi c,$c8     ; $3349 0e c8   
-   ???           ; $334b 08      
+   .byte 0x08    ; $334b 08      
    mov l,d       ; $334c 6a      
    inr b         ; $334d 04      
    mov e,c       ; $334e 59      
-   ???           ; $334f 30      
+   .byte 0x30    ; $334f 30      
    lxi b,$5932   ; $3350 01 32 59
-   ???           ; $3353 30      
+   .byte 0x30    ; $3353 30      
    mov c,l       ; $3354 4d      
-   ???           ; $3355 30      
+   .byte 0x30    ; $3355 30      
    dcr d         ; $3356 15      
    inx b         ; $3357 03      
    inr b         ; $3358 04      
@@ -9899,9 +9846,9 @@ $02da 04         inr b         ; ;COLD
    add b         ; $336e 80      
    nop           ; $336f 00      
    jm $c804      ; $3370 fa 04 c8
-   ???           ; $3373 08      
-   ???           ; $3374 fd      
-   ???           ; $3375 08      
+   .byte 0x08    ; $3373 08      
+   .byte 0xfd    ; $3374 fd      
+   .byte 0x08    ; $3375 08      
    mov c,d       ; $3376 4a      
    lxi d,$2d17   ; $3377 11 17 2d
    mov l,m       ; $337a 6e      
@@ -9912,7 +9859,7 @@ $02da 04         inr b         ; ;COLD
    mov l,m       ; $337f 6e      
    mov a,c       ; $3380 79      
    mov l,d       ; $3381 6a      
-   ???           ; $3382 20      
+   .byte 0x20    ; $3382 20      
    mov h,c       ; $3383 61      
    mov m,d       ; $3384 72      
    mov h,a       ; $3385 67      
@@ -9921,23 +9868,23 @@ $02da 04         inr b         ; ;COLD
    mov h,l       ; $3388 65      
    mov l,m       ; $3389 6e      
    mov m,h       ; $338a 74      
-   ???           ; $338b 20      
+   .byte 0x20    ; $338b 20      
    mov d,b       ; $338c 50      
    mov c,h       ; $338d 4c      
    mov c,a       ; $338e 4f      
    mov d,h       ; $338f 54      
    jp $d403      ; $3390 f2 03 d4
-   ???           ; $3393 30      
+   .byte 0x30    ; $3393 30      
    mov e,c       ; $3394 59      
-   ???           ; $3395 30      
+   .byte 0x30    ; $3395 30      
    cnc $4d30     ; $3396 d4 30 4d
-   ???           ; $3399 30      
+   .byte 0x30    ; $3399 30      
    jp $9603      ; $339a f2 03 96
-   ???           ; $339d 30      
+   .byte 0x30    ; $339d 30      
    mov d,c       ; $339e 51      
    lxi sp,$3059  ; $339f 31 59 30
    mov c,l       ; $33a2 4d      
-   ???           ; $33a3 30      
+   .byte 0x30    ; $33a3 30      
    dcr d         ; $33a4 15      
    inx b         ; $33a5 03      
    inx b         ; $33a6 03      
@@ -10068,6 +10015,7 @@ $02da 04         inr b         ; ;COLD
    nop           ; $3445 00      
    rst 7         ; $3446 ff      
    rst 7         ; $3447 ff      
+l3448:
    dcr b         ; $3448 05      
    mov b,m       ; $3449 46      
    mov c,a       ; $344a 4f      
@@ -10131,13 +10079,13 @@ $02da 04         inr b         ; ;COLD
    nop           ; $3492 00      
    shld $0415    ; $3493 22 15 04
    mvi d,$c5     ; $3496 16 c5   
-   ???           ; $3498 10      
+   .byte 0x10    ; $3498 10      
    dad sp        ; $3499 39      
    nop           ; $349a 00      
    lxi sp,$3400  ; $349b 31 00 34
    mvi m,$43     ; $349e 36 43   
    inr m         ; $34a0 34      
-   ???           ; $34a1 20      
+   .byte 0x20    ; $34a1 20      
    mov b,h       ; $34a2 44      
    mov b,l       ; $34a3 45      
    mov b,e       ; $34a4 43      
@@ -10145,18 +10093,18 @@ $02da 04         inr b         ; ;COLD
    mov c,l       ; $34a6 4d      
    mov b,c       ; $34a7 41      
    mov c,h       ; $34a8 4c      
-   ???           ; $34a9 20      
+   .byte 0x20    ; $34a9 20      
    mvi l,$50     ; $34aa 2e 50   
-   ???           ; $34ac 18      
-   ???           ; $34ad 18      
-   ???           ; $34ae 18      
-   ???           ; $34af 18      
-   ???           ; $34b0 18      
-   ???           ; $34b1 18      
-   ???           ; $34b2 18      
-   ???           ; $34b3 18      
-   ???           ; $34b4 18      
-   ???           ; $34b5 18      
+   .byte 0x18    ; $34ac 18      
+   .byte 0x18    ; $34ad 18      
+   .byte 0x18    ; $34ae 18      
+   .byte 0x18    ; $34af 18      
+   .byte 0x18    ; $34b0 18      
+   .byte 0x18    ; $34b1 18      
+   .byte 0x18    ; $34b2 18      
+   .byte 0x18    ; $34b3 18      
+   .byte 0x18    ; $34b4 18      
+   .byte 0x18    ; $34b5 18      
    dad d         ; $34b6 19      
    dad d         ; $34b7 19      
    dad d         ; $34b8 19      
@@ -10248,16 +10196,16 @@ $02da 04         inr b         ; ;COLD
    rlc           ; $3510 07      
    rnz           ; $3511 c0      
    inx b         ; $3512 03      
-   ???           ; $3513 20      
+   .byte 0x20    ; $3513 20      
    nop           ; $3514 00      
-   ???           ; $3515 20      
+   .byte 0x20    ; $3515 20      
    nop           ; $3516 00      
    xra l         ; $3517 ad      
-   ???           ; $3518 fd      
+   .byte 0xfd    ; $3518 fd      
    ori $fd       ; $3519 f6 fd   
-   ???           ; $351b 20      
+   .byte 0x20    ; $351b 20      
    nop           ; $351c 00      
-   ???           ; $351d 20      
+   .byte 0x20    ; $351d 20      
    nop           ; $351e 00      
    stc           ; $351f 37      
    nop           ; $3520 00      
@@ -10269,7 +10217,7 @@ $02da 04         inr b         ; ;COLD
    dcr d         ; $3529 15      
    cpi $15       ; $352a fe 15   
    cpi $3c       ; $352c fe 3c   
-   ???           ; $352e fd      
+   .byte 0xfd    ; $352e fd      
    dcr d         ; $352f 15      
    cpi $2c       ; $3530 fe 2c   
    inx b         ; $3532 03      
@@ -10379,7 +10327,7 @@ $02da 04         inr b         ; ;COLD
    adc h         ; $359f 8c      
    mov m,l       ; $35a0 75      
    sub h         ; $35a1 94      
-   ???           ; $35a2 10      
+   .byte 0x10    ; $35a2 10      
    mov m,h       ; $35a3 74      
    mov h,l       ; $35a4 65      
    mov m,h       ; $35a5 74      
@@ -10504,7 +10452,7 @@ $02da 04         inr b         ; ;COLD
    mvi m,$cd     ; $3630 36 cd   
    in $1a        ; $3632 db 1a   
    sbb d         ; $3634 9a      
-   ???           ; $3635 38      
+   .byte 0x38    ; $3635 38      
    call $1ac4    ; $3636 cd c4 1a
    dcr b         ; $3639 05      
    mov d,m       ; $363a 56      
@@ -10576,8 +10524,8 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $369a 0a      
    lxi b,$6680   ; $369b 01 80 66
    dcr b         ; $369e 05      
-   ???           ; $369f d9      
-   ???           ; $36a0 08      
+   .byte 0xd9    ; $369f d9      
+   .byte 0x08    ; $36a0 08      
    sub b         ; $36a1 90      
    ldax b        ; $36a2 0a      
    ora c         ; $36a3 b1      
@@ -10620,7 +10568,7 @@ $02da 04         inr b         ; ;COLD
    mov h,m       ; $36d9 66      
    dcr b         ; $36da 05      
    rz            ; $36db c8      
-   ???           ; $36dc 08      
+   .byte 0x08    ; $36dc 08      
    dcr d         ; $36dd 15      
    inx b         ; $36de 03      
    lxi b,$c865   ; $36df 01 65 c8
@@ -10649,7 +10597,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $3705 03      
    cz $9036      ; $3706 cc 36 90
    ldax b        ; $3709 0a      
-   ???           ; $370a 10      
+   .byte 0x10    ; $370a 10      
    stc           ; $370b 37      
    di            ; $370c f3      
    mvi c,$f4     ; $370d 0e f4   
@@ -10666,7 +10614,7 @@ $02da 04         inr b         ; ;COLD
    stc           ; $3721 37      
    call $1adb    ; $3722 cd db 1a
    add m         ; $3725 86      
-   ???           ; $3726 20      
+   .byte 0x20    ; $3726 20      
    call $1ac4    ; $3727 cd c4 1a
    lxi b,$1e6d   ; $372a 01 6d 1e
    stc           ; $372d 37      
@@ -10686,8 +10634,8 @@ $02da 04         inr b         ; ;COLD
    dcx b         ; $373e 0b      
    mov h,m       ; $373f 66      
    dcr b         ; $3740 05      
-   ???           ; $3741 d9      
-   ???           ; $3742 08      
+   .byte 0xd9    ; $3741 d9      
+   .byte 0x08    ; $3742 08      
    mov h,d       ; $3743 62      
    inx b         ; $3744 03      
    dcx h         ; $3745 2b      
@@ -10696,8 +10644,8 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $3748 0a      
    mov h,m       ; $3749 66      
    dcr b         ; $374a 05      
-   ???           ; $374b d9      
-   ???           ; $374c 08      
+   .byte 0xd9    ; $374b d9      
+   .byte 0x08    ; $374c 08      
    mov h,d       ; $374d 62      
    inx b         ; $374e 03      
    dcx h         ; $374f 2b      
@@ -10706,8 +10654,8 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $3752 0a      
    mov h,m       ; $3753 66      
    dcr b         ; $3754 05      
-   ???           ; $3755 d9      
-   ???           ; $3756 08      
+   .byte 0xd9    ; $3755 d9      
+   .byte 0x08    ; $3756 08      
    mov h,d       ; $3757 62      
    inx b         ; $3758 03      
    dcx h         ; $3759 2b      
@@ -10716,8 +10664,8 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $375c 0a      
    mov h,m       ; $375d 66      
    dcr b         ; $375e 05      
-   ???           ; $375f d9      
-   ???           ; $3760 08      
+   .byte 0xd9    ; $375f d9      
+   .byte 0x08    ; $3760 08      
    mov h,d       ; $3761 62      
    inx b         ; $3762 03      
    dcx h         ; $3763 2b      
@@ -10725,8 +10673,8 @@ $02da 04         inr b         ; ;COLD
    mvi l,$0b     ; $3765 2e 0b   
    mov h,m       ; $3767 66      
    dcr b         ; $3768 05      
-   ???           ; $3769 d9      
-   ???           ; $376a 08      
+   .byte 0xd9    ; $3769 d9      
+   .byte 0x08    ; $376a 08      
    mov h,d       ; $376b 62      
    inx b         ; $376c 03      
    dcx h         ; $376d 2b      
@@ -10735,8 +10683,8 @@ $02da 04         inr b         ; ;COLD
    dcx b         ; $3770 0b      
    mov h,m       ; $3771 66      
    dcr b         ; $3772 05      
-   ???           ; $3773 d9      
-   ???           ; $3774 08      
+   .byte 0xd9    ; $3773 d9      
+   .byte 0x08    ; $3774 08      
    dcr d         ; $3775 15      
    inx b         ; $3776 03      
    lxi b,$2a6f   ; $3777 01 6f 2a
@@ -10798,18 +10746,18 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $37c6 03      
    mov h,m       ; $37c7 66      
    dcr b         ; $37c8 05      
-   ???           ; $37c9 fd      
-   ???           ; $37ca 08      
+   .byte 0xfd    ; $37c9 fd      
+   .byte 0x08    ; $37ca 08      
    mvi d,$37     ; $37cb 16 37   
-   ???           ; $37cd d9      
-   ???           ; $37ce 08      
+   .byte 0xd9    ; $37cd d9      
+   .byte 0x08    ; $37ce 08      
    rst 5         ; $37cf ef      
    mvi m,$c8     ; $37d0 36 c8   
-   ???           ; $37d2 08      
+   .byte 0x08    ; $37d2 08      
    mov a,d       ; $37d3 7a      
    ldax b        ; $37d4 0a      
    mov h,e       ; $37d5 63      
-   ???           ; $37d6 38      
+   .byte 0x38    ; $37d6 38      
    mov c,l       ; $37d7 4d      
    mvi m,$d3     ; $37d8 36 d3   
    inx b         ; $37da 03      
@@ -10842,7 +10790,7 @@ $02da 04         inr b         ; ;COLD
    mov l,b       ; $37fd 68      
    ldax b        ; $37fe 0a      
    mov e,e       ; $37ff 5b      
-   ???           ; $3800 38      
+   .byte 0x38    ; $3800 38      
    out $03       ; $3801 d3 03   
    dcx h         ; $3803 2b      
    ldax b        ; $3804 0a      
@@ -10853,14 +10801,14 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $3809 7a      
    ldax b        ; $380a 0a      
    dcr d         ; $380b 15      
-   ???           ; $380c 38      
+   .byte 0x38    ; $380c 38      
    dcx h         ; $380d 2b      
    ldax b        ; $380e 0a      
    mvi b,$00     ; $380f 06 00   
    mov l,b       ; $3811 68      
    ldax b        ; $3812 0a      
    mov e,e       ; $3813 5b      
-   ???           ; $3814 38      
+   .byte 0x38    ; $3814 38      
    out $03       ; $3815 d3 03   
    dcx h         ; $3817 2b      
    ldax b        ; $3818 0a      
@@ -10873,12 +10821,12 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $3820 0a      
    mov c,d       ; $3821 4a      
    lxi d,$0566   ; $3822 11 66 05
-   ???           ; $3825 d9      
-   ???           ; $3826 08      
+   .byte 0xd9    ; $3825 d9      
+   .byte 0x08    ; $3826 08      
    mov a,d       ; $3827 7a      
    ldax b        ; $3828 0a      
    stc           ; $3829 37      
-   ???           ; $382a 38      
+   .byte 0x38    ; $382a 38      
    mov h,d       ; $382b 62      
    inx b         ; $382c 03      
    add d         ; $382d 82      
@@ -10888,18 +10836,18 @@ $02da 04         inr b         ; ;COLD
    lda $6813     ; $3831 3a 13 68
    ldax b        ; $3834 0a      
    mov e,e       ; $3835 5b      
-   ???           ; $3836 38      
+   .byte 0x38    ; $3836 38      
    mvi l,$37     ; $3837 2e 37   
    mov a,d       ; $3839 7a      
    ldax b        ; $383a 0a      
    mov b,e       ; $383b 43      
-   ???           ; $383c 38      
+   .byte 0x38    ; $383c 38      
    mov a,e       ; $383d 7b      
    stc           ; $383e 37      
    mov l,b       ; $383f 68      
    ldax b        ; $3840 0a      
    mov e,e       ; $3841 5b      
-   ???           ; $3842 38      
+   .byte 0x38    ; $3842 38      
    out $03       ; $3843 d3 03   
    dcx h         ; $3845 2b      
    ldax b        ; $3846 0a      
@@ -10910,7 +10858,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $384b 7a      
    ldax b        ; $384c 0a      
    mov e,c       ; $384d 59      
-   ???           ; $384e 38      
+   .byte 0x38    ; $384e 38      
    shld $2b37    ; $384f 22 37 2b
    ldax b        ; $3852 0a      
    dcr b         ; $3853 05      
@@ -10918,7 +10866,7 @@ $02da 04         inr b         ; ;COLD
    mov l,b       ; $3855 68      
    ldax b        ; $3856 0a      
    mov e,e       ; $3857 5b      
-   ???           ; $3858 38      
+   .byte 0x38    ; $3858 38      
    jc $100e      ; $3859 da 0e 10
    inr b         ; $385c 04      
    mov c,d       ; $385d 4a      
@@ -10945,28 +10893,28 @@ $02da 04         inr b         ; ;COLD
    ora m         ; $387a b6      
    inx b         ; $387b 03      
    jm $c804      ; $387c fa 04 c8
-   ???           ; $387f 08      
+   .byte 0x08    ; $387f 08      
    sub b         ; $3880 90      
    ldax b        ; $3881 0a      
    adc b         ; $3882 88      
-   ???           ; $3883 38      
+   .byte 0x38    ; $3883 38      
    di            ; $3884 f3      
    mvi c,$f4     ; $3885 0e f4   
    mvi m,$15     ; $3887 36 15   
    inx b         ; $3889 03      
    lxi b,$6760   ; $388a 01 60 67
-   ???           ; $388d 38      
+   .byte 0x38    ; $388d 38      
    call $1adb    ; $388e cd db 1a
    jp $cd3b      ; $3891 f2 3b cd
    cnz $011a     ; $3894 c4 1a 01
    mov m,l       ; $3897 75      
    adc d         ; $3898 8a      
-   ???           ; $3899 38      
+   .byte 0x38    ; $3899 38      
    call $02e4    ; $389a cd e4 02
    out $03       ; $389d d3 03   
    mov h,m       ; $389f 66      
    dcr d         ; $38a0 15      
-   ???           ; $38a1 ed      
+   .byte 0xed    ; $38a1 ed      
    mvi d,$e6     ; $38a2 16 e6   
    mvi c,$f4     ; $38a4 0e f4   
    mvi m,$d3     ; $38a6 36 d3   
@@ -10975,7 +10923,7 @@ $02da 04         inr b         ; ;COLD
    inx d         ; $38aa 13      
    out $03       ; $38ab d3 03   
    mov l,e       ; $38ad 6b      
-   ???           ; $38ae 38      
+   .byte 0x38    ; $38ae 38      
    dad b         ; $38af 09      
    inx b         ; $38b0 03      
    mov h,d       ; $38b1 62      
@@ -10983,16 +10931,16 @@ $02da 04         inr b         ; ;COLD
    cz $7a36      ; $38b3 cc 36 7a
    ldax b        ; $38b6 0a      
    cmp e         ; $38b7 bb      
-   ???           ; $38b8 38      
+   .byte 0x38    ; $38b8 38      
    ora h         ; $38b9 b4      
    stc           ; $38ba 37      
    adc m         ; $38bb 8e      
-   ???           ; $38bc 38      
+   .byte 0x38    ; $38bc 38      
    rst 5         ; $38bd ef      
    mvi m,$90     ; $38be 36 90   
    ldax b        ; $38c0 0a      
    xthl          ; $38c1 e3      
-   ???           ; $38c2 38      
+   .byte 0x38    ; $38c2 38      
    dcx h         ; $38c3 2b      
    ldax b        ; $38c4 0a      
    lxi h,$a600   ; $38c5 21 00 a6
@@ -11028,7 +10976,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $38eb 7a      
    ldax b        ; $38ec 0a      
    rst 6         ; $38ed f7      
-   ???           ; $38ee 38      
+   .byte 0x38    ; $38ee 38      
    out $03       ; $38ef d3 03   
    mov a,e       ; $38f1 7b      
    inx d         ; $38f2 13      
@@ -11056,7 +11004,7 @@ $02da 04         inr b         ; ;COLD
    inr b         ; $390e 04      
    mov c,e       ; $390f 4b      
    inx d         ; $3910 13      
-   ???           ; $3911 dd      
+   .byte 0xdd    ; $3911 dd      
    inx d         ; $3912 13      
    mvi a,$18     ; $3913 3e 18   
    rlc           ; $3915 07      
@@ -11066,16 +11014,16 @@ $02da 04         inr b         ; ;COLD
    mov m,e       ; $3919 73      
    mov l,a       ; $391a 6f      
    mov l,e       ; $391b 6b      
-   ???           ; $391c 20      
-   ???           ; $391d ed      
+   .byte 0x20    ; $391c 20      
+   .byte 0xed    ; $391d ed      
    mvi d,$15     ; $391e 16 15   
    inx b         ; $3920 03      
    lxi b,$fd79   ; $3921 01 79 fd
-   ???           ; $3924 38      
+   .byte 0x38    ; $3924 38      
    call $02e4    ; $3925 cd e4 02
    mvi a,$18     ; $3928 3e 18   
    dcr c         ; $392a 0d      
-   ???           ; $392b 20      
+   .byte 0x20    ; $392b 20      
    mov m,a       ; $392c 77      
    mov a,c       ; $392d 79      
    mov h,a       ; $392e 67      
@@ -11087,7 +11035,7 @@ $02da 04         inr b         ; ;COLD
    mov m,h       ; $3934 74      
    mov m,e       ; $3935 73      
    mov m,c       ; $3936 71      
-   ???           ; $3937 20      
+   .byte 0x20    ; $3937 20      
    dcr d         ; $3938 15      
    inx b         ; $3939 03      
    lxi b,$214e   ; $393a 01 4e 21
@@ -11122,7 +11070,7 @@ $02da 04         inr b         ; ;COLD
    dad sp        ; $3964 39      
    mvi a,$18     ; $3965 3e 18   
    inx b         ; $3967 03      
-   ???           ; $3968 20      
+   .byte 0x20    ; $3968 20      
    mov l,m       ; $3969 6e      
    mov h,l       ; $396a 65      
    dcr h         ; $396b 25      
@@ -11139,7 +11087,7 @@ $02da 04         inr b         ; ;COLD
    dcr h         ; $3977 25      
    dad sp        ; $3978 39      
    mvi a,$18     ; $3979 3e 18   
-   ???           ; $397b 08      
+   .byte 0x08    ; $397b 08      
    mov a,m       ; $397c 7e      
    mov h,c       ; $397d 61      
    mov m,e       ; $397e 73      
@@ -11188,8 +11136,8 @@ $02da 04         inr b         ; ;COLD
    mov d,e       ; $39af 53      
    mov d,l       ; $39b0 55      
    mov c,l       ; $39b1 4d      
-   ???           ; $39b2 fd      
-   ???           ; $39b3 38      
+   .byte 0xfd    ; $39b2 fd      
+   .byte 0x38    ; $39b3 38      
    call $02e4    ; $39b4 cd e4 02
    mov h,d       ; $39b7 62      
    inx b         ; $39b8 03      
@@ -11231,7 +11179,7 @@ $02da 04         inr b         ; ;COLD
    dad sp        ; $39ec 39      
    call $02e4    ; $39ed cd e4 02
    mvi a,$18     ; $39f0 3e 18   
-   ???           ; $39f2 20      
+   .byte 0x20    ; $39f2 20      
    mov a,d       ; $39f3 7a      
    mov h,c       ; $39f4 61      
    mov h,a       ; $39f5 67      
@@ -11240,7 +11188,7 @@ $02da 04         inr b         ; ;COLD
    mov a,d       ; $39f8 7a      
    mov l,e       ; $39f9 6b      
    mov h,c       ; $39fa 61      
-   ???           ; $39fb 20      
+   .byte 0x20    ; $39fb 20      
    mov m,a       ; $39fc 77      
    mov l,a       ; $39fd 6f      
    mov a,d       ; $39fe 7a      
@@ -11249,17 +11197,17 @@ $02da 04         inr b         ; ;COLD
    hlt           ; $3a01 76      
    mov l,m       ; $3a02 6e      
    mov h,c       ; $3a03 61      
-   ???           ; $3a04 20      
+   .byte 0x20    ; $3a04 20      
    mov m,h       ; $3a05 74      
    mov l,a       ; $3a06 6f      
    mov l,h       ; $3a07 6c      
    mov a,b       ; $3a08 78      
    mov l,e       ; $3a09 6b      
    mov l,a       ; $3a0a 6f      
-   ???           ; $3a0b 20      
+   .byte 0x20    ; $3a0b 20      
    mov m,b       ; $3a0c 70      
    mov l,a       ; $3a0d 6f      
-   ???           ; $3a0e 20      
+   .byte 0x20    ; $3a0e 20      
    mov h,c       ; $3a0f 61      
    mov h,h       ; $3a10 64      
    mvi l,$20     ; $3a11 2e 20   
@@ -11297,14 +11245,14 @@ $02da 04         inr b         ; ;COLD
    dcx h         ; $3a3e 2b      
    ldax b        ; $3a3f 0a      
    lxi b,$9480   ; $3a40 01 80 94
-   ???           ; $3a43 10      
+   .byte 0x10    ; $3a43 10      
    mov a,d       ; $3a44 7a      
    ldax b        ; $3a45 0a      
    mov c,m       ; $3a46 4e      
    lda $137b     ; $3a47 3a 7b 13
    mov l,b       ; $3a4a 68      
    ldax b        ; $3a4b 0a      
-   ???           ; $3a4c 28      
+   .byte 0x28    ; $3a4c 28      
    lda $0382     ; $3a4d 3a 82 03
    adc l         ; $3a50 8d      
    inx b         ; $3a51 03      
@@ -11322,7 +11270,7 @@ $02da 04         inr b         ; ;COLD
    mov d,a       ; $3a65 57      
    inr m         ; $3a66 34      
    sub h         ; $3a67 94      
-   ???           ; $3a68 10      
+   .byte 0x10    ; $3a68 10      
    mov a,d       ; $3a69 7a      
    ldax b        ; $3a6a 0a      
    add c         ; $3a6b 81      
@@ -11404,8 +11352,8 @@ $02da 04         inr b         ; ;COLD
    dad sp        ; $3ad7 39      
    call $02e4    ; $3ad8 cd e4 02
    mov l,b       ; $3adb 68      
-   ???           ; $3adc 18      
-   ???           ; $3add dd      
+   .byte 0x18    ; $3adc 18      
+   .byte 0xdd    ; $3add dd      
    inx d         ; $3ade 13      
    out $03       ; $3adf d3 03   
    xri $01       ; $3ae1 ee 01   
@@ -11417,10 +11365,10 @@ $02da 04         inr b         ; ;COLD
    mov l,b       ; $3aec 68      
    mov l,a       ; $3aed 6f      
    mov h,h       ; $3aee 64      
-   ???           ; $3aef 20      
+   .byte 0x20    ; $3aef 20      
    mov a,d       ; $3af0 7a      
    mov h,c       ; $3af1 61      
-   ???           ; $3af2 20      
+   .byte 0x20    ; $3af2 20      
    mov b,m       ; $3af3 46      
    mov b,l       ; $3af4 45      
    mov c,m       ; $3af5 4e      
@@ -11452,13 +11400,13 @@ $02da 04         inr b         ; ;COLD
    mvi m,$2b     ; $3b19 36 2b   
    ldax b        ; $3b1b 0a      
    add m         ; $3b1c 86      
-   ???           ; $3b1d 20      
+   .byte 0x20    ; $3b1d 20      
    sub e         ; $3b1e 93      
-   ???           ; $3b1f 38      
+   .byte 0x38    ; $3b1f 38      
    dcx h         ; $3b20 2b      
    ldax b        ; $3b21 0a      
    sbb d         ; $3b22 9a      
-   ???           ; $3b23 38      
+   .byte 0x38    ; $3b23 38      
    mvi m,$36     ; $3b24 36 36   
    mov l,l       ; $3b26 6d      
    mvi m,$3e     ; $3b27 36 3e   
@@ -11480,7 +11428,7 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $3b3b 0a      
    mov b,b       ; $3b3c 40      
    dcx sp        ; $3b3d 3b      
-   ???           ; $3b3e ed      
+   .byte 0xed    ; $3b3e ed      
    dad sp        ; $3b3f 39      
    rst 7         ; $3b40 ff      
    mvi c,$0d     ; $3b41 0e 0d   
@@ -11496,23 +11444,23 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $3b51 03      
    mov h,m       ; $3b52 66      
    dcr d         ; $3b53 15      
-   ???           ; $3b54 ed      
+   .byte 0xed    ; $3b54 ed      
    mvi d,$3e     ; $3b55 16 3e   
-   ???           ; $3b57 18      
-   ???           ; $3b58 10      
-   ???           ; $3b59 20      
+   .byte 0x18    ; $3b57 18      
+   .byte 0x10    ; $3b58 10      
+   .byte 0x20    ; $3b59 20      
    inr e         ; $3b5a 1c      
    inr e         ; $3b5b 1c      
    mvi c,$20     ; $3b5c 0e 20   
    mov l,l       ; $3b5e 6d      
    mov l,h       ; $3b5f 6c      
-   ???           ; $3b60 20      
-   ???           ; $3b61 28      
+   .byte 0x20    ; $3b60 20      
+   .byte 0x28    ; $3b61 28      
    mov e,c       ; $3b62 59      
    cma           ; $3b63 2f      
    mvi l,$2e     ; $3b64 2e 2e   
    mvi l,$29     ; $3b66 2e 29   
-   ???           ; $3b68 20      
+   .byte 0x20    ; $3b68 20      
    mov d,h       ; $3b69 54      
    dcr d         ; $3b6a 15      
    out $03       ; $3b6b d3 03   
@@ -11523,7 +11471,7 @@ $02da 04         inr b         ; ;COLD
    mov e,c       ; $3b71 59      
    nop           ; $3b72 00      
    sub h         ; $3b73 94      
-   ???           ; $3b74 10      
+   .byte 0x10    ; $3b74 10      
    mov a,d       ; $3b75 7a      
    ldax b        ; $3b76 0a      
    mov a,l       ; $3b77 7d      
@@ -11536,7 +11484,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $3b7e 03      
    dcx h         ; $3b7f 2b      
    ldax b        ; $3b80 0a      
-   ???           ; $3b81 20      
+   .byte 0x20    ; $3b81 20      
    nop           ; $3b82 00      
    ana l         ; $3b83 a5      
    lda $01e1     ; $3b84 3a e1 01
@@ -11585,14 +11533,14 @@ $02da 04         inr b         ; ;COLD
    lda $36e3     ; $3bc0 3a e3 36
    sbb c         ; $3bc3 99      
    lda $39d5     ; $3bc4 3a d5 39
-   ???           ; $3bc7 20      
+   .byte 0x20    ; $3bc7 20      
    ral           ; $3bc8 17      
    rz            ; $3bc9 c8      
    mvi c,$33     ; $3bca 0e 33   
    inr b         ; $3bcc 04      
    dcx h         ; $3bcd 2b      
    ldax b        ; $3bce 0a      
-   ???           ; $3bcf 10      
+   .byte 0x10    ; $3bcf 10      
    nop           ; $3bd0 00      
    adc d         ; $3bd1 8a      
    dad h         ; $3bd2 29      
@@ -11650,7 +11598,7 @@ $02da 04         inr b         ; ;COLD
    dad b         ; $3c1e 09      
    cmp a         ; $3c1f bf      
    mvi c,$94     ; $3c20 0e 94   
-   ???           ; $3c22 10      
+   .byte 0x10    ; $3c22 10      
    mov a,d       ; $3c23 7a      
    ldax b        ; $3c24 0a      
    cma           ; $3c25 2f      
@@ -11681,7 +11629,7 @@ $02da 04         inr b         ; ;COLD
    pop h         ; $3c4a e1      
    dad sp        ; $3c4b 39      
    sub h         ; $3c4c 94      
-   ???           ; $3c4d 10      
+   .byte 0x10    ; $3c4d 10      
    mov c,d       ; $3c4e 4a      
    lxi d,$6f06   ; $3c4f 11 06 6f
    mov a,e       ; $3c52 7b      
@@ -11735,7 +11683,7 @@ $02da 04         inr b         ; ;COLD
    inr a         ; $3c94 3c      
    inx b         ; $3c95 03      
    inr b         ; $3c96 04      
-   ???           ; $3c97 20      
+   .byte 0x20    ; $3c97 20      
    ral           ; $3c98 17      
    rz            ; $3c99 c8      
    lda $3625     ; $3c9a 3a 25 36
@@ -11781,16 +11729,16 @@ $02da 04         inr b         ; ;COLD
    rrc           ; $3cca 0f      
    mov l,l       ; $3ccb 6d      
    mov l,h       ; $3ccc 6c      
-   ???           ; $3ccd 20      
+   .byte 0x20    ; $3ccd 20      
    inr e         ; $3cce 1c      
    inr e         ; $3ccf 1c      
    mvi c,$20     ; $3cd0 0e 20   
-   ???           ; $3cd2 28      
+   .byte 0x28    ; $3cd2 28      
    mov e,c       ; $3cd3 59      
    cma           ; $3cd4 2f      
    mvi l,$2e     ; $3cd5 2e 2e   
    mvi l,$29     ; $3cd7 2e 29   
-   ???           ; $3cd9 20      
+   .byte 0x20    ; $3cd9 20      
    mov d,h       ; $3cda 54      
    dcr d         ; $3cdb 15      
    out $03       ; $3cdc d3 03   
@@ -11801,7 +11749,7 @@ $02da 04         inr b         ; ;COLD
    mov e,c       ; $3ce2 59      
    nop           ; $3ce3 00      
    sub h         ; $3ce4 94      
-   ???           ; $3ce5 10      
+   .byte 0x10    ; $3ce5 10      
    mov a,d       ; $3ce6 7a      
    ldax b        ; $3ce7 0a      
    cpe $153c     ; $3ce8 ec 3c 15
@@ -11811,13 +11759,13 @@ $02da 04         inr b         ; ;COLD
    out $03       ; $3cf0 d3 03   
    dcx h         ; $3cf2 2b      
    ldax b        ; $3cf3 0a      
-   ???           ; $3cf4 20      
+   .byte 0x20    ; $3cf4 20      
    nop           ; $3cf5 00      
    rz            ; $3cf6 c8      
    mvi c,$29     ; $3cf7 0e 29   
    mvi l,$82     ; $3cf9 2e 82   
    inx b         ; $3cfb 03      
-   ???           ; $3cfc ed      
+   .byte 0xed    ; $3cfc ed      
    mvi d,$66     ; $3cfd 16 66   
    dcr d         ; $3cff 15      
    dad b         ; $3d00 09      
@@ -11829,7 +11777,7 @@ $02da 04         inr b         ; ;COLD
    dcr m         ; $3d08 35      
    rar           ; $3d09 1f      
    mvi l,$0b     ; $3d0a 2e 0b   
-   ???           ; $3d0c 08      
+   .byte 0x08    ; $3d0c 08      
    dcr a         ; $3d0d 3d      
    rz            ; $3d0e c8      
    mvi c,$d3     ; $3d0f 0e d3   
@@ -11864,16 +11812,16 @@ $02da 04         inr b         ; ;COLD
    mvi m,$2b     ; $3d41 36 2b   
    ldax b        ; $3d43 0a      
    jp $933b      ; $3d44 f2 3b 93
-   ???           ; $3d47 38      
+   .byte 0x38    ; $3d47 38      
    dcx h         ; $3d48 2b      
    ldax b        ; $3d49 0a      
    sbb d         ; $3d4a 9a      
-   ???           ; $3d4b 38      
+   .byte 0x38    ; $3d4b 38      
    mvi m,$36     ; $3d4c 36 36   
    dcx h         ; $3d4e 2b      
    ldax b        ; $3d4f 0a      
    add m         ; $3d50 86      
-   ???           ; $3d51 20      
+   .byte 0x20    ; $3d51 20      
    daa           ; $3d52 27      
    stc           ; $3d53 37      
    dcr h         ; $3d54 25      
@@ -11881,15 +11829,15 @@ $02da 04         inr b         ; ;COLD
    dcr b         ; $3d57 05      
    xthl          ; $3d58 e3      
    mvi m,$d9     ; $3d59 36 d9   
-   ???           ; $3d5b 08      
+   .byte 0x08    ; $3d5b 08      
    sub b         ; $3d5c 90      
    ldax b        ; $3d5d 0a      
    mov h,h       ; $3d5e 64      
    dcr a         ; $3d5f 3d      
-   ???           ; $3d60 ed      
+   .byte 0xed    ; $3d60 ed      
    dad sp        ; $3d61 39      
    push d        ; $3d62 d5      
-   ???           ; $3d63 10      
+   .byte 0x10    ; $3d63 10      
    stc           ; $3d64 37      
    inr a         ; $3d65 3c      
    dcr d         ; $3d66 15      
@@ -11937,7 +11885,7 @@ $02da 04         inr b         ; ;COLD
    sub c         ; $3da1 91      
    dcr a         ; $3da2 3d      
    call $0984    ; $3da3 cd 84 09
-   ???           ; $3da6 10      
+   .byte 0x10    ; $3da6 10      
    nop           ; $3da7 00      
    lxi b,$9b44   ; $3da8 01 44 9b
    dcr a         ; $3dab 3d      
@@ -11999,7 +11947,7 @@ $02da 04         inr b         ; ;COLD
    rrc           ; $3df7 0f      
    dcr b         ; $3df8 05      
    rz            ; $3df9 c8      
-   ???           ; $3dfa 08      
+   .byte 0x08    ; $3dfa 08      
    mov a,d       ; $3dfb 7a      
    ldax b        ; $3dfc 0a      
    inx b         ; $3dfd 03      
@@ -12009,10 +11957,10 @@ $02da 04         inr b         ; ;COLD
    out $03       ; $3e03 d3 03   
    dcx h         ; $3e05 2b      
    ldax b        ; $3e06 0a      
-   ???           ; $3e07 08      
+   .byte 0x08    ; $3e07 08      
    nop           ; $3e08 00      
    rz            ; $3e09 c8      
-   ???           ; $3e0a 08      
+   .byte 0x08    ; $3e0a 08      
    sub b         ; $3e0b 90      
    ldax b        ; $3e0c 0a      
    inx d         ; $3e0d 13      
@@ -12081,7 +12029,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $3e5c 03      
    dcx h         ; $3e5d 2b      
    ldax b        ; $3e5e 0a      
-   ???           ; $3e5f 10      
+   .byte 0x10    ; $3e5f 10      
    nop           ; $3e60 00      
    mov d,l       ; $3e61 55      
    inr b         ; $3e62 04      
@@ -12098,7 +12046,7 @@ $02da 04         inr b         ; ;COLD
    mov a,e       ; $3e6f 7b      
    mvi a,$2b     ; $3e70 3e 2b   
    ldax b        ; $3e72 0a      
-   ???           ; $3e73 10      
+   .byte 0x10    ; $3e73 10      
    nop           ; $3e74 00      
    mov c,d       ; $3e75 4a      
    inr b         ; $3e76 04      
@@ -12206,7 +12154,7 @@ $02da 04         inr b         ; ;COLD
    inr d         ; $3f1e 14      
    ana b         ; $3f1f a0      
    dcr b         ; $3f20 05      
-   ???           ; $3f21 10      
+   .byte 0x10    ; $3f21 10      
    inr b         ; $3f22 04      
    mov a,m       ; $3f23 7e      
    dcr b         ; $3f24 05      
@@ -12474,7 +12422,7 @@ $02da 04         inr b         ; ;COLD
    mov l,h       ; $409c 6c      
    mov l,a       ; $409d 6f      
    mov l,e       ; $409e 6b      
-   ???           ; $409f 20      
+   .byte 0x20    ; $409f 20      
    sui $2a       ; $40a0 d6 2a   
    add h         ; $40a2 84      
    dad b         ; $40a3 09      
@@ -12497,9 +12445,9 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $40b6 03      
    mov l,m       ; $40b7 6e      
    mov h,l       ; $40b8 65      
-   ???           ; $40b9 20      
+   .byte 0x20    ; $40b9 20      
    mvi a,$18     ; $40ba 3e 18   
-   ???           ; $40bc 08      
+   .byte 0x08    ; $40bc 08      
    mov l,c       ; $40bd 69      
    mov a,d       ; $40be 7a      
    mov l,l       ; $40bf 6d      
@@ -12521,7 +12469,7 @@ $02da 04         inr b         ; ;COLD
    call $02e4    ; $40d1 cd e4 02
    dcx h         ; $40d4 2b      
    ldax b        ; $40d5 0a      
-   ???           ; $40d6 08      
+   .byte 0x08    ; $40d6 08      
    nop           ; $40d7 00      
    adc c         ; $40d8 89      
    dcr a         ; $40d9 3d      
@@ -12546,7 +12494,7 @@ $02da 04         inr b         ; ;COLD
    cpo $cd40     ; $40f4 e4 40 cd
    in $1a        ; $40f7 db 1a   
    sub h         ; $40f9 94      
-   ???           ; $40fa 10      
+   .byte 0x10    ; $40fa 10      
    call $1ac4    ; $40fb cd c4 1a
    stax b        ; $40fe 02      
    mov d,h       ; $40ff 54      
@@ -12570,7 +12518,7 @@ $02da 04         inr b         ; ;COLD
    dcx h         ; $4116 2b      
    ldax b        ; $4117 0a      
    sub h         ; $4118 94      
-   ???           ; $4119 10      
+   .byte 0x10    ; $4119 10      
    ei            ; $411a fb      
    mov b,b       ; $411b 40      
    dcr d         ; $411c 15      
@@ -12625,7 +12573,7 @@ $02da 04         inr b         ; ;COLD
    dcx b         ; $4156 0b      
    dcr a         ; $4157 3d      
    mov b,c       ; $4158 41      
-   ???           ; $4159 10      
+   .byte 0x10    ; $4159 10      
    inr b         ; $415a 04      
    dcr d         ; $415b 15      
    inx b         ; $415c 03      
@@ -12788,7 +12736,7 @@ $02da 04         inr b         ; ;COLD
    xthl          ; $4235 e3      
    mvi a,$a0     ; $4236 3e a0   
    dcr b         ; $4238 05      
-   ???           ; $4239 10      
+   .byte 0x10    ; $4239 10      
    inr b         ; $423a 04      
    pop b         ; $423b c1      
    inr b         ; $423c 04      
@@ -12830,7 +12778,7 @@ $02da 04         inr b         ; ;COLD
    inr d         ; $426c 14      
    jpo $2b07     ; $426d e2 07 2b
    ldax b        ; $4270 0a      
-   ???           ; $4271 20      
+   .byte 0x20    ; $4271 20      
    nop           ; $4272 00      
    rz            ; $4273 c8      
    mvi c,$51     ; $4274 0e 51   
@@ -12904,7 +12852,7 @@ $02da 04         inr b         ; ;COLD
    inx b         ; $42d3 03      
    ana b         ; $42d4 a0      
    dcr b         ; $42d5 05      
-   ???           ; $42d6 10      
+   .byte 0x10    ; $42d6 10      
    inr b         ; $42d7 04      
    mov h,m       ; $42d8 66      
    dcr b         ; $42d9 05      
@@ -12943,7 +12891,7 @@ $02da 04         inr b         ; ;COLD
    ldax b        ; $430b 0a      
    dcx h         ; $430c 2b      
    ldax b        ; $430d 0a      
-   ???           ; $430e 28      
+   .byte 0x28    ; $430e 28      
    nop           ; $430f 00      
    rz            ; $4310 c8      
    mvi c,$51     ; $4311 0e 51   
@@ -12968,7 +12916,7 @@ $02da 04         inr b         ; ;COLD
    hlt           ; $4328 76      
    mov l,c       ; $4329 69      
    mov l,l       ; $432a 6d      
-   ???           ; $432b 20      
+   .byte 0x20    ; $432b 20      
    mov m,a       ; $432c 77      
    mov m,e       ; $432d 73      
    mov m,h       ; $432e 74      
@@ -13052,7 +13000,7 @@ $02da 04         inr b         ; ;COLD
    mov l,b       ; $438b 68      
    dcr a         ; $438c 3d      
    call $02e4    ; $438d cd e4 02
-   ???           ; $4390 d9      
+   .byte 0xd9    ; $4390 d9      
    inr e         ; $4391 1c      
    mov a,d       ; $4392 7a      
    ldax b        ; $4393 0a      
@@ -13067,7 +13015,7 @@ $02da 04         inr b         ; ;COLD
    rz            ; $439e c8      
    mvi c,$de     ; $439f 0e de   
    inr b         ; $43a1 04      
-   ???           ; $43a2 fd      
+   .byte 0xfd    ; $43a2 fd      
    inr l         ; $43a3 2c      
    add d         ; $43a4 82      
    inx b         ; $43a5 03      
@@ -13112,9 +13060,9 @@ $02da 04         inr b         ; ;COLD
    rlc           ; $43d7 07      
    mov e,b       ; $43d8 58      
    dcr a         ; $43d9 3d      
-   ???           ; $43da 20      
-   ???           ; $43db 20      
-   ???           ; $43dc 20      
+   .byte 0x20    ; $43da 20      
+   .byte 0x20    ; $43db 20      
+   .byte 0x20    ; $43dc 20      
    mov e,c       ; $43dd 59      
    dcr a         ; $43de 3d      
    dcx h         ; $43df 2b      
@@ -13126,7 +13074,7 @@ $02da 04         inr b         ; ;COLD
    mov h,m       ; $43e9 66      
    dcr d         ; $43ea 15      
    cnz $3e16     ; $43eb c4 16 3e
-   ???           ; $43ee 18      
+   .byte 0x18    ; $43ee 18      
    mvi a,$46     ; $43ef 3e 46   
    inx sp        ; $43f1 33      
    cma           ; $43f2 2f      
@@ -13141,21 +13089,21 @@ $02da 04         inr b         ; ;COLD
    sta $492d     ; $43fc 32 2d 49
    mov c,m       ; $43ff 4e      
    mov d,e       ; $4400 53      
-   ???           ; $4401 20      
+   .byte 0x20    ; $4401 20      
    mov b,m       ; $4402 46      
    sta $532d     ; $4403 32 2d 53
    mov d,b       ; $4406 50      
    mov c,h       ; $4407 4c      
    mov c,c       ; $4408 49      
    mov d,h       ; $4409 54      
-   ???           ; $440a 20      
+   .byte 0x20    ; $440a 20      
    mov e,m       ; $440b 5e      
    mov c,a       ; $440c 4f      
    dcr l         ; $440d 2d      
    mov b,h       ; $440e 44      
    mov b,l       ; $440f 45      
    mov c,h       ; $4410 4c      
-   ???           ; $4411 20      
+   .byte 0x20    ; $4411 20      
    mov e,m       ; $4412 5e      
    mov a,m       ; $4413 7e      
    dcr l         ; $4414 2d      
@@ -13166,7 +13114,7 @@ $02da 04         inr b         ; ;COLD
    mov c,a       ; $4419 4f      
    mov d,d       ; $441a 52      
    mov b,h       ; $441b 44      
-   ???           ; $441c 20      
+   .byte 0x20    ; $441c 20      
    mov m,b       ; $441d 70      
    mov m,e       ; $441e 73      
    dcr l         ; $441f 2d      
@@ -13177,7 +13125,7 @@ $02da 04         inr b         ; ;COLD
    mov c,c       ; $4424 49      
    mov c,m       ; $4425 4e      
    mov b,l       ; $4426 45      
-   ???           ; $4427 20      
+   .byte 0x20    ; $4427 20      
    mov b,m       ; $4428 46      
    inr m         ; $4429 34      
    dcr l         ; $442a 2d      
@@ -13214,53 +13162,53 @@ $02da 04         inr b         ; ;COLD
    sui $16       ; $444f d6 16   
    mvi a,$18     ; $4451 3e 18   
    dad d         ; $4453 19      
-   ???           ; $4454 20      
-   ???           ; $4455 20      
-   ???           ; $4456 20      
-   ???           ; $4457 20      
-   ???           ; $4458 20      
-   ???           ; $4459 20      
-   ???           ; $445a 20      
-   ???           ; $445b 20      
-   ???           ; $445c 20      
-   ???           ; $445d 20      
-   ???           ; $445e 20      
+   .byte 0x20    ; $4454 20      
+   .byte 0x20    ; $4455 20      
+   .byte 0x20    ; $4456 20      
+   .byte 0x20    ; $4457 20      
+   .byte 0x20    ; $4458 20      
+   .byte 0x20    ; $4459 20      
+   .byte 0x20    ; $445a 20      
+   .byte 0x20    ; $445b 20      
+   .byte 0x20    ; $445c 20      
+   .byte 0x20    ; $445d 20      
+   .byte 0x20    ; $445e 20      
    inx b         ; $445f 03      
-   ???           ; $4460 20      
-   ???           ; $4461 20      
-   ???           ; $4462 20      
-   ???           ; $4463 20      
-   ???           ; $4464 20      
-   ???           ; $4465 20      
-   ???           ; $4466 20      
-   ???           ; $4467 20      
-   ???           ; $4468 20      
-   ???           ; $4469 20      
-   ???           ; $446a 20      
-   ???           ; $446b 20      
-   ???           ; $446c 20      
+   .byte 0x20    ; $4460 20      
+   .byte 0x20    ; $4461 20      
+   .byte 0x20    ; $4462 20      
+   .byte 0x20    ; $4463 20      
+   .byte 0x20    ; $4464 20      
+   .byte 0x20    ; $4465 20      
+   .byte 0x20    ; $4466 20      
+   .byte 0x20    ; $4467 20      
+   .byte 0x20    ; $4468 20      
+   .byte 0x20    ; $4469 20      
+   .byte 0x20    ; $446a 20      
+   .byte 0x20    ; $446b 20      
+   .byte 0x20    ; $446c 20      
    mov h,m       ; $446d 66      
    dcr d         ; $446e 15      
    out $03       ; $446f d3 03   
    sui $16       ; $4471 d6 16   
    mvi a,$18     ; $4473 3e 18   
    dad d         ; $4475 19      
-   ???           ; $4476 20      
-   ???           ; $4477 20      
+   .byte 0x20    ; $4476 20      
+   .byte 0x20    ; $4477 20      
    ral           ; $4478 17      
    ral           ; $4479 17      
-   ???           ; $447a 20      
+   .byte 0x20    ; $447a 20      
    mvi b,$17     ; $447b 06 17   
    ral           ; $447d 17      
    lxi d,$1117   ; $447e 11 17 11
    mvi b,$17     ; $4481 06 17   
    ral           ; $4483 17      
-   ???           ; $4484 20      
-   ???           ; $4485 20      
+   .byte 0x20    ; $4484 20      
+   .byte 0x20    ; $4485 20      
    ral           ; $4486 17      
    ral           ; $4487 17      
-   ???           ; $4488 20      
-   ???           ; $4489 20      
+   .byte 0x20    ; $4488 20      
+   .byte 0x20    ; $4489 20      
    ral           ; $448a 17      
    lxi d,$1706   ; $448b 11 06 17
    ral           ; $448e 17      
@@ -13270,19 +13218,19 @@ $02da 04         inr b         ; ;COLD
    sui $16       ; $4493 d6 16   
    mvi a,$18     ; $4495 3e 18   
    dad d         ; $4497 19      
-   ???           ; $4498 20      
+   .byte 0x20    ; $4498 20      
    inr b         ; $4499 04      
    lxi d,$1006   ; $449a 11 06 10
    mvi b,$17     ; $449d 06 17   
-   ???           ; $449f 20      
-   ???           ; $44a0 20      
+   .byte 0x20    ; $449f 20      
+   .byte 0x20    ; $44a0 20      
    ral           ; $44a1 17      
    lxi d,$7f17   ; $44a2 11 17 7f
    ral           ; $44a5 17      
-   ???           ; $44a6 20      
+   .byte 0x20    ; $44a6 20      
    inr b         ; $44a7 04      
    lxi d,$1006   ; $44a8 11 06 10
-   ???           ; $44ab 20      
+   .byte 0x20    ; $44ab 20      
    ral           ; $44ac 17      
    lxi d,$7f17   ; $44ad 11 17 7f
    ral           ; $44b0 17      
@@ -13292,7 +13240,7 @@ $02da 04         inr b         ; ;COLD
    sui $16       ; $44b5 d6 16   
    mvi a,$18     ; $44b7 3e 18   
    dad d         ; $44b9 19      
-   ???           ; $44ba 20      
+   .byte 0x20    ; $44ba 20      
    mvi b,$11     ; $44bb 06 11   
    mvi b,$11     ; $44bd 06 11   
    mvi b,$17     ; $44bf 06 17   
@@ -13300,10 +13248,10 @@ $02da 04         inr b         ; ;COLD
    lxi d,$1517   ; $44c2 11 17 15
    ral           ; $44c5 17      
    mvi b,$17     ; $44c6 06 17   
-   ???           ; $44c8 20      
+   .byte 0x20    ; $44c8 20      
    mvi d,$11     ; $44c9 16 11   
    mvi b,$15     ; $44cb 06 15   
-   ???           ; $44cd 20      
+   .byte 0x20    ; $44cd 20      
    ral           ; $44ce 17      
    dcr d         ; $44cf 15      
    ral           ; $44d0 17      
@@ -13314,21 +13262,21 @@ $02da 04         inr b         ; ;COLD
    sui $16       ; $44d7 d6 16   
    mvi a,$18     ; $44d9 3e 18   
    dad d         ; $44db 19      
-   ???           ; $44dc 20      
+   .byte 0x20    ; $44dc 20      
    ral           ; $44dd 17      
    lxi b,$1702   ; $44de 01 02 17
    mvi b,$17     ; $44e1 06 17   
-   ???           ; $44e3 20      
-   ???           ; $44e4 20      
+   .byte 0x20    ; $44e3 20      
+   .byte 0x20    ; $44e4 20      
    ral           ; $44e5 17      
    ral           ; $44e6 17      
    lxi d,$1706   ; $44e7 11 06 17
-   ???           ; $44ea 20      
+   .byte 0x20    ; $44ea 20      
    ral           ; $44eb 17      
-   ???           ; $44ec 20      
-   ???           ; $44ed 20      
+   .byte 0x20    ; $44ec 20      
+   .byte 0x20    ; $44ed 20      
    ral           ; $44ee 17      
-   ???           ; $44ef 20      
+   .byte 0x20    ; $44ef 20      
    ral           ; $44f0 17      
    ral           ; $44f1 17      
    lxi d,$1706   ; $44f2 11 06 17
@@ -13340,8 +13288,8 @@ $02da 04         inr b         ; ;COLD
    dad d         ; $44fd 19      
    inr b         ; $44fe 04      
    ral           ; $44ff 17      
-   ???           ; $4500 20      
-   ???           ; $4501 20      
+   .byte 0x20    ; $4500 20      
+   .byte 0x20    ; $4501 20      
    ral           ; $4502 17      
    mvi b,$17     ; $4503 06 17   
    ral           ; $4505 17      
@@ -13359,27 +13307,27 @@ $02da 04         inr b         ; ;COLD
    sui $16       ; $451b d6 16   
    mvi a,$18     ; $451d 3e 18   
    dad d         ; $451f 19      
-   ???           ; $4520 20      
-   ???           ; $4521 20      
-   ???           ; $4522 20      
-   ???           ; $4523 20      
-   ???           ; $4524 20      
-   ???           ; $4525 20      
-   ???           ; $4526 20      
-   ???           ; $4527 20      
-   ???           ; $4528 20      
-   ???           ; $4529 20      
-   ???           ; $452a 20      
-   ???           ; $452b 20      
-   ???           ; $452c 20      
-   ???           ; $452d 20      
+   .byte 0x20    ; $4520 20      
+   .byte 0x20    ; $4521 20      
+   .byte 0x20    ; $4522 20      
+   .byte 0x20    ; $4523 20      
+   .byte 0x20    ; $4524 20      
+   .byte 0x20    ; $4525 20      
+   .byte 0x20    ; $4526 20      
+   .byte 0x20    ; $4527 20      
+   .byte 0x20    ; $4528 20      
+   .byte 0x20    ; $4529 20      
+   .byte 0x20    ; $452a 20      
+   .byte 0x20    ; $452b 20      
+   .byte 0x20    ; $452c 20      
+   .byte 0x20    ; $452d 20      
    stax b        ; $452e 02      
    lxi b,$2020   ; $452f 01 20 20
    stax b        ; $4532 02      
    lxi b,$2020   ; $4533 01 20 20
-   ???           ; $4536 20      
-   ???           ; $4537 20      
-   ???           ; $4538 20      
+   .byte 0x20    ; $4536 20      
+   .byte 0x20    ; $4537 20      
+   .byte 0x20    ; $4538 20      
    mov h,m       ; $4539 66      
    dcr d         ; $453a 15      
    dcr d         ; $453b 15      
@@ -13397,32 +13345,32 @@ $02da 04         inr b         ; ;COLD
    sui $16       ; $454b d6 16   
    mvi a,$18     ; $454d 3e 18   
    dcr c         ; $454f 0d      
-   ???           ; $4550 20      
-   ???           ; $4551 20      
-   ???           ; $4552 20      
-   ???           ; $4553 20      
-   ???           ; $4554 20      
-   ???           ; $4555 20      
-   ???           ; $4556 20      
-   ???           ; $4557 20      
-   ???           ; $4558 20      
+   .byte 0x20    ; $4550 20      
+   .byte 0x20    ; $4551 20      
+   .byte 0x20    ; $4552 20      
+   .byte 0x20    ; $4553 20      
+   .byte 0x20    ; $4554 20      
+   .byte 0x20    ; $4555 20      
+   .byte 0x20    ; $4556 20      
+   .byte 0x20    ; $4557 20      
+   .byte 0x20    ; $4558 20      
    mvi d,$17     ; $4559 16 17   
    dcr d         ; $455b 15      
-   ???           ; $455c 20      
+   .byte 0x20    ; $455c 20      
    mov h,m       ; $455d 66      
    dcr d         ; $455e 15      
    out $03       ; $455f d3 03   
    sui $16       ; $4561 d6 16   
    mvi a,$18     ; $4563 3e 18   
    dcr c         ; $4565 0d      
-   ???           ; $4566 20      
-   ???           ; $4567 20      
-   ???           ; $4568 20      
-   ???           ; $4569 20      
-   ???           ; $456a 20      
-   ???           ; $456b 20      
-   ???           ; $456c 20      
-   ???           ; $456d 20      
+   .byte 0x20    ; $4566 20      
+   .byte 0x20    ; $4567 20      
+   .byte 0x20    ; $4568 20      
+   .byte 0x20    ; $4569 20      
+   .byte 0x20    ; $456a 20      
+   .byte 0x20    ; $456b 20      
+   .byte 0x20    ; $456c 20      
+   .byte 0x20    ; $456d 20      
    mvi d,$17     ; $456e 16 17   
    ral           ; $4570 17      
    ral           ; $4571 17      
@@ -13433,33 +13381,33 @@ $02da 04         inr b         ; ;COLD
    sui $16       ; $4577 d6 16   
    mvi a,$18     ; $4579 3e 18   
    dcr c         ; $457b 0d      
-   ???           ; $457c 20      
-   ???           ; $457d 20      
-   ???           ; $457e 20      
+   .byte 0x20    ; $457c 20      
+   .byte 0x20    ; $457d 20      
+   .byte 0x20    ; $457e 20      
    mov m,e       ; $457f 73      
    ral           ; $4580 17      
    mov h,m       ; $4581 66      
    mov m,h       ; $4582 74      
-   ???           ; $4583 20      
-   ???           ; $4584 20      
-   ???           ; $4585 20      
-   ???           ; $4586 20      
+   .byte 0x20    ; $4583 20      
+   .byte 0x20    ; $4584 20      
+   .byte 0x20    ; $4585 20      
+   .byte 0x20    ; $4586 20      
    ral           ; $4587 17      
    lxi b,$1566   ; $4588 01 66 15
    out $03       ; $458b d3 03   
    sui $16       ; $458d d6 16   
    mvi a,$18     ; $458f 3e 18   
    dcr c         ; $4591 0d      
-   ???           ; $4592 20      
-   ???           ; $4593 20      
-   ???           ; $4594 20      
+   .byte 0x20    ; $4592 20      
+   .byte 0x20    ; $4593 20      
+   .byte 0x20    ; $4594 20      
    inr b         ; $4595 04      
    ral           ; $4596 17      
    ral           ; $4597 17      
    lxi b,$2020   ; $4598 01 20 20
-   ???           ; $459b 20      
+   .byte 0x20    ; $459b 20      
    mvi b,$11     ; $459c 06 11   
-   ???           ; $459e 20      
+   .byte 0x20    ; $459e 20      
    mov h,m       ; $459f 66      
    dcr d         ; $45a0 15      
    out $03       ; $45a1 d3 03   
@@ -13472,10 +13420,10 @@ $02da 04         inr b         ; ;COLD
    ral           ; $45ab 17      
    ral           ; $45ac 17      
    lxi b,$2020   ; $45ad 01 20 20
-   ???           ; $45b0 20      
-   ???           ; $45b1 20      
+   .byte 0x20    ; $45b0 20      
+   .byte 0x20    ; $45b1 20      
    mvi b,$20     ; $45b2 06 20   
-   ???           ; $45b4 20      
+   .byte 0x20    ; $45b4 20      
    mov h,m       ; $45b5 66      
    dcr d         ; $45b6 15      
    dcr d         ; $45b7 15      
@@ -13498,11 +13446,11 @@ $02da 04         inr b         ; ;COLD
    lxi d,$1704   ; $45cd 11 04 17
    ral           ; $45d0 17      
    dcr d         ; $45d1 15      
-   ???           ; $45d2 20      
+   .byte 0x20    ; $45d2 20      
    inr d         ; $45d3 14      
    mvi d,$17     ; $45d4 16 17   
    inr d         ; $45d6 14      
-   ???           ; $45d7 10      
+   .byte 0x10    ; $45d7 10      
    mvi b,$17     ; $45d8 06 17   
    ral           ; $45da 17      
    ral           ; $45db 17      
@@ -13521,9 +13469,9 @@ $02da 04         inr b         ; ;COLD
    ral           ; $45f0 17      
    ral           ; $45f1 17      
    ral           ; $45f2 17      
-   ???           ; $45f3 20      
+   .byte 0x20    ; $45f3 20      
    mvi b,$17     ; $45f4 06 17   
-   ???           ; $45f6 20      
+   .byte 0x20    ; $45f6 20      
    mov h,m       ; $45f7 66      
    dcr d         ; $45f8 15      
    out $03       ; $45f9 d3 03   
@@ -13531,16 +13479,16 @@ $02da 04         inr b         ; ;COLD
    mvi a,$18     ; $45fd 3e 18   
    stax d        ; $45ff 12      
    mvi b,$17     ; $4600 06 17   
-   ???           ; $4602 20      
-   ???           ; $4603 20      
+   .byte 0x20    ; $4602 20      
+   .byte 0x20    ; $4603 20      
    mvi b,$17     ; $4604 06 17   
    mvi b,$17     ; $4606 06 17   
    mvi b,$17     ; $4608 06 17   
    mvi b,$17     ; $460a 06 17   
    mvi b,$17     ; $460c 06 17   
-   ???           ; $460e 20      
+   .byte 0x20    ; $460e 20      
    mvi b,$17     ; $460f 06 17   
-   ???           ; $4611 20      
+   .byte 0x20    ; $4611 20      
    mov h,m       ; $4612 66      
    dcr d         ; $4613 15      
    out $03       ; $4614 d3 03   
@@ -13554,9 +13502,9 @@ $02da 04         inr b         ; ;COLD
    mvi b,$17     ; $4623 06 17   
    mvi d,$17     ; $4625 16 17   
    mvi d,$17     ; $4627 16 17   
-   ???           ; $4629 20      
+   .byte 0x20    ; $4629 20      
    mvi b,$17     ; $462a 06 17   
-   ???           ; $462c 20      
+   .byte 0x20    ; $462c 20      
    mov h,m       ; $462d 66      
    dcr d         ; $462e 15      
    out $03       ; $462f d3 03   
@@ -13569,14 +13517,14 @@ $02da 04         inr b         ; ;COLD
    lxi d,$1702   ; $4639 11 02 17
    ral           ; $463c 17      
    inx d         ; $463d 13      
-   ???           ; $463e 20      
+   .byte 0x20    ; $463e 20      
    inx b         ; $463f 03      
    ral           ; $4640 17      
    ral           ; $4641 17      
    inx b         ; $4642 03      
    lxi b,$0620   ; $4643 01 20 06
    ral           ; $4646 17      
-   ???           ; $4647 20      
+   .byte 0x20    ; $4647 20      
    mov h,m       ; $4648 66      
    dcr d         ; $4649 15      
    dcr d         ; $464a 15      
@@ -13628,7 +13576,7 @@ $02da 04         inr b         ; ;COLD
    rnz           ; $467c c0      
    mov b,l       ; $467d 45      
    adc c         ; $467e 89      
-   ???           ; $467f 30      
+   .byte 0x30    ; $467f 30      
    dcx h         ; $4680 2b      
    ldax b        ; $4681 0a      
    mvi m,$00     ; $4682 36 00   
@@ -13657,12 +13605,12 @@ $02da 04         inr b         ; ;COLD
    inx sp        ; $469d 33      
    rz            ; $469e c8      
    mvi c,$4d     ; $469f 0e 4d   
-   ???           ; $46a1 30      
+   .byte 0x30    ; $46a1 30      
    rz            ; $46a2 c8      
    mvi c,$59     ; $46a3 0e 59   
-   ???           ; $46a5 30      
+   .byte 0x30    ; $46a5 30      
    mov a,d       ; $46a6 7a      
-   ???           ; $46a7 30      
+   .byte 0x30    ; $46a7 30      
    dcx h         ; $46a8 2b      
    ldax b        ; $46a9 0a      
    mov h,m       ; $46aa 66      

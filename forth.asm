@@ -115,14 +115,13 @@ _FORTH:
    mov b,e       ; $01ac 43      
    nop           ; $01ad 00      
    nop           ; $01ae 00      
-   stax b        ; $01af 02      
-   mov d,d       ; $01b0 52      
-   .byte 0x30    ; $01b1 30      
-   mov c,b       ; $01b2 48      
-   inr m         ; $01b3 34      
+
+   .byte 2,"R0"
+   .word $3448
+_R0:
    call $0984    ; $01b4 cd 84 09
-   ldax d        ; $01b7 1a      
-   inr m         ; $01b8 34      
+   .word $341a
+
    stax b        ; $01b9 02      
    mov d,e       ; $01ba 53      
    .byte 0x30    ; $01bb 30      

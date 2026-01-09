@@ -146,7 +146,7 @@ _FORTH:
 l01d6:
    .byte 8,"VOC-LINK"
    .word 0x01cd
-;_VOC-LINK:
+_VOC_2DLINK:
    call $0984
    .word $3422
 
@@ -158,7 +158,7 @@ _FENCE:
 
    .byte 6,"W-LINK"
    .word $01e6
-;_W-LINK:
+_W_2DLINK:
    call $0984    ; $01fc cd 84 09
    .word $3426
 
@@ -360,17 +360,20 @@ l02e4:
 l02f6:
    .byte 4,"NEXT"
    .word 0x02da
+_NEXT:
    call $0984
    .word $02ef
 l0302:
    .byte 4,"CALL"
    .word $02f6
+_CALL:
    call $0984    ; $0309 cd 84 09
    .word $02e4
 
    .byte 4,"EXIT"
    stax b        ; $0313 02      
    inx b         ; $0314 03      
+_EXIT:
    lhld $341e    ; $0315 2a 1e 34
    mov c,m       ; $0318 4e      
    inx h         ; $0319 23      
@@ -381,9 +384,12 @@ l0302:
 
    .byte 7,"EXECUTE"
    mvi c,$03     ; $032a 0e 03   
+_EXECUTE:
    ret           ; $032c c9      
 
    .byte 7,"ASMCALL"
+;   .word
+_ASMCALL:
    shld $2a03    ; $0335 22 03 2a
    mvi e,$34     ; $0338 1e 34   
    dcx h         ; $033a 2b      
@@ -413,6 +419,7 @@ l0302:
 
    .byte 4,"OVER"
    .word $0322
+_OVER:
    pop h
    pop d         ; $0363 d1      
    push d        ; $0364 d5      
@@ -422,6 +429,7 @@ l0302:
 
    .byte 4,"PICK"
    .word $035b
+_PICK:
    pop h         ; $0371 e1      
    dad h         ; $0372 29      
    dad sp        ; $0373 39      
@@ -433,18 +441,13 @@ l0302:
 
    .byte 4,"DROP"
    .word $036a
+_DROP:
    pop h         ; $0382 e1      
    jmp $02ef     ; $0383 c3 ef 02
 
    .byte 4,"SWAP"
    .word $037b
-;   inr b         ; $0386 04      
-;   mov d,e       ; $0387 53      
-;   mov d,a       ; $0388 57      
-;   mov b,c       ; $0389 41      
-;   mov d,b       ; $038a 50      
-;   mov a,e       ; $038b 7b      
-;   inx b         ; $038c 03      
+_SWAP:
    pop h         ; $038d e1      
    xthl          ; $038e e3      
    push h        ; $038f e5      
@@ -452,12 +455,7 @@ l0302:
 
    .byte 5,"2SWAP"
    .word $0386
-;   dcr b         ; $0393 05      
-;   sta $5753     ; $0394 32 53 57
-;   mov b,c       ; $0397 41      
-;   mov d,b       ; $0398 50      
-;   add m         ; $0399 86      
-;   inx b         ; $039a 03      
+_2SWAP:
    pop h         ; $039b e1      
    pop d         ; $039c d1      
    xthl          ; $039d e3      
@@ -478,6 +476,7 @@ l0302:
 
    .byte 3,"ROT"
    .word $0393
+_ROT:
    pop d         ; $03b6 d1      
    pop h         ; $03b7 e1      
    xthl          ; $03b8 e3      
@@ -487,6 +486,7 @@ l0302:
 
    .byte 4,"-ROT"
    .word $03b0
+__2DROT:
    pop h         ; $03c5 e1      
    pop d         ; $03c6 d1      
    xthl          ; $03c7 e3      

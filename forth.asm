@@ -78,10 +78,8 @@ l0140:
    sub h         ; $0174 94      
    mvi d,$a4     ; $0175 16 a4   
    .byte 0x10    ; $0177 10      
-   dcx h         ; $0178 2b      
-   ldax b        ; $0179 0a      
-   mov m,h       ; $017a 74      
-   mov h,l       ; $017b 65      
+l0178:
+   .word _LIT,$6574
    adc h         ; $017c 8c      
    lhld $099d    ; $017d 2a 9d 09
    dcx h         ; $0180 2b      
@@ -111,6 +109,7 @@ l0140:
 l019e:
    .byte 5, "FORTH"
    .word 0x0000
+_FORTH:
    call $1b95    ; $01a6 cd 95 1b
    lxi b,$8680   ; $01a9 01 80 86
    mov b,e       ; $01ac 43      
@@ -147,16 +146,19 @@ l019e:
 l01d6:
    .byte 8,"VOC-LINK"
    .word 0x01cd
+;_VOC-LINK:
    call $0984
    .word $3422
 
    .byte 5,"FENCE"
    .word $01d6
+_FENCE:
    call $0984    ; $01ee cd 84 09
    .word $3424
 
    .byte 6,"W-LINK"
    .word $01e6
+;_W-LINK:
    call $0984    ; $01fc cd 84 09
    .word $3426
 
@@ -1630,12 +1632,10 @@ l0302:
    dcx h         ; $0a20 2b      
    mov m,e       ; $0a21 73      
    jmp $02ef     ; $0a22 c3 ef 02
-   inx b         ; $0a25 03      
-   mov c,h       ; $0a26 4c      
-   mov c,c       ; $0a27 49      
-   mov d,h       ; $0a28 54      
-   inr d         ; $0a29 14      
-   ldax b        ; $0a2a 0a      
+
+   .byte 3,"LIT"
+   .word $0a14
+_LIT:
    ldax b        ; $0a2b 0a      
    mov l,a       ; $0a2c 6f      
    inx b         ; $0a2d 03      
@@ -1644,6 +1644,7 @@ l0302:
    inx b         ; $0a30 03      
    push h        ; $0a31 e5      
    jmp $02ef     ; $0a32 c3 ef 02
+
    inr b         ; $0a35 04      
    mov b,h       ; $0a36 44      
    mov c,h       ; $0a37 4c      
@@ -2237,6 +2238,7 @@ l0302:
    dcr c         ; $0d41 0d      
    dcr d         ; $0d42 15      
    inx b         ; $0d43 03      
+l0d44:
    shld $3422    ; $0d44 22 22 34
    lhld $341c    ; $0d47 2a 1c 34
    sphl          ; $0d4a f9      
@@ -2244,6 +2246,7 @@ l0302:
    shld $341e    ; $0d4e 22 1e 34
    lxi b,$0178   ; $0d51 01 78 01
    jmp $02ef     ; $0d54 c3 ef 02
+
    nop           ; $0d57 00      
    nop           ; $0d58 00      
    nop           ; $0d59 00      

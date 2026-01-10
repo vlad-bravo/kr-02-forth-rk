@@ -27,16 +27,17 @@ try:
     if word:
         name_length, name, lfa, cfa = word
         label = filtr_string(name)
+        label_length = len(label)
         next_word = words.get(lfa)
         if next_word:
             next_name_length, next_name, _, _ = next_word
             lfa = 'NFA' + filtr_string(next_name) + ' ' * (12 - int(next_name_length)) + ' ; ' + lfa
         else:
             lfa = '$' + lfa
-        text = (f'\nNFA{label}:{" "*(12-int(name_length))}; {nfa}\n'
+        text = (f'\nNFA{label}:{" "*(13-int(label_length))}; {nfa}\n'
                 f'   .byte {name_length},"{name}"\n'
                 f'   .word {lfa}\n'
-                f'{label}:{" "*(15-int(name_length))}; {cfa}')
+                f'{label}:{" "*(16-int(label_length))}; {cfa}')
         pyperclip.copy(text)
 except pyperclip.PyperclipException:
     pass

@@ -2594,10 +2594,10 @@ __2C:              ; 0F1D
    dcr d         ; $0f28 15      
    inx b         ; $0f29 03      
 
-NFA_C_2C:          ; 0F2A
+NFA_C_2C:        ; 0F2A
    .byte 2,"C,"
    .word NFA__2C            ; 0F19
-_C_2C:             ; 0F2F
+_C_2C:           ; 0F2F
    call $02e4    ; $0f2f cd e4 02
    rst 7         ; $0f32 ff      
    mvi c,$d1     ; $0f33 0e d1   
@@ -2607,9 +2607,11 @@ _C_2C:             ; 0F2F
    dad b         ; $0f39 09      
    dcr d         ; $0f3a 15      
    inx b         ; $0f3b 03      
-   stax b        ; $0f3c 02      
-   shld $2a2c    ; $0f3d 22 2c 2a
-   rrc           ; $0f40 0f      
+
+NFA__22_2C:      ; 0F3C
+   .byte 2,"\","
+   .word NFA_C_2C           ; 0F2A
+__22_2C:         ; 0F41
    call $02e4    ; $0f41 cd e4 02
    rst 7         ; $0f44 ff      
    mvi c,$62     ; $0f45 0e 62   
@@ -2625,12 +2627,11 @@ _C_2C:             ; 0F2F
    dcx b         ; $0f51 0b      
    dcr d         ; $0f52 15      
    inx b         ; $0f53 03      
-   inx b         ; $0f54 03      
-   mov d,b       ; $0f55 50      
-   mov b,c       ; $0f56 41      
-   mov b,h       ; $0f57 44      
-   inr a         ; $0f58 3c      
-   rrc           ; $0f59 0f      
+
+NFA_PAD:         ; 0F54
+   .byte 3,"PAD"
+   .word NFA__22_2C           ; 0F3C
+_PAD:            ; 0F5A
    call $02e4    ; $0f5a cd e4 02
    rst 7         ; $0f5d ff      
    mvi c,$2b     ; $0f5e 0e 2b   
@@ -2641,14 +2642,11 @@ _C_2C:             ; 0F2F
    inr b         ; $0f64 04      
    dcr d         ; $0f65 15      
    inx b         ; $0f66 03      
-   dcr b         ; $0f67 05      
-   mov b,e       ; $0f68 43      
-   mov c,a       ; $0f69 4f      
-   mov d,l       ; $0f6a 55      
-   mov c,m       ; $0f6b 4e      
-   mov d,h       ; $0f6c 54      
-   mov d,h       ; $0f6d 54      
-   rrc           ; $0f6e 0f      
+
+NFA_COUNT:       ; 0F67
+   .byte 5,"COUNT"
+   .word NFA_PAD          ; 0F54
+_COUNT:          ; 0F6F
    pop h         ; $0f6f e1      
    mvi d,$00     ; $0f70 16 00   
    mov e,m       ; $0f72 5e      
@@ -2656,16 +2654,11 @@ _C_2C:             ; 0F2F
    push h        ; $0f74 e5      
    push d        ; $0f75 d5      
    jmp $02ef     ; $0f76 c3 ef 02
-   rlc           ; $0f79 07      
-   mov b,e       ; $0f7a 43      
-   mov c,a       ; $0f7b 4f      
-   mov c,l       ; $0f7c 4d      
-   mov d,b       ; $0f7d 50      
-   mov c,c       ; $0f7e 49      
-   mov c,h       ; $0f7f 4c      
-   mov b,l       ; $0f80 45      
-   mov h,a       ; $0f81 67      
-   rrc           ; $0f82 0f      
+
+NFA_COMPILE:     ; 0F79
+   .byte 7,"COMPILE"
+   .word NFA_COUNT        ; 0F67
+_COMPILE:        ; 0F83
    call $02e4    ; $0f83 cd e4 02
    .byte 0x20    ; $0f86 20      
    dad b         ; $0f87 09      
@@ -2680,20 +2673,22 @@ _C_2C:             ; 0F2F
    rrc           ; $0f91 0f      
    dcr d         ; $0f92 15      
    inx b         ; $0f93 03      
-   inx b         ; $0f94 03      
-   mov d,e       ; $0f95 53      
-   mvi a,$44     ; $0f96 3e 44   
-   mov a,c       ; $0f98 79      
-   rrc           ; $0f99 0f      
+
+NFA_S_3ED:       ; 0F94
+   .byte 3,"S>D"
+   .word NFA_COMPILE      ; 0F79
+_S_3ED:          ; 0F9A
    call $02e4    ; $0f9a cd e4 02
    out $03       ; $0f9d d3 03   
    dcr a         ; $0f9f 3d      
    dcr b         ; $0fa0 05      
    dcr d         ; $0fa1 15      
    inx b         ; $0fa2 03      
-   stax b        ; $0fa3 02      
-   mov c,l       ; $0fa4 4d      
-   lhld $0f94    ; $0fa5 2a 94 0f
+
+NFA_M_2A:        ; 0FA3
+   .byte 2,"M*"
+   .word NFA_S_3ED          ; 0F94
+_M_2A:           ; 0FA8
    call $02e4    ; $0fa8 cd e4 02
    jp $eb03      ; $0fab f2 03 eb
    .byte 0x08    ; $0fae 08      
@@ -2715,31 +2710,33 @@ _C_2C:             ; 0F2F
    jmp $200f     ; $0fbf c3 0f 20
    mvi b,$15     ; $0fc2 06 15   
    inx b         ; $0fc4 03      
-   lxi b,$a32f   ; $0fc5 01 2f a3
-   rrc           ; $0fc8 0f      
+
+NFA__2F:         ; 0FC5
+   .byte 1,"/"
+   .word NFA_M_2A           ; 0FA3
+__2F:            ; 0FC9
    call $02e4    ; $0fc9 cd e4 02
    jpo $1007     ; $0fcc e2 07 10
    inr b         ; $0fcf 04      
    dcr d         ; $0fd0 15      
    inx b         ; $0fd1 03      
-   inx b         ; $0fd2 03      
-   mov c,l       ; $0fd3 4d      
-   mov c,a       ; $0fd4 4f      
-   mov b,h       ; $0fd5 44      
-   push b        ; $0fd6 c5      
-   rrc           ; $0fd7 0f      
+
+NFA_MOD:         ; 0FD2
+   .byte 3,"MOD"
+   .word NFA__2F            ; 0FC5
+_MOD:            ; 0FD8
    call $02e4    ; $0fd8 cd e4 02
    jpo $8207     ; $0fdb e2 07 82
    inx b         ; $0fde 03      
    dcr d         ; $0fdf 15      
    inx b         ; $0fe0 03      
-   inr b         ; $0fe1 04      
-   mov b,h       ; $0fe2 44      
-   mov b,c       ; $0fe3 41      
-   mov b,d       ; $0fe4 42      
-   mov d,e       ; $0fe5 53      
-   jnc $cd0f     ; $0fe6 d2 0f cd
-   cpo $d302     ; $0fe9 e4 02 d3
+
+NFA_DABS:        ; 0FE1
+   .byte 4,"DABS"
+   .word NFA_MOD          ; 0FD2
+_DABS:           ; 0FE8
+   call $02e4    ; cd
+   .byte $d3     ; d3
    inx b         ; $0fec 03      
    dcr a         ; $0fed 3d      
    dcr b         ; $0fee 05      
@@ -2750,11 +2747,11 @@ _C_2C:             ; 0F2F
    .byte 0x20    ; $0ff3 20      
    mvi b,$15     ; $0ff4 06 15   
    inx b         ; $0ff6 03      
-   stax b        ; $0ff7 02      
-   mov d,l       ; $0ff8 55      
-   cma           ; $0ff9 2f      
-   pop h         ; $0ffa e1      
-   rrc           ; $0ffb 0f      
+
+NFA_U_2F:        ; 0FF7
+   .byte 2,"U/"
+   .word NFA_DABS         ; 0FE1
+_U_2F:           ; 0FFC
    call $02e4    ; $0ffc cd e4 02
    dcx h         ; $0fff 2b      
    .byte 0x08    ; $1000 08      
@@ -2762,14 +2759,11 @@ _C_2C:             ; 0F2F
    inr b         ; $1002 04      
    dcr d         ; $1003 15      
    inx b         ; $1004 03      
-   mvi b,$55     ; $1005 06 55   
-   mov c,l       ; $1007 4d      
-   cma           ; $1008 2f      
-   mov c,l       ; $1009 4d      
-   mov c,a       ; $100a 4f      
-   mov b,h       ; $100b 44      
-   rst 6         ; $100c f7      
-   rrc           ; $100d 0f      
+
+NFA_UM_2FMOD:    ; 1005
+   .byte 6,"UM/MOD"
+   .word NFA_U_2F           ; 0FF7
+_UM_2FMOD:       ; 100E
    call $02e4    ; $100e cd e4 02
    rz            ; $1011 c8      
    mvi c,$f9     ; $1012 0e f9   
@@ -2779,14 +2773,11 @@ _C_2C:             ; 0F2F
    inr b         ; $1018 04      
    dcr d         ; $1019 15      
    inx b         ; $101a 03      
-   dcr b         ; $101b 05      
-   mov c,l       ; $101c 4d      
-   cma           ; $101d 2f      
-   mov c,l       ; $101e 4d      
-   mov c,a       ; $101f 4f      
-   mov b,h       ; $1020 44      
-   dcr b         ; $1021 05      
-   .byte 0x10    ; $1022 10      
+
+NFA_M_2FMOD:     ; 101B
+   .byte 5,"M/MOD"
+   .word NFA_UM_2FMOD       ; 1005
+_M_2FMOD:        ; 1023
    call $02e4    ; $1023 cd e4 02
    rpo           ; $1026 e0      
    inx b         ; $1027 03      
@@ -2854,12 +2845,11 @@ _C_2C:             ; 0F2F
    dad b         ; $1069 09      
    dcr d         ; $106a 15      
    inx b         ; $106b 03      
-   dcr b         ; $106c 05      
-   lhld $4d2f    ; $106d 2a 2f 4d
-   mov c,a       ; $1070 4f      
-   mov b,h       ; $1071 44      
-   dcx d         ; $1072 1b      
-   .byte 0x10    ; $1073 10      
+
+NFA__2A_2FMOD:   ; 106C
+   .byte 5,"*/MOD"
+   .word NFA_M_2FMOD        ; 101B
+__2A_2FMOD:      ; 1074
    call $02e4    ; $1074 cd e4 02
    dcr c         ; $1077 0d      
    dad b         ; $1078 09      
@@ -2871,9 +2861,11 @@ _C_2C:             ; 0F2F
    .byte 0x10    ; $107e 10      
    dcr d         ; $107f 15      
    inx b         ; $1080 03      
-   stax b        ; $1081 02      
-   lhld $6c2f    ; $1082 2a 2f 6c
-   .byte 0x10    ; $1085 10      
+
+NFA__2A_2F:      ; 1081
+   .byte 2,"*/"
+   .word NFA__2A_2FMOD        ; 106C
+__2A_2F:         ; 1086
    call $02e4    ; $1086 cd e4 02
    mov m,h       ; $1089 74      
    .byte 0x10    ; $108a 10      
@@ -2881,10 +2873,11 @@ _C_2C:             ; 0F2F
    inr b         ; $108c 04      
    dcr d         ; $108d 15      
    inx b         ; $108e 03      
-   stax b        ; $108f 02      
-   inr a         ; $1090 3c      
-   mvi a,$81     ; $1091 3e 81   
-   .byte 0x10    ; $1093 10      
+
+NFA__3C_3E:      ; 108F
+   .byte 2,"<>"
+   .word NFA__2A_2F           ; 1081
+__3C_3E:         ; 1094
    call $02e4    ; $1094 cd e4 02
    mov h,m       ; $1097 66      
    dcr b         ; $1098 05      
@@ -2892,13 +2885,11 @@ _C_2C:             ; 0F2F
    dcr b         ; $109a 05      
    dcr d         ; $109b 15      
    inx b         ; $109c 03      
-   inr b         ; $109d 04      
-   mov d,c       ; $109e 51      
-   mov d,l       ; $109f 55      
-   mov c,c       ; $10a0 49      
-   mov d,h       ; $10a1 54      
-   adc a         ; $10a2 8f      
-   .byte 0x10    ; $10a3 10      
+
+NFA_QUIT:        ; 109D
+   .byte 4,"QUIT"
+   .word NFA__3C_3E           ; 108F
+_QUIT:           ; 10A4
    call $02e4    ; $10a4 cd e4 02
    dcx h         ; $10a7 2b      
    ldax b        ; $10a8 0a      
@@ -2932,14 +2923,11 @@ _C_2C:             ; 0F2F
    ldax b        ; $10c8 0a      
    jmp $1510     ; $10c9 c3 10 15
    inx b         ; $10cc 03      
-   dcr b         ; $10cd 05      
-   mov b,c       ; $10ce 41      
-   mov b,d       ; $10cf 42      
-   mov c,a       ; $10d0 4f      
-   mov d,d       ; $10d1 52      
-   mov d,h       ; $10d2 54      
-   sbb l         ; $10d3 9d      
-   .byte 0x10    ; $10d4 10      
+
+NFA_ABORT:       ; 10CD
+   .byte 5,"ABORT"
+   .word NFA_QUIT         ; 109D
+_ABORT:          ; 10D5
    call $02e4    ; $10d5 cd e4 02
    dcx h         ; $10d8 2b      
    ldax b        ; $10d9 0a      
@@ -3027,15 +3015,11 @@ _C_2C:             ; 0F2F
    .byte 0x10    ; $113c 10      
    dcr d         ; $113d 15      
    inx b         ; $113e 03      
-   .byte 0x08    ; $113f 08      
-   .byte 0x28    ; $1140 28      
-   mov b,c       ; $1141 41      
-   mov b,d       ; $1142 42      
-   mov c,a       ; $1143 4f      
-   mov d,d       ; $1144 52      
-   mov d,h       ; $1145 54      
-   shld $cd29    ; $1146 22 29 cd
-   .byte 0x10    ; $1149 10      
+
+NFA__28ABORT_22_29:; 113F
+   .byte 8,"(ABORT\")"
+   .word NFA_ABORT        ; 10CD
+__28ABORT_22_29: ; 114A
    call $02e4    ; $114a cd e4 02
    mov a,d       ; $114d 7a      
    ldax b        ; $114e 0a      
@@ -3063,13 +3047,11 @@ _C_2C:             ; 0F2F
    dad b         ; $116c 09      
    dcr d         ; $116d 15      
    inx b         ; $116e 03      
-   add m         ; $116f 86      
-   mov b,c       ; $1170 41      
-   mov b,d       ; $1171 42      
-   mov c,a       ; $1172 4f      
-   mov d,d       ; $1173 52      
-   mov d,h       ; $1174 54      
-   shld $113f    ; $1175 22 3f 11
+
+NFA_ABORT_22:    ; 116F
+   .byte $86,"ABORT\""          ; IMMEDIATE
+   .word NFA__28ABORT_22_29     ; 113F
+_ABORT_22:       ; 1178
    call $02e4    ; $1178 cd e4 02
    mvi h,$1c     ; $117b 26 1c   
    add e         ; $117d 83      
@@ -3082,11 +3064,12 @@ _C_2C:             ; 0F2F
    rrc           ; $1188 0f      
    dcr d         ; $1189 15      
    inx b         ; $118a 03      
-   stax b        ; $118b 02      
-   inx h         ; $118c 23      
-   mvi a,$6f     ; $118d 3e 6f   
-   lxi d,$e4cd   ; $118f 11 cd e4
-   stax b        ; $1192 02      
+
+NFA__23_3E:      ; 118B
+   .byte 2,"#>"
+   .word NFA_ABORT_22       ; 116F
+__23_3E:         ; 1190
+   call $02e4    ; cd e4
    inx b         ; $1193 03      
    inr b         ; $1194 04      
    mov c,c       ; $1195 49      
@@ -3101,12 +3084,12 @@ _C_2C:             ; 0F2F
    inr b         ; $119e 04      
    dcr d         ; $119f 15      
    inx b         ; $11a0 03      
-   stax b        ; $11a1 02      
-   inr a         ; $11a2 3c      
-   inx h         ; $11a3 23      
-   adc e         ; $11a4 8b      
-   lxi d,$e4cd   ; $11a5 11 cd e4
-   stax b        ; $11a8 02      
+
+NFA__3C_23:      ; 11A1
+   .byte 2,"<#"
+   .word NFA__23_3E           ; 118B
+__3C_23:         ; 11A6
+   call $02e4    ; cd e4
    mov e,d       ; $11a9 5a      
    rrc           ; $11aa 0f      
    mov c,c       ; $11ab 49      
@@ -3115,14 +3098,12 @@ _C_2C:             ; 0F2F
    dad b         ; $11ae 09      
    dcr d         ; $11af 15      
    inx b         ; $11b0 03      
-   inr b         ; $11b1 04      
-   mov c,b       ; $11b2 48      
-   mov c,a       ; $11b3 4f      
-   mov c,h       ; $11b4 4c      
-   mov b,h       ; $11b5 44      
-   ana c         ; $11b6 a1      
-   lxi d,$e4cd   ; $11b7 11 cd e4
-   stax b        ; $11ba 02      
+
+NFA_HOLD:        ; 11B1
+   .byte 4,"HOLD"
+   .word NFA__3C_23           ; 11A1
+_HOLD:           ; 11B8
+   call $02e4    ; cd e4
    mov c,c       ; $11bb 49      
    stax b        ; $11bc 02      
    ldax d        ; $11bd 1a      
@@ -3135,14 +3116,12 @@ _C_2C:             ; 0F2F
    dad b         ; $11c4 09      
    dcr d         ; $11c5 15      
    inx b         ; $11c6 03      
-   inr b         ; $11c7 04      
-   mov d,e       ; $11c8 53      
-   mov c,c       ; $11c9 49      
-   mov b,a       ; $11ca 47      
-   mov c,m       ; $11cb 4e      
-   ora c         ; $11cc b1      
-   lxi d,$e4cd   ; $11cd 11 cd e4
-   stax b        ; $11d0 02      
+
+NFA_SIGN:        ; 11C7
+   .byte 4,"SIGN"
+   .word NFA_HOLD         ; 11B1
+_SIGN:           ; 11CE
+   call $02e4    ; cd e4
    dcr a         ; $11d1 3d      
    dcr b         ; $11d2 05      
    mov a,d       ; $11d3 7a      
@@ -3153,13 +3132,12 @@ _C_2C:             ; 0F2F
    nop           ; $11da 00      
    cmp b         ; $11db b8      
    lxi d,$0315   ; $11dc 11 15 03
-   inr b         ; $11df 04      
-   mvi a,$44     ; $11e0 3e 44   
-   mov c,c       ; $11e2 49      
-   mov b,a       ; $11e3 47      
-   rst 0         ; $11e4 c7      
-   lxi d,$e4cd   ; $11e5 11 cd e4
-   stax b        ; $11e8 02      
+
+NFA__3EDIG:      ; 11DF
+   .byte 4,">DIG"
+   .word NFA_SIGN         ; 11C7
+__3EDIG:         ; 11E6
+   call $02e4    ; cd e4
    dcx h         ; $11e9 2b      
    ldax b        ; $11ea 0a      
    dad b         ; $11eb 09      
@@ -3182,9 +3160,12 @@ _C_2C:             ; 0F2F
    inr b         ; $1202 04      
    dcr d         ; $1203 15      
    inx b         ; $1204 03      
-   lxi b,$df23   ; $1205 01 23 df
-   lxi d,$e4cd   ; $1208 11 cd e4
-   stax b        ; $120b 02      
+
+NFA__23:         ; 1205
+   .byte 1,"#"
+   .word NFA__3EDIG         ; 11DF
+__23:            ; 1209
+   call $02e4    ; cd e4
    .byte 0x08    ; $120c 08      
    stax b        ; $120d 02      
    add h         ; $120e 84      
@@ -3200,10 +3181,11 @@ _C_2C:             ; 0F2F
    ani $11       ; $121a e6 11   
    cmp b         ; $121c b8      
    lxi d,$0315   ; $121d 11 15 03
-   stax b        ; $1220 02      
-   inx h         ; $1221 23      
-   mvi l,$05     ; $1222 2e 05   
-   stax d        ; $1224 12      
+
+NFA__23_2E:      ; 1220
+   .byte 2,"#."
+   .word NFA__23            ; 1205
+__23_2E:         ; 1225
    call $02e4    ; $1225 cd e4 02
    .byte 0x08    ; $1228 08      
    stax b        ; $1229 02      

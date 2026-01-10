@@ -122,26 +122,27 @@ _R0:
    call $0984    ; $01b4 cd 84 09
    .word $341a
 
-   stax b        ; $01b9 02      
-   mov d,e       ; $01ba 53      
-   .byte 0x30    ; $01bb 30      
-   xra a         ; $01bc af      
-   lxi b,$84cd   ; $01bd 01 cd 84
-   dad b         ; $01c0 09      
-   inr e         ; $01c1 1c      
-   inr m         ; $01c2 34      
-   stax b        ; $01c3 02      
-   mov d,d       ; $01c4 52      
-   mov d,b       ; $01c5 50      
-   cmp c         ; $01c6 b9      
-   lxi b,$84cd   ; $01c7 01 cd 84
-   dad b         ; $01ca 09      
-   mvi e,$34     ; $01cb 1e 34   
-   lxi b,$c348   ; $01cd 01 48 c3
-   lxi b,$84cd   ; $01d0 01 cd 84
-   dad b         ; $01d3 09      
-   .byte 0x20    ; $01d4 20      
-   inr m         ; $01d5 34      
+NFA_S0:    ; 01B9
+   .byte 2,"S0"
+   .word $01AF
+_S0:       ; 01BE
+   call $0984
+   .word $341c
+
+NFA_RP:    ; 01C3
+   .byte 2,"RP"
+   .word $01B9
+_RP:       ; 01C8
+   call $0984
+   .word $341e
+
+NFA_H:    ; 01CD
+   .byte 1,"H"
+   .word $01C3
+_H:       ; 01D1
+   call $0984
+   .word $3420
+
 l01d6:
    .byte 8,"VOC-LINK"
    .word 0x01cd

@@ -1,10 +1,8 @@
-$02df c5         push b
-$02e0 02         stax b
-$02e1 c3 06 01   jmp $0106
-$02e4 2a 1e 34   lhld $341e
-$02e7 2b         dcx h
-$02e8 70         mov m,b
-$02e9 2b         dcx h
-$02ea 71         mov m,c
-$02eb 22 1e 34   shld $341e
-$02ee c1         pop b
+$0f10 cd e4 02   call $02e4
+$0f13 d1         pop d
+$0f14 01 da 09   lxi b,$09da
+$0f17 15         dcr d
+$0f18 03         inx b
+$0f19 01 2c 08   lxi b,$082c
+$0f1c 0f         rrc
+$0f1d cd e4 02   call $02e4

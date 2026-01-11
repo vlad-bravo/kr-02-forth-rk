@@ -1,6 +1,6 @@
 # выборка слов из образа forth
 
-LAST_NFA = 0x464C
+LAST_NFA = 0x4442   #0x464C
 
 def process_nfa(dump, nfa: int):
     if nfa:
@@ -12,7 +12,7 @@ def process_nfa(dump, nfa: int):
         print(f'{nfa:04X}', f'{name_length:02X}', name, f'{lfa_ref:04X}', f'{cfa:04X}')
         process_nfa(dump, lfa_ref)
 
-with open('memory.bin', 'br') as in_file:
+with open('rk86-memory-1.bin', 'br') as in_file:
     dump = in_file.read()
 
 process_nfa(dump, LAST_NFA)

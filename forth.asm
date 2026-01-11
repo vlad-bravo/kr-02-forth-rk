@@ -8,8 +8,8 @@
    jmp l0106     ; $0100 c3 06 01
    jmp l0140     ; $0103 c3 40 01
 l0106:
-   lxi d,l019e   ; $0106 11 9e 01
-   lxi h,l3448   ; $0109 21 48 34
+   lxi d,l019e   ; $0106 11 9e 01 Словарная статья _FORTH
+   lxi h,l3448   ; $0109 21 48 34 копируется в новое место
    mvi b,$11     ; $010c 06 11   
 l010e:
    ldax d        ; $010e 1a      
@@ -41,7 +41,7 @@ l0140:
    sphl          ; $0143 f9      
    lhld $341a    ; $0144 2a 1a 34
    shld $341e    ; $0147 22 1e 34
-   lxi b,$015a   ; $014a 01 5a 01
+   lxi b,l015a   ; $014a 01 5a 01
    jmp $02ef     ; $014d c3 ef 02
 
    stax b        ; $0150 02      
@@ -54,6 +54,8 @@ l0140:
    nop           ; $0157 00      
    add b         ; $0158 80      
    mov e,l       ; $0159 5d      
+
+l015a:
    dcx h         ; $015a 2b      
    ldax b        ; $015b 0a      
    .byte $18     ; $015c 18      
@@ -68,6 +70,7 @@ l0140:
    lxi b,$032c   ; $0165 01 2c 03
    dcr d         ; $0168 15      
    inx b         ; $0169 03      
+
    lhld $7816    ; $016a 2a 16 78
    dcr c         ; $016d 0d      
    ani $0e       ; $016e e6 0e   
@@ -324,6 +327,7 @@ _FCALL:
    mov m,c       ; $02ea 71      
    shld $341e    ; $02eb 22 1e 34
    pop b         ; $02ee c1      
+
    ldax b        ; $02ef 0a      
    mov l,a       ; $02f0 6f      
    inx b         ; $02f1 03      
@@ -1671,10 +1675,10 @@ _DLIT:           ; 0A3C
    push d        ; $0a49 d5      
    jmp $02ef     ; $0a4a c3 ef 02
 
-NFA__28_22_29:         ; 0A4D
+NFA__28_22_29:   ; 0A4D
    .byte 3,"(\")"
    .word NFA_DLIT         ; 0A35
-__28_22_29:            ; 0A53
+__28_22_29:      ; 0A53
    push b        ; $0a53 c5      
    ldax b        ; $0a54 0a      
    mov l,a       ; $0a55 6f      
@@ -1703,7 +1707,7 @@ __3FBRANCH:        ; 0A7A
    pop d         ; $0a7a d1      
    mov a,d       ; $0a7b 7a      
    ora e         ; $0a7c b3      
-   jz $0a68      ; $0a7d ca 68 0a
+   jz _BRANCH    ; $0a7d ca 68 0a
    inx b         ; $0a80 03      
    inx b         ; $0a81 03      
    jmp $02ef     ; $0a82 c3 ef 02
@@ -1715,7 +1719,7 @@ _N_3FBRANCH:       ; 0A90
    pop d         ; $0a90 d1      
    mov a,d       ; $0a91 7a      
    ora e         ; $0a92 b3      
-   jnz $0a68     ; $0a93 c2 68 0a
+   jnz _BRANCH   ; $0a93 c2 68 0a
    inx b         ; $0a96 03      
    inx b         ; $0a97 03      
    jmp $02ef     ; $0a98 c3 ef 02
@@ -1808,10 +1812,10 @@ __28_3FDO_29:          ; 0B0C
    push h        ; $0b0f e5      
    mov a,l       ; $0b10 7d      
    cmp e         ; $0b11 bb      
-   jnz $0ae5     ; $0b12 c2 e5 0a
+   jnz __28DO_29 ; $0b12 c2 e5 0a
    mov a,h       ; $0b15 7c      
    cmp d         ; $0b16 ba      
-   jnz $0ae5     ; $0b17 c2 e5 0a
+   jnz __28DO_29 ; $0b17 c2 e5 0a
    ldax b        ; $0b1a 0a      
    mov d,a       ; $0b1b 57      
    inx b         ; $0b1c 03      
@@ -1822,10 +1826,10 @@ __28_3FDO_29:          ; 0B0C
    pop h         ; $0b21 e1      
    jmp $02ef     ; $0b22 c3 ef 02
 
-NFA__28LOOP_29:      ; 0B25
+NFA__28LOOP_29:  ; 0B25
    .byte 6,"(LOOP)"
    .word NFA__28_3FDO_29        ; 0B04
-__28LOOP_29:         ; 0B2E
+__28LOOP_29:     ; 0B2E - 0B59
    lhld $341e    ; $0b2e 2a 1e 34
    mov e,m       ; $0b31 5e      
    inx h         ; $0b32 23      
@@ -2086,25 +2090,18 @@ __28EMIT_29:         ; 0C8B
    push h        ; $0ca5 e5      
    jmp $02ef     ; $0ca6 c3 ef 02
 
-NFA__28CR_29:        ; 0CA9
+NFA__28CR_29:    ; 0CA9
    .byte 4,"(CR)"
    .word NFA__28EMIT_29       ; 0C82
-__28CR_29:           ; 0CB0
-   call $02e4    ; $0cb0 cd e4 02
-   dcx h         ; $0cb3 2b      
-   ldax b        ; $0cb4 0a      
-   dcr c         ; $0cb5 0d      
-   nop           ; $0cb6 00      
-   dcr a         ; $0cb7 3d      
-   dcr d         ; $0cb8 15      
-   dcx h         ; $0cb9 2b      
-   ldax b        ; $0cba 0a      
-   ldax b        ; $0cbb 0a      
-   nop           ; $0cbc 00      
-   dcr a         ; $0cbd 3d      
-   dcr d         ; $0cbe 15      
-   dcr d         ; $0cbf 15      
-   inx b         ; $0cc0 03      
+__28CR_29:       ; 0CB0 - 0CC1
+   call _FCALL            ; 0CB0
+   .word _LIT             ; 0CB3 0A2B - LIT
+   .word $000D            ; 0CB5 000D
+   .word _EMIT            ; 0CB7 153D - EMIT
+   .word _LIT             ; 0CB9 0A2B - LIT
+   .word $000A            ; 0CBB 000A
+   .word _EMIT            ; 0CBD 153D - EMIT
+   .word _EXIT            ; 0CBF 0315 - EXIT
 
 NFA__3FTERMINAL:   ; 0CC1
    .byte 9,"?TERMINAL"
@@ -2208,7 +2205,7 @@ l0d44:
    sphl          ; $0d4a f9      
    lhld $341a    ; $0d4b 2a 1a 34
    shld $341e    ; $0d4e 22 1e 34
-   lxi b,$0178   ; $0d51 01 78 01
+   lxi b,l0178   ; $0d51 01 78 01
    jmp $02ef     ; $0d54 c3 ef 02
 
    nop           ; $0d57 00      
@@ -3816,18 +3813,21 @@ _TYPE:           ; 157E - 15A7
    .word __40             ; 1585 0984 - @
    .word __3FDUP          ; 1587 03E0 - ?DUP
    .word __3FBRANCH       ; 1589 0A7A - ?BRANCH
-   .word $1591            ; 158B 1591
+   .word l1591            ; 158B 1591
    .word _EXECUTE         ; 158D 032C - EXECUTE
    .word _EXIT            ; 158F 0315 - EXIT
+l1591:
    .word _0               ; 1591 0EC8 - 0
    .word __28_3FDO_29     ; 1593 0B0C - (?DO)
-   .word $15A3            ; 1595 15A3
+   .word l15A3            ; 1595 15A3
+l1597:
    .word _DUP             ; 1597 03D3 - DUP
    .word _C_40            ; 1599 0991 - C@
    .word _EMIT            ; 159B 153D - EMIT
    .word _1_2B            ; 159D 0477 - 1+
    .word __28LOOP_29      ; 159F 0B2E - (LOOP)
-   .word $1597            ; 15A1 1597
+   .word l1597            ; 15A1 1597
+l15A3:
    .word _DROP            ; 15A3 0382 - DROP
    .word _EXIT            ; 15A5 0315 - EXIT
 

@@ -1,8 +1,0 @@
-$0f10 cd e4 02   call $02e4
-$0f13 d1         pop d
-$0f14 01 da 09   lxi b,$09da
-$0f17 15         dcr d
-$0f18 03         inx b
-$0f19 01 2c 08   lxi b,$082c
-$0f1c 0f         rrc
-$0f1d cd e4 02   call $02e4

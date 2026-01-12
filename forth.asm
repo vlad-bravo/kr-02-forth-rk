@@ -18,7 +18,7 @@ l010e:
    inx d         ; $0111 13      
    dcr b         ; $0112 05      
    jnz l010e     ; $0113 c2 0e 01
-   mvi b,$1a     ; $0116 06 1a   
+   mvi b,$1a     ; $0116 06 1a    Обнуление области памяти
    lxi h,$3400   ; $0118 21 00 34
    sub a         ; $011b 97      
 l011c:
@@ -26,7 +26,7 @@ l011c:
    inx h         ; $011d 23      
    dcr b         ; $011e 05      
    jnz l011c     ; $011f c2 1c 01
-   lhld $02d0    ; $0122 2a d0 02
+   lhld $02d0    ; $0122 2a d0 02 Инициализация
    shld $341a    ; $0125 22 1a 34
    lhld $02d2    ; $0128 2a d2 02
    shld $341c    ; $012b 22 1c 34
@@ -35,14 +35,15 @@ l011c:
    lhld $02d6    ; $0134 2a d6 02
    shld $3424    ; $0137 22 24 34
    lhld $02d8    ; $013a 2a d8 02
-   jmp $0d44     ; $013d c3 44 0d
+   jmp l0d44     ; $013d c3 44 0d
+
 l0140:
    lhld $341c    ; $0140 2a 1c 34
    sphl          ; $0143 f9      
    lhld $341a    ; $0144 2a 1a 34
    shld $341e    ; $0147 22 1e 34
-   lxi b,l015a   ; $014a 01 5a 01
-   jmp $02ef     ; $014d c3 ef 02
+   lxi b,l015a   ; $014a 01 5a 01 Адрес ФОРТ-программы
+   jmp l02ef     ; $014d c3 ef 02 Передача управления
 
    stax b        ; $0150 02      
    nop           ; $0151 00      
@@ -56,74 +57,57 @@ l0140:
    mov e,l       ; $0159 5d      
 
 l015a:
-   dcx h         ; $015a 2b      
-   ldax b        ; $015b 0a      
-   .byte $18     ; $015c 18      
-   inr m         ; $015d 34      
-   add h         ; $015e 84      
-   dad b         ; $015f 09      
-   rpo           ; $0160 e0      
-   inx b         ; $0161 03      
-   mov a,d       ; $0162 7a      
-   ldax b        ; $0163 0a      
-   mov l,d       ; $0164 6a      
-   lxi b,$032c   ; $0165 01 2c 03
-   dcr d         ; $0168 15      
-   inx b         ; $0169 03      
+   .word _LIT             ; $015a 0A2B - LIT
+   .word $3418            ; $015c 3418
+   .word __40             ; $015e 0984 - @
+   .word __3FDUP          ; $0160 03E0 - ?DUP
+   .word __3FBRANCH       ; $0162 0A7A - ?BRANCH
+   .word $016A            ; $0164 016A
+   .word _EXECUTE         ; $0166 032C - EXECUTE
+   .word _EXIT            ; $0168 0315 - EXIT
+   .word $162A            ; $016a 162A
+   .word _TITLE           ; $016c 0D78 - TITLE
+   .word _TRUE            ; $016e 0EE6 - TRUE
+   .word _WARNING         ; $0170 02C0 - WARNING
+   .word __21             ; $0172 099D - !
+   .word _DECIMAL         ; $0174 1694 - DECIMAL
+   .word _QUIT            ; $0176 10A4 - QUIT
 
-   lhld $7816    ; $016a 2a 16 78
-   dcr c         ; $016d 0d      
-   ani $0e       ; $016e e6 0e   
-   rnz           ; $0170 c0      
-   stax b        ; $0171 02      
-   sbb l         ; $0172 9d      
-   dad b         ; $0173 09      
-   sub h         ; $0174 94      
-   mvi d,$a4     ; $0175 16 a4   
-   .byte 0x10    ; $0177 10      
 l0178:
-   .word _LIT,$6574
-   adc h         ; $017c 8c      
-   lhld $099d    ; $017d 2a 9d 09
-   dcx h         ; $0180 2b      
-   ldax b        ; $0181 0a      
-   adc h         ; $0182 8c      
-   mov m,l       ; $0183 75      
-   sbb d         ; $0184 9a      
-   lhld $099d    ; $0185 2a 9d 09
-   mov c,b       ; $0188 48      
-   dcx h         ; $0189 2b      
-   mov l,b       ; $018a 68      
-   ldax b        ; $018b 0a      
-   mov e,d       ; $018c 5a      
-   lxi b,$2086   ; $018d 01 86 20
-   add m         ; $0190 86      
-   .byte 0x20    ; $0191 20      
-   add m         ; $0192 86      
-   .byte 0x20    ; $0193 20      
-   ani $0e       ; $0194 e6 0e   
-   rnz           ; $0196 c0      
-   stax b        ; $0197 02      
-   sbb l         ; $0198 9d      
-   dad b         ; $0199 09      
-   sub h         ; $019a 94      
-   mvi d,$a4     ; $019b 16 a4   
-   .byte 0x10    ; $019d 10      
+   .word _LIT             ; $0178 0A2B - LIT
+   .word $6574            ; $017a 6574
+   .word _FIRST1          ; $017c 2A8C - FIRST1
+   .word __21             ; $017e 099D - !
+   .word _LIT             ; $0180 0A2B - LIT
+   .word $758C            ; $0182 758C
+   .word _LIMIT1          ; $0184 2A9A - LIMIT1
+   .word __21             ; $0186 099D - !
+   .word _EMPTY_2DBUFFERS ; $0188 2B48 - EMPTY-BUFFERS
+   .word _BRANCH          ; $018a 0A68 - BRANCH
+   .word $015A            ; $018c 015A
+   .word _NOOP            ; $018e 2086 - NOOP
+   .word _NOOP            ; $0190 2086 - NOOP
+   .word _NOOP            ; $0192 2086 - NOOP
+   .word _TRUE            ; $0194 0EE6 - TRUE
+   .word _WARNING         ; $0196 02C0 - WARNING
+   .word __21             ; $0198 099D - !
+   .word _DECIMAL         ; $019a 1694 - DECIMAL
+   .word _QUIT            ; $019c 10A4 - QUIT
 
 ; NOT IN WORDS LINK
 l019e:
    .byte 5, "FORTH"
    .word 0x0000
-_FORTH:
-   call $1b95    ; $01a6 cd 95 1b
-   lxi b,$8680   ; $01a9 01 80 86
-   mov b,e       ; $01ac 43      
-   nop           ; $01ad 00      
-   nop           ; $01ae 00      
+;_FORTH:
+   call l1b95    ; $01a6 cd 95 1b
+   .byte $01
+   .byte $80
+   .word $4386
+   .word $0000
 
 NFA_R0:          ; 01AF
    .byte 2,"R0"
-   .word $3448   ; !!! _FORTH
+   .word NFA_FORTH
 _R0:             ; 01B4
    call $0984    ; $01b4 cd 84 09
    .word $341a
@@ -163,10 +147,10 @@ _FENCE:          ; 01EE
    call $0984    ; $01ee cd 84 09
    .word $3424
 
-; NOT IN WORDS LINK
+NFA_W_2DLINK:    ; 01F3
    .byte 6,"W-LINK"
-   .word NFA_FENCE
-_W_2DLINK:
+   .word NFA_FENCE        ; 01E6
+_W_2DLINK:       ; 01FC - None
    call $0984    ; $01fc cd 84 09
    .word $3426
 
@@ -220,14 +204,12 @@ _CSP:            ; 0254
    .word $3434   ; $0257 34      
 
 ; NOT IN WORDS LINK
-   inx b         ; $0259 03      
-   mov c,c       ; $025a 49      
-   mov c,m       ; $025b 4e      
-   mov b,d       ; $025c 42      
-   mov c,m       ; $025d 4e      
-   stax b        ; $025e 02      
+NFA_INB:         ; 0259
+   .byte 3,"INB"
+   .word NFA_CSP          ; 024E
+_INB:            ; 025F - None
    call $0984    ; $025f cd 84 09
-   mvi m,$34     ; $0262 36 34   
+   .word $3436   ; $0262 36 34   
 
 NFA__23TIB:      ; 0264
    .byte 4,"#TIB"
@@ -244,27 +226,20 @@ __3EIN:          ; 0276
    .word $343a   ; $0279 3a 34
 
 ; NOT IN WORDS LINK
-   .byte 04
-   mov c,a       ; $027c 4f      
-   mov d,l       ; $027d 55      
-   mov d,h       ; $027e 54      
-   mov b,d       ; $027f 42      
-   mov m,b       ; $0280 70      
-   stax b        ; $0281 02      
+NFA_OUTB:        ; 027B
+   .byte 4,"OUTB"
+   .word NFA__3EIN          ; 0270
+_OUTB:           ; 0282 - None
    call $0984    ; $0282 cd 84 09
-   inr a         ; $0285 3c      
-   inr m         ; $0286 34      
+   .word $343c   ; $0285 3c      
 
 ; NOT IN WORDS LINK
-   inr b         ; $0287 04      
-   inx h         ; $0288 23      
-   mov d,h       ; $0289 54      
-   mov c,a       ; $028a 4f      
-   mov b,d       ; $028b 42      
-   mov m,b       ; $028c 70      
-   stax b        ; $028d 02      
+NFA__23TOB:      ; 0287
+   .byte 4,"#TOB"
+   .word NFA__3EIN          ; 0270
+__23TOB:         ; 028E - None
    call $0984    ; $028e cd 84 09
-   mvi a,$34     ; $0291 3e 34   
+   .word $343e   ; $0291 3e 34   
 
 NFA_SPAN:        ; 0293
    .byte 4,"SPAN"
@@ -302,6 +277,7 @@ _TIB:            ; 02CB
    sbb l         ; $02ce 9d      
    inr m         ; $02cf 34      
 
+; !!!
    sbb c         ; $02d0 99      
    inr m         ; $02d1 34      
    cmc           ; $02d2 3f      
@@ -327,7 +303,7 @@ _FCALL:
    mov m,c       ; $02ea 71      
    shld $341e    ; $02eb 22 1e 34
    pop b         ; $02ee c1      
-
+l02ef:
    ldax b        ; $02ef 0a      
    mov l,a       ; $02f0 6f      
    inx b         ; $02f1 03      
@@ -369,11 +345,11 @@ _EXECUTE:        ; 032C
    ret           ; $032c c9      
 
 ; NOT IN WORDS LINK
+NFA_ASMCALL:     ; 032D
    .byte 7,"ASMCALL"
-;   .word
-_ASMCALL:
-   shld $2a03    ; $0335 22 03 2a
-   mvi e,$34     ; $0338 1e 34   
+   .word NFA_EXECUTE      ; 0322
+_ASMCALL:        ; 0337 - None
+   lhld $341e    ; $0337 2a 1e 34
    dcx h         ; $033a 2b      
    mov m,b       ; $033b 70      
    dcx h         ; $033c 2b      
@@ -928,13 +904,10 @@ _DNEGATE:        ; 0620
    push h        ; $0631 e5      
    jmp $02ef     ; $0632 c3 ef 02
 
-   dcr b         ; $0635 05      
-   dcr l         ; $0636 2d      
-   mov d,h       ; $0637 54      
-   mov b,l       ; $0638 45      
-   mov e,b       ; $0639 58      
-   mov d,h       ; $063a 54      
-   mvi d,$06     ; $063b 16 06   
+NFA__2DTEXT:     ; 0635
+   .byte 5,"-TEXT"
+   .word NFA_DNEGATE      ; 0616
+__2DTEXT:        ; 063D - None
    mov h,b       ; $063d 60      
    mov l,c       ; $063e 69      
    pop d         ; $063f d1      
@@ -1277,14 +1250,10 @@ _U_2FMOD:          ; 082B
    push h        ; $0833 e5      
    jmp $02ef     ; $0834 c3 ef 02
 
-   dcr b         ; $0837 05      
-   cmc           ; $0838 3f      
-   mov d,a       ; $0839 57      
-   mov c,a       ; $083a 4f      
-   mov d,d       ; $083b 52      
-   mov b,h       ; $083c 44      
-   inx h         ; $083d 23      
-   .byte 0x08    ; $083e 08      
+NFA__3FWORD:     ; 0837
+   .byte 5,"?WORD"
+   .word NFA_U_2FMOD        ; 0823
+__3FWORD:        ; 083F - None
    pop h         ; $083f e1      
    pop d         ; $0840 d1      
    push b        ; $0841 c5      
@@ -2052,16 +2021,12 @@ _ENCLOSE:        ; 0C33
 NFA_BYE:         ; 0C71
    .byte 3,"BYE"
    .word NFA_ENCLOSE      ; 0C29
-_BYE:            ; 0C77
-   call $02e4    ; $0c77 cd e4 02
-   dcx h         ; $0c7a 2b      
-   ldax b        ; $0c7b 0a      
-   nop           ; $0c7c 00      
-   rm            ; $0c7d f8      
-   inr l         ; $0c7e 2c      
-   inx b         ; $0c7f 03      
-   dcr d         ; $0c80 15      
-   inx b         ; $0c81 03      
+_BYE:            ; 0C77 - 0C82
+   call _FCALL            ; 0C77
+   .word _LIT             ; $0c7a 0A2B - LIT
+   .word $F800            ; $0c7c F800
+   .word _EXECUTE         ; $0c7e 032C - EXECUTE
+   .word _EXIT            ; $0c80 0315 - EXIT
 
 NFA__28EMIT_29:      ; 0C82
    .byte 6,"(EMIT)"
@@ -2074,14 +2039,10 @@ __28EMIT_29:         ; 0C8B
    pop b         ; $0c91 c1      
    jmp $02ef     ; $0c92 c3 ef 02
 
-   dcr b         ; $0c95 05      
-   .byte 0x28    ; $0c96 28      
-   mov c,e       ; $0c97 4b      
-   mov b,l       ; $0c98 45      
-   mov e,c       ; $0c99 59      
-   dad h         ; $0c9a 29      
-   add d         ; $0c9b 82      
-   inr c         ; $0c9c 0c      
+NFA__28KEY_29:   ; 0C95
+   .byte 5,"(KEY)"
+   .word NFA__28EMIT_29       ; 0C82
+__28KEY_29:      ; 0C9D - None
    push b        ; $0c9d c5      
    call $f803    ; $0c9e cd 03 f8
    mvi h,$00     ; $0ca1 26 00   
@@ -2136,13 +2097,10 @@ __3FKEY:           ; 0CE5
    mvi c,$15     ; $0cf7 0e 15   
    inx b         ; $0cf9 03      
 
-   dcr b         ; $0cfa 05      
-   mov c,h       ; $0cfb 4c      
-   mov b,l       ; $0cfc 45      
-   mov c,l       ; $0cfd 4d      
-   mov c,c       ; $0cfe 49      
-   mov d,h       ; $0cff 54      
-   sbi $0c       ; $0d00 de 0c   
+NFA_LEMIT:       ; 0CFA
+   .byte 5,"LEMIT"
+   .word NFA__3FKEY         ; 0CDE
+_LEMIT:          ; 0D02 - None
    pop h         ; $0d02 e1      
    push b        ; $0d03 c5      
    mov c,l       ; $0d04 4d      
@@ -2150,54 +2108,33 @@ __3FKEY:           ; 0CE5
    pop b         ; $0d08 c1      
    jmp $02ef     ; $0d09 c3 ef 02
 
-   dcr b         ; $0d0c 05      
-   mov d,b       ; $0d0d 50      
-   mov d,d       ; $0d0e 52      
-   mov c,c       ; $0d0f 49      
-   mov c,m       ; $0d10 4e      
-   mov d,h       ; $0d11 54      
-   sbi $0c       ; $0d12 de 0c   
+NFA_PRINT:       ; 0D0C
+   .byte 5,"PRINT"
+   .word NFA__3FKEY         ; 0CDE
+_PRINT:          ; 0D14 - None
    call $02e4    ; $0d14 cd e4 02
-   dcx h         ; $0d17 2b      
-   ldax b        ; $0d18 0a      
-   nop           ; $0d19 00      
-   nop           ; $0d1a 00      
-   inr c         ; $0d1b 0c      
-   dcx b         ; $0d1c 0b      
-   dcx h         ; $0d1d 2b      
-   dcr c         ; $0d1e 0d      
-   out $03       ; $0d1f d3 03   
-   sub c         ; $0d21 91      
-   dad b         ; $0d22 09      
-   stax b        ; $0d23 02      
-   dcr c         ; $0d24 0d      
-   mov m,a       ; $0d25 77      
-   inr b         ; $0d26 04      
-   mvi l,$0b     ; $0d27 2e 0b   
-   rar           ; $0d29 1f      
-   dcr c         ; $0d2a 0d      
-   add d         ; $0d2b 82      
-   inx b         ; $0d2c 03      
-   dcr d         ; $0d2d 15      
-   inx b         ; $0d2e 03      
+   .word _LIT             ; $0d17 0A2B - LIT
+   .word $0000            ; $0d19 0000
+   .word __28_3FDO_29     ; $0d1b 0B0C - (?DO)
+   .word $0D2B            ; $0d1d 0D2B
+   .word _DUP             ; $0d1f 03D3 - DUP
+   .word _C_40            ; $0d21 0991 - C@
+   .word _LEMIT           ; $0d23 0D02 - LEMIT
+   .word _1_2B            ; $0d25 0477 - 1+
+   .word __28LOOP_29      ; $0d27 0B2E - (LOOP)
+   .word $0D1F            ; $0d29 0D1F
+   .word _DROP            ; $0d2b 0382 - DROP
+   .word _EXIT            ; $0d2d 0315 - EXIT
 
-   rlc           ; $0d2f 07      
-   .byte 0x28    ; $0d30 28      
-   mov c,h       ; $0d31 4c      
-   mov b,l       ; $0d32 45      
-   mov c,l       ; $0d33 4d      
-   mov c,c       ; $0d34 49      
-   mov d,h       ; $0d35 54      
-   dad h         ; $0d36 29      
-   sbi $0c       ; $0d37 de 0c   
+NFA__28LEMIT_29: ; 0D2F
+   .byte 7,"(LEMIT)"
+   .word NFA__3FKEY         ; 0CDE
+__28LEMIT_29:    ; 0D39 - None
    call $02e4    ; $0d39 cd e4 02
-   out $03       ; $0d3c d3 03   
-   adc e         ; $0d3e 8b      
-   inr c         ; $0d3f 0c      
-   stax b        ; $0d40 02      
-   dcr c         ; $0d41 0d      
-   dcr d         ; $0d42 15      
-   inx b         ; $0d43 03      
+   .word _DUP             ; $0d3c 03D3 - DUP
+   .word __28EMIT_29      ; $0d3e 0C8B - (EMIT)
+   .word _LEMIT           ; $0d40 0D02 - LEMIT
+   .word _EXIT            ; $0d42 0315 - EXIT
 
 l0d44:
    shld $3422    ; $0d44 22 22 34
@@ -2205,290 +2142,39 @@ l0d44:
    sphl          ; $0d4a f9      
    lhld $341a    ; $0d4b 2a 1a 34
    shld $341e    ; $0d4e 22 1e 34
-   lxi b,l0178   ; $0d51 01 78 01
-   jmp $02ef     ; $0d54 c3 ef 02
+   lxi b,l0178   ; $0d51 01 78 01 Адрес ФОРТ-программы
+   jmp l02ef     ; $0d54 c3 ef 02 Передача управления
 
-   nop           ; $0d57 00      
-   nop           ; $0d58 00      
-   nop           ; $0d59 00      
-   nop           ; $0d5a 00      
-   nop           ; $0d5b 00      
-   nop           ; $0d5c 00      
-   nop           ; $0d5d 00      
-   nop           ; $0d5e 00      
-   nop           ; $0d5f 00      
-   nop           ; $0d60 00      
-   nop           ; $0d61 00      
-   nop           ; $0d62 00      
-   nop           ; $0d63 00      
-   nop           ; $0d64 00      
-   nop           ; $0d65 00      
-   nop           ; $0d66 00      
-   nop           ; $0d67 00      
-   nop           ; $0d68 00      
-   nop           ; $0d69 00      
-   nop           ; $0d6a 00      
-   nop           ; $0d6b 00      
-   nop           ; $0d6c 00      
-   nop           ; $0d6d 00      
-   nop           ; $0d6e 00      
-   nop           ; $0d6f 00      
+.storage 25,0x00
 
 NFA_TITLE:       ; 0D70
    .byte 5,"TITLE"
    .word NFA__3FKEY         ; 0CDE
 _TITLE:          ; 0D78
    call $02e4    ; $0d78 cd e4 02
-   mov h,m       ; $0d7b 66      
-   dcr d         ; $0d7c 15      
-   dcx h         ; $0d7d 2b      
-   ldax b        ; $0d7e 0a      
-   stax d        ; $0d7f 12      
-   nop           ; $0d80 00      
-   sui $16       ; $0d81 d6 16   
-   mvi a,$18     ; $0d83 3e 18   
-   lxi d,$6f66   ; $0d85 11 66 6f
-   mov m,d       ; $0d88 72      
-   mov m,h       ; $0d89 74      
-   dcr l         ; $0d8a 2d      
-   mov m,e       ; $0d8b 73      
-   mov l,c       ; $0d8c 69      
-   mov m,e       ; $0d8d 73      
-   mov m,h       ; $0d8e 74      
-   mov h,l       ; $0d8f 65      
-   mov l,l       ; $0d90 6d      
-   mov h,c       ; $0d91 61      
-   .byte 0x20    ; $0d92 20      
-   mov l,h       ; $0d93 6c      
-   mov m,e       ; $0d94 73      
-   dcr l         ; $0d95 2d      
-   lxi sp,$1566  ; $0d96 31 66 15
-   mov h,m       ; $0d99 66      
-   dcr d         ; $0d9a 15      
-   mvi a,$18     ; $0d9b 3e 18   
-   stc           ; $0d9d 37      
-   mov m,e       ; $0d9e 73      
-   mov m,h       ; $0d9f 74      
-   mov h,c       ; $0da0 61      
-   mov l,m       ; $0da1 6e      
-   mov h,h       ; $0da2 64      
-   mov h,c       ; $0da3 61      
-   mov m,d       ; $0da4 72      
-   mov m,h       ; $0da5 74      
-   .byte 0x20    ; $0da6 20      
-   mov b,m       ; $0da7 46      
-   mov c,a       ; $0da8 4f      
-   mov d,d       ; $0da9 52      
-   mov d,h       ; $0daa 54      
-   mov c,b       ; $0dab 48      
-   dcr l         ; $0dac 2d      
-   .byte 0x38    ; $0dad 38      
-   inx sp        ; $0dae 33      
-   .byte 0x20    ; $0daf 20      
-   mov l,c       ; $0db0 69      
-   .byte 0x20    ; $0db1 20      
-   mov h,c       ; $0db2 61      
-   mov m,e       ; $0db3 73      
-   mov m,e       ; $0db4 73      
-   mov h,l       ; $0db5 65      
-   mov l,l       ; $0db6 6d      
-   mov h,d       ; $0db7 62      
-   mov l,h       ; $0db8 6c      
-   mov h,l       ; $0db9 65      
-   mov m,d       ; $0dba 72      
-   .byte 0x20    ; $0dbb 20      
-   .byte 0x28    ; $0dbc 28      
-   mov b,e       ; $0dbd 43      
-   dad h         ; $0dbe 29      
-   .byte 0x20    ; $0dbf 20      
-   mov l,m       ; $0dc0 6e      
-   mov l,c       ; $0dc1 69      
-   mov l,c       ; $0dc2 69      
-   mov m,e       ; $0dc3 73      
-   mov a,m       ; $0dc4 7e      
-   mov h,l       ; $0dc5 65      
-   mov m,h       ; $0dc6 74      
-   mov l,l       ; $0dc7 6d      
-   mov h,c       ; $0dc8 61      
-   mov a,e       ; $0dc9 7b      
-   .byte 0x20    ; $0dca 20      
-   mov l,h       ; $0dcb 6c      
-   mov h,a       ; $0dcc 67      
-   mov m,l       ; $0dcd 75      
-   inr l         ; $0dce 2c      
-   .byte 0x20    ; $0dcf 20      
-   lxi sp,$3839  ; $0dd0 31 39 38
-   mvi m,$2e     ; $0dd3 36 2e   
-   mov h,m       ; $0dd5 66      
-   dcr d         ; $0dd6 15      
-   mvi a,$18     ; $0dd7 3e 18   
-   stc           ; $0dd9 37      
-   mov m,d       ; $0dda 72      
-   mov h,l       ; $0ddb 65      
-   mov h,h       ; $0ddc 64      
-   mov h,c       ; $0ddd 61      
-   mov l,e       ; $0dde 6b      
-   mov m,h       ; $0ddf 74      
-   mov l,a       ; $0de0 6f      
-   mov m,d       ; $0de1 72      
-   inr l         ; $0de2 2c      
-   .byte 0x20    ; $0de3 20      
-   mov h,m       ; $0de4 66      
-   mov h,c       ; $0de5 61      
-   mov l,d       ; $0de6 6a      
-   mov l,h       ; $0de7 6c      
-   mov l,a       ; $0de8 6f      
-   mov m,a       ; $0de9 77      
-   mov h,c       ; $0dea 61      
-   mov m,c       ; $0deb 71      
-   .byte 0x20    ; $0dec 20      
-   mov m,e       ; $0ded 73      
-   mov l,c       ; $0dee 69      
-   mov m,e       ; $0def 73      
-   mov m,h       ; $0df0 74      
-   mov h,l       ; $0df1 65      
-   mov l,l       ; $0df2 6d      
-   mov h,c       ; $0df3 61      
-   inr l         ; $0df4 2c      
-   .byte 0x20    ; $0df5 20      
-   mov m,b       ; $0df6 70      
-   mov m,e       ; $0df7 73      
-   mov h,l       ; $0df8 65      
-   mov m,a       ; $0df9 77      
-   mov h,h       ; $0dfa 64      
-   mov l,a       ; $0dfb 6f      
-   mov h,a       ; $0dfc 67      
-   mov m,d       ; $0dfd 72      
-   mov h,c       ; $0dfe 61      
-   mov h,m       ; $0dff 66      
-   mov l,c       ; $0e00 69      
-   mov l,e       ; $0e01 6b      
-   mov h,c       ; $0e02 61      
-   .byte 0x20    ; $0e03 20      
-   mov l,c       ; $0e04 69      
-   .byte 0x20    ; $0e05 20      
-   mov a,d       ; $0e06 7a      
-   mov h,c       ; $0e07 61      
-   mov h,a       ; $0e08 67      
-   mov m,d       ; $0e09 72      
-   mov m,l       ; $0e0a 75      
-   mov a,d       ; $0e0b 7a      
-   mov a,m       ; $0e0c 7e      
-   mov l,c       ; $0e0d 69      
-   mov l,e       ; $0e0e 6b      
-   .byte 0x20    ; $0e0f 20      
-   dcr l         ; $0e10 2d      
-   mov h,m       ; $0e11 66      
-   dcr d         ; $0e12 15      
-   mvi a,$18     ; $0e13 3e 18   
-   stc           ; $0e15 37      
-   .byte 0x28    ; $0e16 28      
-   mov b,e       ; $0e17 43      
-   dad h         ; $0e18 29      
-   .byte 0x20    ; $0e19 20      
-   mov l,h       ; $0e1a 6c      
-   mov h,l       ; $0e1b 65      
-   mov l,d       ; $0e1c 6a      
-   mov h,h       ; $0e1d 64      
-   mov l,c       ; $0e1e 69      
-   .byte 0x20    ; $0e1f 20      
-   mov m,e       ; $0e20 73      
-   ral           ; $0e21 17      
-   mov h,m       ; $0e22 66      
-   mov m,h       ; $0e23 74      
-   inr l         ; $0e24 2c      
-   .byte 0x20    ; $0e25 20      
-   .byte 0x20    ; $0e26 20      
-   mov l,l       ; $0e27 6d      
-   mov l,a       ; $0e28 6f      
-   mov m,e       ; $0e29 73      
-   mov l,e       ; $0e2a 6b      
-   mov m,a       ; $0e2b 77      
-   mov h,c       ; $0e2c 61      
-   inr l         ; $0e2d 2c      
-   .byte 0x20    ; $0e2e 20      
-   .byte 0x20    ; $0e2f 20      
-   .byte 0x20    ; $0e30 20      
-   mov m,d       ; $0e31 72      
-   mov h,l       ; $0e32 65      
-   mov h,a       ; $0e33 67      
-   mvi l,$20     ; $0e34 2e 20   
-   mov m,l       ; $0e36 75      
-   mov h,h       ; $0e37 64      
-   mov l,a       ; $0e38 6f      
-   mov m,e       ; $0e39 73      
-   mov m,h       ; $0e3a 74      
-   mov l,a       ; $0e3b 6f      
-   mov m,a       ; $0e3c 77      
-   mov h,l       ; $0e3d 65      
-   mov m,d       ; $0e3e 72      
-   mov h,l       ; $0e3f 65      
-   mov l,m       ; $0e40 6e      
-   mov l,c       ; $0e41 69      
-   mov h,l       ; $0e42 65      
-   .byte 0x20    ; $0e43 20      
-   mov b,c       ; $0e44 41      
-   cma           ; $0e45 2f      
-   sta $3532     ; $0e46 32 32 35
-   inr m         ; $0e49 34      
-   sta $2e36     ; $0e4a 32 36 2e
-   mov h,m       ; $0e4d 66      
-   dcr d         ; $0e4e 15      
-   mov h,m       ; $0e4f 66      
-   dcr d         ; $0e50 15      
-   mvi a,$18     ; $0e51 3e 18   
-   stc           ; $0e53 37      
-   .byte 0x28    ; $0e54 28      
-   mov b,e       ; $0e55 43      
-   dad h         ; $0e56 29      
-   .byte 0x20    ; $0e57 20      
-   mov l,h       ; $0e58 6c      
-   mov h,l       ; $0e59 65      
-   mov l,d       ; $0e5a 6a      
-   mov h,h       ; $0e5b 64      
-   mov l,c       ; $0e5c 69      
-   .byte 0x20    ; $0e5d 20      
-   mov b,e       ; $0e5e 43      
-   ral           ; $0e5f 17      
-   mov h,m       ; $0e60 66      
-   mov m,h       ; $0e61 74      
-   inr l         ; $0e62 2c      
-   .byte 0x20    ; $0e63 20      
-   .byte 0x20    ; $0e64 20      
-   mov l,l       ; $0e65 6d      
-   mov l,a       ; $0e66 6f      
-   mov m,e       ; $0e67 73      
-   mov l,e       ; $0e68 6b      
-   mov m,a       ; $0e69 77      
-   mov h,c       ; $0e6a 61      
-   inr l         ; $0e6b 2c      
-   .byte 0x20    ; $0e6c 20      
-   .byte 0x20    ; $0e6d 20      
-   .byte 0x20    ; $0e6e 20      
-   mov m,h       ; $0e6f 74      
-   mov h,l       ; $0e70 65      
-   mov l,h       ; $0e71 6c      
-   mvi l,$20     ; $0e72 2e 20   
-   dad sp        ; $0e74 39      
-   inr m         ; $0e75 34      
-   dcr m         ; $0e76 35      
-   dcr l         ; $0e77 2d      
-   lxi sp,$2d31  ; $0e78 31 31 2d
-   dcr m         ; $0e7b 35      
-   lxi sp,$202c  ; $0e7c 31 2c 20
-   .byte 0x20    ; $0e7f 20      
-   .byte 0x20    ; $0e80 20      
-   mov l,c       ; $0e81 69      
-   mov h,b       ; $0e82 60      
-   mov l,m       ; $0e83 6e      
-   mov a,b       ; $0e84 78      
-   .byte 0x20    ; $0e85 20      
-   lxi sp,$3839  ; $0e86 31 39 38
-   .byte 0x38    ; $0e89 38      
-   mvi l,$66     ; $0e8a 2e 66   
-   dcr d         ; $0e8c 15      
-   dcr d         ; $0e8d 15      
-   inx b         ; $0e8e 03      
+   .word _CR              ; $0d7b 1566 - CR
+   .word _LIT             ; $0d7d 0A2B - LIT
+   .word $0012            ; $0d7f 0012
+   .word _SPACES          ; $0d81 16D6 - SPACES
+   .word __28_2E_22_29    ; $0d83 183E - (.")
+   .byte 17,"fort-sistema ls-1"
+   .word _CR              ; $0d97 1566 - CR
+   .word _CR              ; $0d99 1566 - CR
+   .word __28_2E_22_29    ; $0d9b 183E - (.")
+   .byte 55,"standart FORTH-83 i assembler (C) niis~etma{ lgu, 1986."
+   .word _CR              ; $0dd5 1566 - CR
+   .word __28_2E_22_29    ; $0dd7 183E - (.")
+   .byte 55,"redaktor, fajlowaq sistema, psewdografika i zagruz~ik -"
+   .word _CR              ; $0e11 1566 - CR
+   .word __28_2E_22_29    ; $0e13 183E - (.")
+   .byte 55,"(C) lejdi s",0x17,"ft,  moskwa,   reg. udostowerenie A/225426."
+   .word _CR              ; $0e4d 1566 - CR
+   .word _CR              ; $0e4f 1566 - CR
+   .word __28_2E_22_29    ; $0e51 183E - (.")
+   .byte 55,"(C) lejdi C",0x17,"ft,  moskwa,   tel. 945-11-51,   i`nx 1988."
+   .word _CR              ; $0e8b 1566 - CR
+   .word _EXIT            ; $0e8d 0315 - EXIT
+
    mvi d,$3e     ; $0e8f 16 3e   
    .byte 0x18    ; $0e91 18      
    dcr d         ; $0e92 15      
@@ -2567,85 +2253,67 @@ _FALSE:          ; 0EF3
 NFA_HERE:        ; 0EF8
    .byte 4,"HERE"
    .word NFA_FALSE        ; 0EEB
-_HERE:           ; 0EFF
-   call $02e4    ; $0eff cd e4 02
-   pop d         ; $0f02 d1      
-   lxi b,$0984   ; $0f03 01 84 09
-   dcr d         ; $0f06 15      
-   inx b         ; $0f07 03      
+_HERE:           ; 0EFF - 0F08
+   call _FCALL            ; 0EFF
+   .word _H               ; $0f02 01D1 - H
+   .word __40             ; $0f04 0984 - @
+   .word _EXIT            ; $0f06 0315 - EXIT
 
 NFA_ALLOT:       ; 0F08
    .byte 5,"ALLOT"
    .word NFA_HERE         ; 0EF8
-_ALLOT:          ; 0F10
-   call $02e4    ; $0f10 cd e4 02
-   pop d         ; $0f13 d1      
-   lxi b,$09da   ; $0f14 01 da 09
-   dcr d         ; $0f17 15      
-   inx b         ; $0f18 03      
+_ALLOT:          ; 0F10 - 0F19
+   call _FCALL            ; 0F10
+   .word _H               ; $0f13 01D1 - H
+   .word __2B_21          ; $0f15 09DA - +!
+   .word _EXIT            ; $0f17 0315 - EXIT
 
-NFA__2C:           ; 0F19
+NFA__2C:         ; 0F19
    .byte 1,","
    .word NFA_ALLOT        ; 0F08
-__2C:              ; 0F1D
-   call $02e4    ; $0f1d cd e4 02
-   rst 7         ; $0f20 ff      
-   mvi c,$da     ; $0f21 0e da   
-   mvi c,$10     ; $0f23 0e 10   
-   rrc           ; $0f25 0f      
-   sbb l         ; $0f26 9d      
-   dad b         ; $0f27 09      
-   dcr d         ; $0f28 15      
-   inx b         ; $0f29 03      
+__2C:            ; 0F1D - 0F2A
+   call _FCALL            ; 0F1D
+   .word _HERE            ; $0f20 0EFF - HERE
+   .word _2               ; $0f22 0EDA - 2
+   .word _ALLOT           ; $0f24 0F10 - ALLOT
+   .word __21             ; $0f26 099D - !
+   .word _EXIT            ; $0f28 0315 - EXIT
 
 NFA_C_2C:        ; 0F2A
    .byte 2,"C,"
    .word NFA__2C            ; 0F19
-_C_2C:           ; 0F2F
-   call $02e4    ; $0f2f cd e4 02
-   rst 7         ; $0f32 ff      
-   mvi c,$d1     ; $0f33 0e d1   
-   mvi c,$10     ; $0f35 0e 10   
-   rrc           ; $0f37 0f      
-   xra d         ; $0f38 aa      
-   dad b         ; $0f39 09      
-   dcr d         ; $0f3a 15      
-   inx b         ; $0f3b 03      
+_C_2C:           ; 0F2F - 0F3C
+   call _FCALL            ; 0F2F
+   .word _HERE            ; $0f32 0EFF - HERE
+   .word _1               ; $0f34 0ED1 - 1
+   .word _ALLOT           ; $0f36 0F10 - ALLOT
+   .word _C_21            ; $0f38 09AA - C!
+   .word _EXIT            ; $0f3a 0315 - EXIT
 
 NFA__22_2C:      ; 0F3C
    .byte 2,"\","
    .word NFA_C_2C           ; 0F2A
-__22_2C:         ; 0F41
-   call $02e4    ; $0f41 cd e4 02
-   rst 7         ; $0f44 ff      
-   mvi c,$62     ; $0f45 0e 62   
-   inx b         ; $0f47 03      
-   sub c         ; $0f48 91      
-   dad b         ; $0f49 09      
-   mov m,a       ; $0f4a 77      
-   inr b         ; $0f4b 04      
-   out $03       ; $0f4c d3 03   
-   .byte 0x10    ; $0f4e 10      
-   rrc           ; $0f4f 0f      
-   mov a,h       ; $0f50 7c      
-   dcx b         ; $0f51 0b      
-   dcr d         ; $0f52 15      
-   inx b         ; $0f53 03      
+__22_2C:         ; 0F41 - 0F54
+   call _FCALL            ; 0F41
+   .word _HERE            ; $0f44 0EFF - HERE
+   .word _OVER            ; $0f46 0362 - OVER
+   .word _C_40            ; $0f48 0991 - C@
+   .word _1_2B            ; $0f4a 0477 - 1+
+   .word _DUP             ; $0f4c 03D3 - DUP
+   .word _ALLOT           ; $0f4e 0F10 - ALLOT
+   .word _CMOVE           ; $0f50 0B7C - CMOVE
+   .word _EXIT            ; $0f52 0315 - EXIT
 
 NFA_PAD:         ; 0F54
    .byte 3,"PAD"
    .word NFA__22_2C           ; 0F3C
-_PAD:            ; 0F5A
-   call $02e4    ; $0f5a cd e4 02
-   rst 7         ; $0f5d ff      
-   mvi c,$2b     ; $0f5e 0e 2b   
-   ldax b        ; $0f60 0a      
-   mov d,h       ; $0f61 54      
-   nop           ; $0f62 00      
-   mov c,d       ; $0f63 4a      
-   inr b         ; $0f64 04      
-   dcr d         ; $0f65 15      
-   inx b         ; $0f66 03      
+_PAD:            ; 0F5A - 0F67
+   call _FCALL            ; 0F5A
+   .word _HERE            ; $0f5d 0EFF - HERE
+   .word _LIT             ; $0f5f 0A2B - LIT
+   .word $0054            ; $0f61 0054
+   .word __2B             ; $0f63 044A - +
+   .word _EXIT            ; $0f65 0315 - EXIT
 
 NFA_COUNT:       ; 0F67
    .byte 5,"COUNT"
@@ -2662,997 +2330,678 @@ _COUNT:          ; 0F6F
 NFA_COMPILE:     ; 0F79
    .byte 7,"COMPILE"
    .word NFA_COUNT        ; 0F67
-_COMPILE:        ; 0F83
-   call $02e4    ; $0f83 cd e4 02
-   .byte 0x20    ; $0f86 20      
-   dad b         ; $0f87 09      
-   out $03       ; $0f88 d3 03   
-   add d         ; $0f8a 82      
-   inr b         ; $0f8b 04      
-   dcr c         ; $0f8c 0d      
-   dad b         ; $0f8d 09      
-   add h         ; $0f8e 84      
-   dad b         ; $0f8f 09      
-   dcr e         ; $0f90 1d      
-   rrc           ; $0f91 0f      
-   dcr d         ; $0f92 15      
-   inx b         ; $0f93 03      
+_COMPILE:        ; 0F83 - 0F94
+   call _FCALL            ; 0F83
+   .word _R_3E            ; $0f86 0920 - R>
+   .word _DUP             ; $0f88 03D3 - DUP
+   .word _2_2B            ; $0f8a 0482 - 2+
+   .word __3ER            ; $0f8c 090D - >R
+   .word __40             ; $0f8e 0984 - @
+   .word __2C             ; $0f90 0F1D - ,
+   .word _EXIT            ; $0f92 0315 - EXIT
 
 NFA_S_3ED:       ; 0F94
    .byte 3,"S>D"
    .word NFA_COMPILE      ; 0F79
-_S_3ED:          ; 0F9A
-   call $02e4    ; $0f9a cd e4 02
-   out $03       ; $0f9d d3 03   
-   dcr a         ; $0f9f 3d      
-   dcr b         ; $0fa0 05      
-   dcr d         ; $0fa1 15      
-   inx b         ; $0fa2 03      
+_S_3ED:          ; 0F9A - 0FA3
+   call _FCALL            ; 0F9A
+   .word _DUP             ; $0f9d 03D3 - DUP
+   .word _0_3C            ; $0f9f 053D - 0<
+   .word _EXIT            ; $0fa1 0315 - EXIT
 
 NFA_M_2A:        ; 0FA3
    .byte 2,"M*"
    .word NFA_S_3ED          ; 0F94
-_M_2A:           ; 0FA8
-   call $02e4    ; $0fa8 cd e4 02
-   jp $eb03      ; $0fab f2 03 eb
-   .byte 0x08    ; $0fae 08      
-   dcr c         ; $0faf 0d      
-   dad b         ; $0fb0 09      
-   ora c         ; $0fb1 b1      
-   inr b         ; $0fb2 04      
-   adc l         ; $0fb3 8d      
-   inx b         ; $0fb4 03      
-   ora c         ; $0fb5 b1      
-   inr b         ; $0fb6 04      
-   rst 0         ; $0fb7 c7      
-   mvi b,$20     ; $0fb8 06 20   
-   dad b         ; $0fba 09      
-   dcr a         ; $0fbb 3d      
-   dcr b         ; $0fbc 05      
-   mov a,d       ; $0fbd 7a      
-   ldax b        ; $0fbe 0a      
-   jmp $200f     ; $0fbf c3 0f 20
-   mvi b,$15     ; $0fc2 06 15   
-   inx b         ; $0fc4 03      
+_M_2A:           ; 0FA8 - 0FC5
+   call _FCALL            ; 0FA8
+   .word _2DUP            ; $0fab 03F2 - 2DUP
+   .word _XOR             ; $0fad 08EB - XOR
+   .word __3ER            ; $0faf 090D - >R
+   .word _ABS             ; $0fb1 04B1 - ABS
+   .word _SWAP            ; $0fb3 038D - SWAP
+   .word _ABS             ; $0fb5 04B1 - ABS
+   .word _UM_2A           ; $0fb7 06C7 - UM*
+   .word _R_3E            ; $0fb9 0920 - R>
+   .word _0_3C            ; $0fbb 053D - 0<
+   .word __3FBRANCH       ; $0fbd 0A7A - ?BRANCH
+   .word $0FC3            ; $0fbf 0FC3
+   .word _DNEGATE         ; $0fc1 0620 - DNEGATE
+   .word _EXIT            ; $0fc3 0315 - EXIT
 
 NFA__2F:         ; 0FC5
    .byte 1,"/"
    .word NFA_M_2A           ; 0FA3
-__2F:            ; 0FC9
-   call $02e4    ; $0fc9 cd e4 02
-   jpo $1007     ; $0fcc e2 07 10
-   inr b         ; $0fcf 04      
-   dcr d         ; $0fd0 15      
-   inx b         ; $0fd1 03      
+__2F:            ; 0FC9 - 0FD2
+   call _FCALL            ; 0FC9
+   .word __2FMOD          ; $0fcc 07E2 - /MOD
+   .word _PRESS           ; $0fce 0410 - PRESS
+   .word _EXIT            ; $0fd0 0315 - EXIT
 
 NFA_MOD:         ; 0FD2
    .byte 3,"MOD"
    .word NFA__2F            ; 0FC5
-_MOD:            ; 0FD8
-   call $02e4    ; $0fd8 cd e4 02
-   jpo $8207     ; $0fdb e2 07 82
-   inx b         ; $0fde 03      
-   dcr d         ; $0fdf 15      
-   inx b         ; $0fe0 03      
+_MOD:            ; 0FD8 - 0FE1
+   call _FCALL            ; 0FD8
+   .word __2FMOD          ; $0fdb 07E2 - /MOD
+   .word _DROP            ; $0fdd 0382 - DROP
+   .word _EXIT            ; $0fdf 0315 - EXIT
 
 NFA_DABS:        ; 0FE1
    .byte 4,"DABS"
    .word NFA_MOD          ; 0FD2
-_DABS:           ; 0FE8
-   call $02e4    ; cd
-   .byte $d3     ; d3
-   inx b         ; $0fec 03      
-   dcr a         ; $0fed 3d      
-   dcr b         ; $0fee 05      
-   mov a,d       ; $0fef 7a      
-   ldax b        ; $0ff0 0a      
-   push psw      ; $0ff1 f5      
-   rrc           ; $0ff2 0f      
-   .byte 0x20    ; $0ff3 20      
-   mvi b,$15     ; $0ff4 06 15   
-   inx b         ; $0ff6 03      
+_DABS:           ; 0FE8 - 0FF7
+   call _FCALL            ; 0FE8
+   .word _DUP             ; $0feb 03D3 - DUP
+   .word _0_3C            ; $0fed 053D - 0<
+   .word __3FBRANCH       ; $0fef 0A7A - ?BRANCH
+   .word $0FF5            ; $0ff1 0FF5
+   .word _DNEGATE         ; $0ff3 0620 - DNEGATE
+   .word _EXIT            ; $0ff5 0315 - EXIT
 
 NFA_U_2F:        ; 0FF7
    .byte 2,"U/"
    .word NFA_DABS         ; 0FE1
-_U_2F:           ; 0FFC
-   call $02e4    ; $0ffc cd e4 02
-   dcx h         ; $0fff 2b      
-   .byte 0x08    ; $1000 08      
-   .byte 0x10    ; $1001 10      
-   inr b         ; $1002 04      
-   dcr d         ; $1003 15      
-   inx b         ; $1004 03      
+_U_2F:           ; 0FFC - 1005
+   call _FCALL            ; 0FFC
+   .word _U_2FMOD         ; $0fff 082B - U/MOD
+   .word _PRESS           ; $1001 0410 - PRESS
+   .word _EXIT            ; $1003 0315 - EXIT
 
 NFA_UM_2FMOD:    ; 1005
    .byte 6,"UM/MOD"
    .word NFA_U_2F           ; 0FF7
-_UM_2FMOD:       ; 100E
-   call $02e4    ; $100e cd e4 02
-   rz            ; $1011 c8      
-   mvi c,$f9     ; $1012 0e f9   
-   mvi b,$82     ; $1014 06 82   
-   inx b         ; $1016 03      
-   .byte 0x10    ; $1017 10      
-   inr b         ; $1018 04      
-   dcr d         ; $1019 15      
-   inx b         ; $101a 03      
+_UM_2FMOD:       ; 100E - 101B
+   call _FCALL            ; 100E
+   .word _0               ; $1011 0EC8 - 0
+   .word _DU_2FMOD        ; $1013 06F9 - DU/MOD
+   .word _DROP            ; $1015 0382 - DROP
+   .word _PRESS           ; $1017 0410 - PRESS
+   .word _EXIT            ; $1019 0315 - EXIT
 
 NFA_M_2FMOD:     ; 101B
    .byte 5,"M/MOD"
    .word NFA_UM_2FMOD       ; 1005
-_M_2FMOD:        ; 1023
-   call $02e4    ; $1023 cd e4 02
-   rpo           ; $1026 e0      
-   inx b         ; $1027 03      
-   mov a,d       ; $1028 7a      
-   ldax b        ; $1029 0a      
-   mov l,d       ; $102a 6a      
-   .byte 0x10    ; $102b 10      
-   out $03       ; $102c d3 03   
-   dcr c         ; $102e 0d      
-   dad b         ; $102f 09      
-   jp $eb03      ; $1030 f2 03 eb
-   .byte 0x08    ; $1033 08      
-   dcr c         ; $1034 0d      
-   dad b         ; $1035 09      
-   dcr c         ; $1036 0d      
-   dad b         ; $1037 09      
-   rpe           ; $1038 e8      
-   rrc           ; $1039 0f      
-   inx sp        ; $103a 33      
-   dad b         ; $103b 09      
-   ora c         ; $103c b1      
-   inr b         ; $103d 04      
-   mvi c,$10     ; $103e 0e 10   
-   adc l         ; $1040 8d      
-   inx b         ; $1041 03      
-   .byte 0x20    ; $1042 20      
-   dad b         ; $1043 09      
-   dcr a         ; $1044 3d      
-   dcr b         ; $1045 05      
-   mov a,d       ; $1046 7a      
-   ldax b        ; $1047 0a      
-   mov c,h       ; $1048 4c      
-   .byte 0x10    ; $1049 10      
-   mov l,d       ; $104a 6a      
-   inr b         ; $104b 04      
-   adc l         ; $104c 8d      
-   inx b         ; $104d 03      
-   .byte 0x20    ; $104e 20      
-   dad b         ; $104f 09      
-   dcr a         ; $1050 3d      
-   dcr b         ; $1051 05      
-   mov a,d       ; $1052 7a      
-   ldax b        ; $1053 0a      
-   mov l,b       ; $1054 68      
-   .byte 0x10    ; $1055 10      
-   mov l,d       ; $1056 6a      
-   inr b         ; $1057 04      
-   mov h,d       ; $1058 62      
-   inx b         ; $1059 03      
-   mov a,d       ; $105a 7a      
-   ldax b        ; $105b 0a      
-   mov l,b       ; $105c 68      
-   .byte 0x10    ; $105d 10      
-   adc m         ; $105e 8e      
-   inr b         ; $105f 04      
-   inx sp        ; $1060 33      
-   dad b         ; $1061 09      
-   ora m         ; $1062 b6      
-   inx b         ; $1063 03      
-   mov d,l       ; $1064 55      
-   inr b         ; $1065 04      
-   adc l         ; $1066 8d      
-   inx b         ; $1067 03      
-   mov m,l       ; $1068 75      
-   dad b         ; $1069 09      
-   dcr d         ; $106a 15      
-   inx b         ; $106b 03      
+_M_2FMOD:        ; 1023 - 106C
+   call _FCALL            ; 1023
+   .word __3FDUP          ; $1026 03E0 - ?DUP
+   .word __3FBRANCH       ; $1028 0A7A - ?BRANCH
+   .word $106A            ; $102a 106A
+   .word _DUP             ; $102c 03D3 - DUP
+   .word __3ER            ; $102e 090D - >R
+   .word _2DUP            ; $1030 03F2 - 2DUP
+   .word _XOR             ; $1032 08EB - XOR
+   .word __3ER            ; $1034 090D - >R
+   .word __3ER            ; $1036 090D - >R
+   .word _DABS            ; $1038 0FE8 - DABS
+   .word _R_40            ; $103a 0933 - R@
+   .word _ABS             ; $103c 04B1 - ABS
+   .word _UM_2FMOD        ; $103e 100E - UM/MOD
+   .word _SWAP            ; $1040 038D - SWAP
+   .word _R_3E            ; $1042 0920 - R>
+   .word _0_3C            ; $1044 053D - 0<
+   .word __3FBRANCH       ; $1046 0A7A - ?BRANCH
+   .word $104C            ; $1048 104C
+   .word _NEGATE          ; $104a 046A - NEGATE
+   .word _SWAP            ; $104c 038D - SWAP
+   .word _R_3E            ; $104e 0920 - R>
+   .word _0_3C            ; $1050 053D - 0<
+   .word __3FBRANCH       ; $1052 0A7A - ?BRANCH
+   .word $1068            ; $1054 1068
+   .word _NEGATE          ; $1056 046A - NEGATE
+   .word _OVER            ; $1058 0362 - OVER
+   .word __3FBRANCH       ; $105a 0A7A - ?BRANCH
+   .word $1068            ; $105c 1068
+   .word _1_2D            ; $105e 048E - 1-
+   .word _R_40            ; $1060 0933 - R@
+   .word _ROT             ; $1062 03B6 - ROT
+   .word __2D             ; $1064 0455 - -
+   .word _SWAP            ; $1066 038D - SWAP
+   .word _RDROP           ; $1068 0975 - RDROP
+   .word _EXIT            ; $106a 0315 - EXIT
 
 NFA__2A_2FMOD:   ; 106C
    .byte 5,"*/MOD"
    .word NFA_M_2FMOD        ; 101B
-__2A_2FMOD:      ; 1074
-   call $02e4    ; $1074 cd e4 02
-   dcr c         ; $1077 0d      
-   dad b         ; $1078 09      
-   xra b         ; $1079 a8      
-   rrc           ; $107a 0f      
-   .byte 0x20    ; $107b 20      
-   dad b         ; $107c 09      
-   inx h         ; $107d 23      
-   .byte 0x10    ; $107e 10      
-   dcr d         ; $107f 15      
-   inx b         ; $1080 03      
+__2A_2FMOD:      ; 1074 - 1081
+   call _FCALL            ; 1074
+   .word __3ER            ; $1077 090D - >R
+   .word _M_2A            ; $1079 0FA8 - M*
+   .word _R_3E            ; $107b 0920 - R>
+   .word _M_2FMOD         ; $107d 1023 - M/MOD
+   .word _EXIT            ; $107f 0315 - EXIT
 
 NFA__2A_2F:      ; 1081
    .byte 2,"*/"
    .word NFA__2A_2FMOD        ; 106C
-__2A_2F:         ; 1086
-   call $02e4    ; $1086 cd e4 02
-   mov m,h       ; $1089 74      
-   .byte 0x10    ; $108a 10      
-   .byte 0x10    ; $108b 10      
-   inr b         ; $108c 04      
-   dcr d         ; $108d 15      
-   inx b         ; $108e 03      
+__2A_2F:         ; 1086 - 108F
+   call _FCALL            ; 1086
+   .word __2A_2FMOD       ; $1089 1074 - */MOD
+   .word _PRESS           ; $108b 0410 - PRESS
+   .word _EXIT            ; $108d 0315 - EXIT
 
 NFA__3C_3E:      ; 108F
    .byte 2,"<>"
    .word NFA__2A_2F           ; 1081
-__3C_3E:         ; 1094
-   call $02e4    ; $1094 cd e4 02
-   mov h,m       ; $1097 66      
-   dcr b         ; $1098 05      
-   mov a,m       ; $1099 7e      
-   dcr b         ; $109a 05      
-   dcr d         ; $109b 15      
-   inx b         ; $109c 03      
+__3C_3E:         ; 1094 - 109D
+   call _FCALL            ; 1094
+   .word __3D             ; $1097 0566 - =
+   .word _0_3D            ; $1099 057E - 0=
+   .word _EXIT            ; $109b 0315 - EXIT
 
 NFA_QUIT:        ; 109D
    .byte 4,"QUIT"
    .word NFA__3C_3E           ; 108F
-_QUIT:           ; 10A4
-   call $02e4    ; $10a4 cd e4 02
-   dcx h         ; $10a7 2b      
-   ldax b        ; $10a8 0a      
-   nop           ; $10a9 00      
-   inr m         ; $10aa 34      
-   add h         ; $10ab 84      
-   dad b         ; $10ac 09      
-   rpo           ; $10ad e0      
-   inx b         ; $10ae 03      
-   mov a,d       ; $10af 7a      
-   ldax b        ; $10b0 0a      
-   ora l         ; $10b1 b5      
-   .byte 0x10    ; $10b2 10      
-   inr l         ; $10b3 2c      
-   inx b         ; $10b4 03      
-   ora h         ; $10b5 b4      
-   lxi b,$0984   ; $10b6 01 84 09
-   mov d,b       ; $10b9 50      
-   dad b         ; $10ba 09      
-   lhld $7116    ; $10bb 2a 16 71
-   ral           ; $10be 17      
-   mov d,b       ; $10bf 50      
-   inr m         ; $10c0 34      
-   ldax b        ; $10c1 0a      
-   ral           ; $10c2 17      
-   pop psw       ; $10c3 f1      
-   dcr d         ; $10c4 15      
-   pop b         ; $10c5 c1      
-   dad d         ; $10c6 19      
-   mov l,b       ; $10c7 68      
-   ldax b        ; $10c8 0a      
-   jmp $1510     ; $10c9 c3 10 15
-   inx b         ; $10cc 03      
+_QUIT:           ; 10A4 - 10CD
+   call _FCALL            ; 10A4
+   .word _LIT             ; $10a7 0A2B - LIT
+   .word $3400            ; $10a9 3400
+   .word __40             ; $10ab 0984 - @
+   .word __3FDUP          ; $10ad 03E0 - ?DUP
+   .word __3FBRANCH       ; $10af 0A7A - ?BRANCH
+   .word $10B5            ; $10b1 10B5
+   .word _EXECUTE         ; $10b3 032C - EXECUTE
+   .word _R0              ; $10b5 01B4 - R0
+   .word __40             ; $10b7 0984 - @
+   .word _RP_21           ; $10b9 0950 - RP!
+   .word $162A            ; $10bb 162A
+   .word __5B             ; $10bd 1771 - [
+   .word _FORTH           ; $10bf 3450 - FORTH
+   .word _DEFINITIONS     ; $10c1 170A - DEFINITIONS
+   .word _QUERY           ; $10c3 15F1 - QUERY
+   .word _INTERPRET       ; $10c5 19C1 - INTERPRET
+   .word _BRANCH          ; $10c7 0A68 - BRANCH
+   .word $10C3            ; $10c9 10C3
+   .word _EXIT            ; $10cb 0315 - EXIT
 
 NFA_ABORT:       ; 10CD
    .byte 5,"ABORT"
    .word NFA_QUIT         ; 109D
-_ABORT:          ; 10D5
-   call $02e4    ; $10d5 cd e4 02
-   dcx h         ; $10d8 2b      
-   ldax b        ; $10d9 0a      
-   stax b        ; $10da 02      
-   inr m         ; $10db 34      
-   add h         ; $10dc 84      
-   dad b         ; $10dd 09      
-   rpo           ; $10de e0      
-   inx b         ; $10df 03      
-   mov a,d       ; $10e0 7a      
-   ldax b        ; $10e1 0a      
-   ani $10       ; $10e2 e6 10   
-   inr l         ; $10e4 2c      
-   inx b         ; $10e5 03      
-   ora c         ; $10e6 b1      
-   stax b        ; $10e7 02      
-   add h         ; $10e8 84      
-   dad b         ; $10e9 09      
-   rpo           ; $10ea e0      
-   inx b         ; $10eb 03      
-   mov a,d       ; $10ec 7a      
-   ldax b        ; $10ed 0a      
-   dcr m         ; $10ee 35      
-   lxi d,$1566   ; $10ef 11 66 15
-   mvi a,$18     ; $10f2 3e 18   
-   mvi c,$4f     ; $10f4 0e 4f   
-   ei            ; $10f6 fb      
-   pchl          ; $10f7 e9      
-   jpo $414b     ; $10f8 e2 4b 41
-   lda $fc20     ; $10fb 3a 20 fc
-   mov c,e       ; $10fe 4b      
-   mov d,b       ; $10ff 50      
-   mov b,c       ; $1100 41      
-   mov c,b       ; $1101 48      
-   .byte 0x20    ; $1102 20      
-   cpi $12       ; $1103 fe 12   
-   mvi a,$18     ; $1105 3e 18   
-   rlc           ; $1107 07      
-   mov b,e       ; $1108 43      
-   mov d,h       ; $1109 54      
-   mov d,b       ; $110a 50      
-   mov c,a       ; $110b 4f      
-   mov c,e       ; $110c 4b      
-   mov b,c       ; $110d 41      
-   .byte 0x20    ; $110e 20      
-   hlt           ; $110f 76      
-   stax b        ; $1110 02      
-   add h         ; $1111 84      
-   dad b         ; $1112 09      
-   dcx h         ; $1113 2b      
-   ldax b        ; $1114 0a      
-   mov b,b       ; $1115 40      
-   nop           ; $1116 00      
-   cm $d30f      ; $1117 fc 0f d3
-   inx b         ; $111a 03      
-   cpi $12       ; $111b fe 12   
-   mov h,m       ; $111d 66      
-   dcr d         ; $111e 15      
-   ora c         ; $111f b1      
-   stax b        ; $1120 02      
-   add h         ; $1121 84      
-   dad b         ; $1122 09      
-   .byte 0xfd    ; $1123 fd      
-   inr l         ; $1124 2c      
-   adc l         ; $1125 8d      
-   inx b         ; $1126 03      
-   dcx h         ; $1127 2b      
-   ldax b        ; $1128 0a      
-   mov b,b       ; $1129 40      
-   nop           ; $112a 00      
-   sbb e         ; $112b 9b      
-   mvi b,$4a     ; $112c 06 4a   
-   inr b         ; $112e 04      
-   dcx h         ; $112f 2b      
-   ldax b        ; $1130 0a      
-   mov b,b       ; $1131 40      
-   nop           ; $1132 00      
-   mov a,m       ; $1133 7e      
-   dcr d         ; $1134 15      
-   cmp m         ; $1135 be      
-   lxi b,$0984   ; $1136 01 84 09
-   mov b,c       ; $1139 41      
-   inr b         ; $113a 04      
-   ana h         ; $113b a4      
-   .byte 0x10    ; $113c 10      
-   dcr d         ; $113d 15      
-   inx b         ; $113e 03      
+_ABORT:          ; 10D5 - 113F
+   call _FCALL            ; 10D5
+   .word _LIT             ; $10d8 0A2B - LIT
+   .word $3402            ; $10da 3402
+   .word __40             ; $10dc 0984 - @
+   .word __3FDUP          ; $10de 03E0 - ?DUP
+   .word __3FBRANCH       ; $10e0 0A7A - ?BRANCH
+   .word $10E6            ; $10e2 10E6
+   .word _EXECUTE         ; $10e4 032C - EXECUTE
+   .word _BLK             ; $10e6 02B1 - BLK
+   .word __40             ; $10e8 0984 - @
+   .word __3FDUP          ; $10ea 03E0 - ?DUP
+   .word __3FBRANCH       ; $10ec 0A7A - ?BRANCH
+   .word $1135            ; $10ee 1135
+   .word _CR              ; $10f0 1566 - CR
+   .word __28_2E_22_29    ; $10f2 183E - (.")
+   .byte 14,"O",0xfb,0xe9,0xe2,"KA: ",0xfc,"KPAH "
+   .word __2E             ; $1103 12FE - .
+   .word __28_2E_22_29    ; $1105 183E - (.")
+   .byte 7,"CTPOKA "
+   .word __3EIN           ; $110f 0276 - >IN
+   .word __40             ; $1111 0984 - @
+   .word _LIT             ; $1113 0A2B - LIT
+   .word $0040            ; $1115 0040
+   .word _U_2F            ; $1117 0FFC - U/
+   .word _DUP             ; $1119 03D3 - DUP
+   .word __2E             ; $111b 12FE - .
+   .word _CR              ; $111d 1566 - CR
+   .word _BLK             ; $111f 02B1 - BLK
+   .word __40             ; $1121 0984 - @
+   .word _BLOCK           ; $1123 2CFD - BLOCK
+   .word _SWAP            ; $1125 038D - SWAP
+   .word _LIT             ; $1127 0A2B - LIT
+   .word $0040            ; $1129 0040
+   .word __2A             ; $112b 069B - *
+   .word __2B             ; $112d 044A - +
+   .word _LIT             ; $112f 0A2B - LIT
+   .word $0040            ; $1131 0040
+   .word _TYPE            ; $1133 157E - TYPE
+   .word _S0              ; $1135 01BE - S0
+   .word __40             ; $1137 0984 - @
+   .word _SP_21           ; $1139 0441 - SP!
+   .word _QUIT            ; $113b 10A4 - QUIT
+   .word _EXIT            ; $113d 0315 - EXIT
 
 NFA__28ABORT_22_29:; 113F
    .byte 8,"(ABORT\")"
    .word NFA_ABORT        ; 10CD
 __28ABORT_22_29: ; 114A
    call $02e4    ; $114a cd e4 02
-   mov a,d       ; $114d 7a      
-   ldax b        ; $114e 0a      
-   mov h,c       ; $114f 61      
-   lxi d,$0eff   ; $1150 11 ff 0e
-   .byte 0xed    ; $1153 ed      
-   mvi d,$c4     ; $1154 16 c4   
-   mvi d,$20     ; $1156 16 20   
-   dad b         ; $1158 09      
-   .byte 0xed    ; $1159 ed      
-   mvi d,$d5     ; $115a 16 d5   
-   .byte 0x10    ; $115c 10      
-   mov l,b       ; $115d 68      
-   ldax b        ; $115e 0a      
-   mov l,l       ; $115f 6d      
-   lxi d,$0920   ; $1160 11 20 09
-   out $03       ; $1163 d3 03   
-   sub c         ; $1165 91      
-   dad b         ; $1166 09      
-   mov m,a       ; $1167 77      
-   inr b         ; $1168 04      
-   mov c,d       ; $1169 4a      
-   inr b         ; $116a 04      
-   dcr c         ; $116b 0d      
-   dad b         ; $116c 09      
-   dcr d         ; $116d 15      
-   inx b         ; $116e 03      
+   .word __3FBRANCH       ; $114d 0A7A - ?BRANCH
+   .word $1161            ; $114f 1161
+   .word _HERE            ; $1151 0EFF - HERE
+   .word _ID_2E           ; $1153 16ED - ID.
+   .word _SPACE           ; $1155 16C4 - SPACE
+   .word _R_3E            ; $1157 0920 - R>
+   .word _ID_2E           ; $1159 16ED - ID.
+   .word _ABORT           ; $115b 10D5 - ABORT
+   .word _BRANCH          ; $115d 0A68 - BRANCH
+   .word $116D            ; $115f 116D
+   .word _R_3E            ; $1161 0920 - R>
+   .word _DUP             ; $1163 03D3 - DUP
+   .word _C_40            ; $1165 0991 - C@
+   .word _1_2B            ; $1167 0477 - 1+
+   .word __2B             ; $1169 044A - +
+   .word __3ER            ; $116b 090D - >R
+   .word _EXIT            ; $116d 0315 - EXIT
 
 NFA_ABORT_22:    ; 116F
-   .byte $86,"ABORT\""          ; IMMEDIATE
+   .byte 0x86,"ABORT\"" ; IMMEDIATE
    .word NFA__28ABORT_22_29     ; 113F
-_ABORT_22:       ; 1178
-   call $02e4    ; $1178 cd e4 02
-   mvi h,$1c     ; $117b 26 1c   
-   add e         ; $117d 83      
-   rrc           ; $117e 0f      
-   mov c,d       ; $117f 4a      
-   lxi d,$0a2b   ; $1180 11 2b 0a
-   shld $ed00    ; $1183 22 00 ed
-   inx d         ; $1186 13      
-   mov b,c       ; $1187 41      
-   rrc           ; $1188 0f      
-   dcr d         ; $1189 15      
-   inx b         ; $118a 03      
+_ABORT_22:       ; 1178 - 118B
+   call _FCALL            ; 1178
+   .word __3FCOMP         ; $117b 1C26 - ?COMP
+   .word _COMPILE         ; $117d 0F83 - COMPILE
+   .word __28ABORT_22_29  ; $117f 114A - (ABORT")
+   .word _LIT             ; $1181 0A2B - LIT
+   .word $0022            ; $1183 0022
+   .word _WORD            ; $1185 13ED - WORD
+   .word __22_2C          ; $1187 0F41 - ",
+   .word _EXIT            ; $1189 0315 - EXIT
 
 NFA__23_3E:      ; 118B
    .byte 2,"#>"
    .word NFA_ABORT_22       ; 116F
-__23_3E:         ; 1190
-   call $02e4    ; cd e4
-   inx b         ; $1193 03      
-   inr b         ; $1194 04      
-   mov c,c       ; $1195 49      
-   stax b        ; $1196 02      
-   add h         ; $1197 84      
-   dad b         ; $1198 09      
-   mov e,d       ; $1199 5a      
-   rrc           ; $119a 0f      
-   mov h,d       ; $119b 62      
-   inx b         ; $119c 03      
-   mov d,l       ; $119d 55      
-   inr b         ; $119e 04      
-   dcr d         ; $119f 15      
-   inx b         ; $11a0 03      
+__23_3E:         ; 1190 - 11A1
+   call _FCALL            ; 1190
+   .word _2DROP           ; $1193 0403 - 2DROP
+   .word _HLD             ; $1195 0249 - HLD
+   .word __40             ; $1197 0984 - @
+   .word _PAD             ; $1199 0F5A - PAD
+   .word _OVER            ; $119b 0362 - OVER
+   .word __2D             ; $119d 0455 - -
+   .word _EXIT            ; $119f 0315 - EXIT
 
 NFA__3C_23:      ; 11A1
    .byte 2,"<#"
    .word NFA__23_3E           ; 118B
-__3C_23:         ; 11A6
-   call $02e4    ; cd e4
-   mov e,d       ; $11a9 5a      
-   rrc           ; $11aa 0f      
-   mov c,c       ; $11ab 49      
-   stax b        ; $11ac 02      
-   sbb l         ; $11ad 9d      
-   dad b         ; $11ae 09      
-   dcr d         ; $11af 15      
-   inx b         ; $11b0 03      
+__3C_23:         ; 11A6 - 11B1
+   call _FCALL            ; 11A6
+   .word _PAD             ; $11a9 0F5A - PAD
+   .word _HLD             ; $11ab 0249 - HLD
+   .word __21             ; $11ad 099D - !
+   .word _EXIT            ; $11af 0315 - EXIT
 
 NFA_HOLD:        ; 11B1
    .byte 4,"HOLD"
    .word NFA__3C_23           ; 11A1
-_HOLD:           ; 11B8
-   call $02e4    ; cd e4
-   mov c,c       ; $11bb 49      
-   stax b        ; $11bc 02      
-   ldax d        ; $11bd 1a      
-   ldax b        ; $11be 0a      
-   mov c,c       ; $11bf 49      
-   stax b        ; $11c0 02      
-   add h         ; $11c1 84      
-   dad b         ; $11c2 09      
-   xra d         ; $11c3 aa      
-   dad b         ; $11c4 09      
-   dcr d         ; $11c5 15      
-   inx b         ; $11c6 03      
+_HOLD:           ; 11B8 - 11C7
+   call _FCALL            ; 11B8
+   .word _HLD             ; $11bb 0249 - HLD
+   .word _1_2D_21         ; $11bd 0A1A - 1-!
+   .word _HLD             ; $11bf 0249 - HLD
+   .word __40             ; $11c1 0984 - @
+   .word _C_21            ; $11c3 09AA - C!
+   .word _EXIT            ; $11c5 0315 - EXIT
 
 NFA_SIGN:        ; 11C7
    .byte 4,"SIGN"
    .word NFA_HOLD         ; 11B1
-_SIGN:           ; 11CE
-   call $02e4    ; cd e4
-   dcr a         ; $11d1 3d      
-   dcr b         ; $11d2 05      
-   mov a,d       ; $11d3 7a      
-   ldax b        ; $11d4 0a      
-   .byte 0xdd    ; $11d5 dd      
-   lxi d,$0a2b   ; $11d6 11 2b 0a
-   dcr l         ; $11d9 2d      
-   nop           ; $11da 00      
-   cmp b         ; $11db b8      
-   lxi d,$0315   ; $11dc 11 15 03
+_SIGN:           ; 11CE - 11DF
+   call _FCALL            ; 11CE
+   .word _0_3C            ; $11d1 053D - 0<
+   .word __3FBRANCH       ; $11d3 0A7A - ?BRANCH
+   .word $11DD            ; $11d5 11DD
+   .word _LIT             ; $11d7 0A2B - LIT
+   .word $002D            ; $11d9 002D
+   .word _HOLD            ; $11db 11B8 - HOLD
+   .word _EXIT            ; $11dd 0315 - EXIT
 
 NFA__3EDIG:      ; 11DF
    .byte 4,">DIG"
    .word NFA_SIGN         ; 11C7
-__3EDIG:         ; 11E6
-   call $02e4    ; cd e4
-   dcx h         ; $11e9 2b      
-   ldax b        ; $11ea 0a      
-   dad b         ; $11eb 09      
-   nop           ; $11ec 00      
-   mov h,d       ; $11ed 62      
-   inx b         ; $11ee 03      
-   jm $7a04      ; $11ef fa 04 7a
-   ldax b        ; $11f2 0a      
-   .byte 0xfd    ; $11f3 fd      
-   lxi d,$0a2b   ; $11f4 11 2b 0a
-   stc           ; $11f7 37      
-   nop           ; $11f8 00      
-   mov l,b       ; $11f9 68      
-   ldax b        ; $11fa 0a      
-   lxi b,$2b12   ; $11fb 01 12 2b
-   ldax b        ; $11fe 0a      
-   .byte 0x30    ; $11ff 30      
-   nop           ; $1200 00      
-   mov c,d       ; $1201 4a      
-   inr b         ; $1202 04      
-   dcr d         ; $1203 15      
-   inx b         ; $1204 03      
+__3EDIG:         ; 11E6 - 1205
+   call _FCALL            ; 11E6
+   .word _LIT             ; $11e9 0A2B - LIT
+   .word $0009            ; $11eb 0009
+   .word _OVER            ; $11ed 0362 - OVER
+   .word _U_3C            ; $11ef 04FA - U<
+   .word __3FBRANCH       ; $11f1 0A7A - ?BRANCH
+   .word $11FD            ; $11f3 11FD
+   .word _LIT             ; $11f5 0A2B - LIT
+   .word $0037            ; $11f7 0037
+   .word _BRANCH          ; $11f9 0A68 - BRANCH
+   .word $1201            ; $11fb 1201
+   .word _LIT             ; $11fd 0A2B - LIT
+   .word $0030            ; $11ff 0030
+   .word __2B             ; $1201 044A - +
+   .word _EXIT            ; $1203 0315 - EXIT
 
 NFA__23:         ; 1205
    .byte 1,"#"
    .word NFA__3EDIG         ; 11DF
-__23:            ; 1209
-   call $02e4    ; cd e4
-   .byte 0x08    ; $120c 08      
-   stax b        ; $120d 02      
-   add h         ; $120e 84      
-   dad b         ; $120f 09      
-   rz            ; $1210 c8      
-   mvi c,$f9     ; $1211 0e f9   
-   mvi b,$b6     ; $1213 06 b6   
-   inx b         ; $1215 03      
-   add d         ; $1216 82      
-   inx b         ; $1217 03      
-   ora m         ; $1218 b6      
-   inx b         ; $1219 03      
-   ani $11       ; $121a e6 11   
-   cmp b         ; $121c b8      
-   lxi d,$0315   ; $121d 11 15 03
+__23:            ; 1209 - 1220
+   call _FCALL            ; 1209
+   .word _BASE            ; $120c 0208 - BASE
+   .word __40             ; $120e 0984 - @
+   .word _0               ; $1210 0EC8 - 0
+   .word _DU_2FMOD        ; $1212 06F9 - DU/MOD
+   .word _ROT             ; $1214 03B6 - ROT
+   .word _DROP            ; $1216 0382 - DROP
+   .word _ROT             ; $1218 03B6 - ROT
+   .word __3EDIG          ; $121a 11E6 - >DIG
+   .word _HOLD            ; $121c 11B8 - HOLD
+   .word _EXIT            ; $121e 0315 - EXIT
 
 NFA__23_2E:      ; 1220
    .byte 2,"#."
    .word NFA__23            ; 1205
-__23_2E:         ; 1225
-   call $02e4    ; $1225 cd e4 02
-   .byte 0x08    ; $1228 08      
-   stax b        ; $1229 02      
-   add h         ; $122a 84      
-   dad b         ; $122b 09      
-   dcx h         ; $122c 2b      
-   .byte 0x08    ; $122d 08      
-   adc l         ; $122e 8d      
-   inx b         ; $122f 03      
-   ani $11       ; $1230 e6 11   
-   cmp b         ; $1232 b8      
-   lxi d,$0315   ; $1233 11 15 03
-   inx b         ; $1236 03      
-   inx h         ; $1237 23      
-   mvi l,$53     ; $1238 2e 53   
-   .byte 0x20    ; $123a 20      
-   stax d        ; $123b 12      
-   call $02e4    ; $123c cd e4 02
-   dcr h         ; $123f 25      
-   stax d        ; $1240 12      
-   out $03       ; $1241 d3 03   
-   mov a,m       ; $1243 7e      
-   dcr b         ; $1244 05      
-   mov a,d       ; $1245 7a      
-   ldax b        ; $1246 0a      
-   cmc           ; $1247 3f      
-   stax d        ; $1248 12      
-   dcr d         ; $1249 15      
-   inx b         ; $124a 03      
-   stax b        ; $124b 02      
-   inx h         ; $124c 23      
-   mov d,e       ; $124d 53      
-   mvi m,$12     ; $124e 36 12   
-   call $02e4    ; $1250 cd e4 02
-   dad b         ; $1253 09      
-   stax d        ; $1254 12      
-   jp $d903      ; $1255 f2 03 d9
-   .byte 0x08    ; $1258 08      
-   mov a,m       ; $1259 7e      
-   dcr b         ; $125a 05      
-   mov a,d       ; $125b 7a      
-   ldax b        ; $125c 0a      
-   mov d,e       ; $125d 53      
-   stax d        ; $125e 12      
-   dcr d         ; $125f 15      
-   inx b         ; $1260 03      
-   inx b         ; $1261 03      
-   mov b,h       ; $1262 44      
-   mvi l,$52     ; $1263 2e 52   
-   mov c,e       ; $1265 4b      
-   stax d        ; $1266 12      
-   call $02e4    ; $1267 cd e4 02
-   dcr c         ; $126a 0d      
-   dad b         ; $126b 09      
-   out $03       ; $126c d3 03   
-   dcr c         ; $126e 0d      
-   dad b         ; $126f 09      
-   rpe           ; $1270 e8      
-   rrc           ; $1271 0f      
-   ana m         ; $1272 a6      
-   lxi d,$1250   ; $1273 11 50 12
-   .byte 0x20    ; $1276 20      
-   dad b         ; $1277 09      
-   aci $11       ; $1278 ce 11   
-   sub b         ; $127a 90      
-   lxi d,$0920   ; $127b 11 20 09
-   mov h,d       ; $127e 62      
-   inx b         ; $127f 03      
-   mov d,l       ; $1280 55      
-   inr b         ; $1281 04      
-   sui $16       ; $1282 d6 16   
-   mov a,m       ; $1284 7e      
-   dcr d         ; $1285 15      
-   dcr d         ; $1286 15      
-   inx b         ; $1287 03      
-   stax b        ; $1288 02      
-   mov b,h       ; $1289 44      
-   mvi l,$61     ; $128a 2e 61   
-   stax d        ; $128c 12      
-   call $02e4    ; $128d cd e4 02
-   out $03       ; $1290 d3 03   
-   dcr c         ; $1292 0d      
-   dad b         ; $1293 09      
-   rpe           ; $1294 e8      
-   rrc           ; $1295 0f      
-   ana m         ; $1296 a6      
-   lxi d,$1250   ; $1297 11 50 12
-   .byte 0x20    ; $129a 20      
-   dad b         ; $129b 09      
-   aci $11       ; $129c ce 11   
-   sub b         ; $129e 90      
-   lxi d,$157e   ; $129f 11 7e 15
-   cnz $1516     ; $12a2 c4 16 15
-   inx b         ; $12a5 03      
-   stax b        ; $12a6 02      
-   mvi l,$52     ; $12a7 2e 52   
-   adc b         ; $12a9 88      
-   stax d        ; $12aa 12      
-   call $02e4    ; $12ab cd e4 02
-   dcr c         ; $12ae 0d      
-   dad b         ; $12af 09      
-   out $03       ; $12b0 d3 03   
-   dcr c         ; $12b2 0d      
-   dad b         ; $12b3 09      
-   ora c         ; $12b4 b1      
-   inr b         ; $12b5 04      
-   ana m         ; $12b6 a6      
-   lxi d,$123c   ; $12b7 11 3c 12
-   .byte 0x20    ; $12ba 20      
-   dad b         ; $12bb 09      
-   aci $11       ; $12bc ce 11   
-   rz            ; $12be c8      
-   mvi c,$90     ; $12bf 0e 90   
-   lxi d,$0920   ; $12c1 11 20 09
-   mov h,d       ; $12c4 62      
-   inx b         ; $12c5 03      
-   mov d,l       ; $12c6 55      
-   inr b         ; $12c7 04      
-   sui $16       ; $12c8 d6 16   
-   mov a,m       ; $12ca 7e      
-   dcr d         ; $12cb 15      
-   dcr d         ; $12cc 15      
-   inx b         ; $12cd 03      
-   stax b        ; $12ce 02      
-   mvi l,$30     ; $12cf 2e 30   
-   ana m         ; $12d1 a6      
-   stax d        ; $12d2 12      
-   call $02e4    ; $12d3 cd e4 02
-   dcr c         ; $12d6 0d      
-   dad b         ; $12d7 09      
-   ana m         ; $12d8 a6      
-   lxi d,$123c   ; $12d9 11 3c 12
-   rz            ; $12dc c8      
-   mvi c,$90     ; $12dd 0e 90   
-   lxi d,$0920   ; $12df 11 20 09
-   mov h,d       ; $12e2 62      
-   inx b         ; $12e3 03      
-   mov d,l       ; $12e4 55      
-   inr b         ; $12e5 04      
-   rz            ; $12e6 c8      
-   mvi c,$0c     ; $12e7 0e 0c   
-   dcx b         ; $12e9 0b      
-   ori $12       ; $12ea f6 12   
-   dcx h         ; $12ec 2b      
-   ldax b        ; $12ed 0a      
-   .byte 0x30    ; $12ee 30      
-   nop           ; $12ef 00      
-   dcr a         ; $12f0 3d      
-   dcr d         ; $12f1 15      
-   mvi l,$0b     ; $12f2 2e 0b   
-   cpe $7e12     ; $12f4 ec 12 7e
-   dcr d         ; $12f7 15      
-   dcr d         ; $12f8 15      
-   inx b         ; $12f9 03      
-   lxi b,$ce2e   ; $12fa 01 2e ce
-   stax d        ; $12fd 12      
-   call $02e4    ; $12fe cd e4 02
-   out $03       ; $1301 d3 03   
-   dcr c         ; $1303 0d      
-   dad b         ; $1304 09      
-   ora c         ; $1305 b1      
-   inr b         ; $1306 04      
-   ana m         ; $1307 a6      
-   lxi d,$123c   ; $1308 11 3c 12
-   .byte 0x20    ; $130b 20      
-   dad b         ; $130c 09      
-   aci $11       ; $130d ce 11   
-   rz            ; $130f c8      
-   mvi c,$90     ; $1310 0e 90   
-   lxi d,$157e   ; $1312 11 7e 15
-   cnz $1516     ; $1315 c4 16 15
-   inx b         ; $1318 03      
-   stax b        ; $1319 02      
-   mov d,l       ; $131a 55      
-   mvi l,$fa     ; $131b 2e fa   
-   stax d        ; $131d 12      
-   call $02e4    ; $131e cd e4 02
-   rz            ; $1321 c8      
-   mvi c,$8d     ; $1322 0e 8d   
-   stax d        ; $1324 12      
-   dcr d         ; $1325 15      
-   inx b         ; $1326 03      
-   inx b         ; $1327 03      
-   mov b,e       ; $1328 43      
-   mov b,m       ; $1329 46      
-   mov c,h       ; $132a 4c      
-   dad d         ; $132b 19      
-   inx d         ; $132c 13      
+__23_2E:         ; 1225 - 1236
+   call _FCALL            ; 1225
+   .word _BASE            ; $1228 0208 - BASE
+   .word __40             ; $122a 0984 - @
+   .word _U_2FMOD         ; $122c 082B - U/MOD
+   .word _SWAP            ; $122e 038D - SWAP
+   .word __3EDIG          ; $1230 11E6 - >DIG
+   .word _HOLD            ; $1232 11B8 - HOLD
+   .word _EXIT            ; $1234 0315 - EXIT
+
+NFA__23_2ES:     ; 1236
+   .byte 3,"#.S"
+   .word NFA__23_2E           ; 1220
+__23_2ES:        ; 123C - 124B
+   call _FCALL            ; 123C
+   .word __23_2E          ; $123f 1225 - #.
+   .word _DUP             ; $1241 03D3 - DUP
+   .word _0_3D            ; $1243 057E - 0=
+   .word __3FBRANCH       ; $1245 0A7A - ?BRANCH
+   .word $123F            ; $1247 123F
+   .word _EXIT            ; $1249 0315 - EXIT
+
+NFA__23S:        ; 124B
+   .byte 2,"#S"
+   .word NFA__23_2ES          ; 1236
+__23S:           ; 1250 - 1261
+   call _FCALL            ; 1250
+   .word __23             ; $1253 1209 - #
+   .word _2DUP            ; $1255 03F2 - 2DUP
+   .word _OR              ; $1257 08D9 - OR
+   .word _0_3D            ; $1259 057E - 0=
+   .word __3FBRANCH       ; $125b 0A7A - ?BRANCH
+   .word $1253            ; $125d 1253
+   .word _EXIT            ; $125f 0315 - EXIT
+
+NFA_D_2ER:       ; 1261
+   .byte 3,"D.R"
+   .word NFA__23S           ; 124B
+_D_2ER:          ; 1267 - 1288
+   call _FCALL            ; 1267
+   .word __3ER            ; $126a 090D - >R
+   .word _DUP             ; $126c 03D3 - DUP
+   .word __3ER            ; $126e 090D - >R
+   .word _DABS            ; $1270 0FE8 - DABS
+   .word __3C_23          ; $1272 11A6 - <#
+   .word __23S            ; $1274 1250 - #S
+   .word _R_3E            ; $1276 0920 - R>
+   .word _SIGN            ; $1278 11CE - SIGN
+   .word __23_3E          ; $127a 1190 - #>
+   .word _R_3E            ; $127c 0920 - R>
+   .word _OVER            ; $127e 0362 - OVER
+   .word __2D             ; $1280 0455 - -
+   .word _SPACES          ; $1282 16D6 - SPACES
+   .word _TYPE            ; $1284 157E - TYPE
+   .word _EXIT            ; $1286 0315 - EXIT
+
+NFA_D_2E:        ; 1288
+   .byte 2,"D."
+   .word NFA_D_2ER          ; 1261
+_D_2E:           ; 128D - 12A6
+   call _FCALL            ; 128D
+   .word _DUP             ; $1290 03D3 - DUP
+   .word __3ER            ; $1292 090D - >R
+   .word _DABS            ; $1294 0FE8 - DABS
+   .word __3C_23          ; $1296 11A6 - <#
+   .word __23S            ; $1298 1250 - #S
+   .word _R_3E            ; $129a 0920 - R>
+   .word _SIGN            ; $129c 11CE - SIGN
+   .word __23_3E          ; $129e 1190 - #>
+   .word _TYPE            ; $12a0 157E - TYPE
+   .word _SPACE           ; $12a2 16C4 - SPACE
+   .word _EXIT            ; $12a4 0315 - EXIT
+
+NFA__2ER:        ; 12A6
+   .byte 2,".R"
+   .word NFA_D_2E           ; 1288
+__2ER:           ; 12AB - 12CE
+   call _FCALL            ; 12AB
+   .word __3ER            ; $12ae 090D - >R
+   .word _DUP             ; $12b0 03D3 - DUP
+   .word __3ER            ; $12b2 090D - >R
+   .word _ABS             ; $12b4 04B1 - ABS
+   .word __3C_23          ; $12b6 11A6 - <#
+   .word __23_2ES         ; $12b8 123C - #.S
+   .word _R_3E            ; $12ba 0920 - R>
+   .word _SIGN            ; $12bc 11CE - SIGN
+   .word _0               ; $12be 0EC8 - 0
+   .word __23_3E          ; $12c0 1190 - #>
+   .word _R_3E            ; $12c2 0920 - R>
+   .word _OVER            ; $12c4 0362 - OVER
+   .word __2D             ; $12c6 0455 - -
+   .word _SPACES          ; $12c8 16D6 - SPACES
+   .word _TYPE            ; $12ca 157E - TYPE
+   .word _EXIT            ; $12cc 0315 - EXIT
+
+NFA__2E0:        ; 12CE
+   .byte 2,".0"
+   .word NFA__2ER           ; 12A6
+__2E0:           ; 12D3 - 12FA
+   call _FCALL            ; 12D3
+   .word __3ER            ; $12d6 090D - >R
+   .word __3C_23          ; $12d8 11A6 - <#
+   .word __23_2ES         ; $12da 123C - #.S
+   .word _0               ; $12dc 0EC8 - 0
+   .word __23_3E          ; $12de 1190 - #>
+   .word _R_3E            ; $12e0 0920 - R>
+   .word _OVER            ; $12e2 0362 - OVER
+   .word __2D             ; $12e4 0455 - -
+   .word _0               ; $12e6 0EC8 - 0
+   .word __28_3FDO_29     ; $12e8 0B0C - (?DO)
+   .word $12F6            ; $12ea 12F6
+   .word _LIT             ; $12ec 0A2B - LIT
+   .word $0030            ; $12ee 0030
+   .word _EMIT            ; $12f0 153D - EMIT
+   .word __28LOOP_29      ; $12f2 0B2E - (LOOP)
+   .word $12EC            ; $12f4 12EC
+   .word _TYPE            ; $12f6 157E - TYPE
+   .word _EXIT            ; $12f8 0315 - EXIT
+
+NFA__2E:         ; 12FA
+   .byte 1,"."
+   .word NFA__2E0           ; 12CE
+__2E:            ; 12FE - 1319
+   call _FCALL            ; 12FE
+   .word _DUP             ; $1301 03D3 - DUP
+   .word __3ER            ; $1303 090D - >R
+   .word _ABS             ; $1305 04B1 - ABS
+   .word __3C_23          ; $1307 11A6 - <#
+   .word __23_2ES         ; $1309 123C - #.S
+   .word _R_3E            ; $130b 0920 - R>
+   .word _SIGN            ; $130d 11CE - SIGN
+   .word _0               ; $130f 0EC8 - 0
+   .word __23_3E          ; $1311 1190 - #>
+   .word _TYPE            ; $1313 157E - TYPE
+   .word _SPACE           ; $1315 16C4 - SPACE
+   .word _EXIT            ; $1317 0315 - EXIT
+
+NFA_U_2E:        ; 1319
+   .byte 2,"U."
+   .word NFA__2E            ; 12FA
+_U_2E:           ; 131E - 1327
+   call _FCALL            ; 131E
+   .word _0               ; $1321 0EC8 - 0
+   .word _D_2E            ; $1323 128D - D.
+   .word _EXIT            ; $1325 0315 - EXIT
+
+NFA_CFL:         ; 1327
+   .byte 3,"CFL"
+   .word NFA_U_2E           ; 1319
+_CFL:            ; 132D - 1332
    call $0984    ; $132d cd 84 09
    inx b         ; $1330 03      
    nop           ; $1331 00      
-   dcr b         ; $1332 05      
-   mvi a,$42     ; $1333 3e 42   
-   mov c,a       ; $1335 4f      
-   mov b,h       ; $1336 44      
-   mov e,c       ; $1337 59      
-   daa           ; $1338 27      
-   inx d         ; $1339 13      
-   call $02e4    ; $133a cd e4 02
-   dcr l         ; $133d 2d      
-   inx d         ; $133e 13      
-   mov c,d       ; $133f 4a      
-   inr b         ; $1340 04      
-   dcr d         ; $1341 15      
-   inx b         ; $1342 03      
-   dcr b         ; $1343 05      
-   mov b,d       ; $1344 42      
-   mov c,a       ; $1345 4f      
-   mov b,h       ; $1346 44      
-   mov e,c       ; $1347 59      
-   mvi a,$32     ; $1348 3e 32   
-   inx d         ; $134a 13      
-   call $02e4    ; $134b cd e4 02
-   dcr l         ; $134e 2d      
-   inx d         ; $134f 13      
-   mov d,l       ; $1350 55      
-   inr b         ; $1351 04      
-   dcr d         ; $1352 15      
-   inx b         ; $1353 03      
-   dcr b         ; $1354 05      
-   mvi a,$4c     ; $1355 3e 4c   
-   mov c,c       ; $1357 49      
-   mov c,m       ; $1358 4e      
-   mov c,e       ; $1359 4b      
-   mov b,e       ; $135a 43      
-   inx d         ; $135b 13      
-   call $02e4    ; $135c cd e4 02
-   sbb c         ; $135f 99      
-   inr b         ; $1360 04      
-   dcr d         ; $1361 15      
-   inx b         ; $1362 03      
-   dcr b         ; $1363 05      
-   mov c,h       ; $1364 4c      
-   mov c,c       ; $1365 49      
-   mov c,m       ; $1366 4e      
-   mov c,e       ; $1367 4b      
-   mvi a,$54     ; $1368 3e 54   
-   inx d         ; $136a 13      
-   call $02e4    ; $136b cd e4 02
-   add d         ; $136e 82      
-   inr b         ; $136f 04      
-   dcr d         ; $1370 15      
-   inx b         ; $1371 03      
-   mvi b,$4e     ; $1372 06 4e   
-   mvi a,$4c     ; $1374 3e 4c   
-   mov c,c       ; $1376 49      
-   mov c,m       ; $1377 4e      
-   mov c,e       ; $1378 4b      
-   mov h,e       ; $1379 63      
-   inx d         ; $137a 13      
-   call $02e4    ; $137b cd e4 02
-   mov l,a       ; $137e 6f      
-   rrc           ; $137f 0f      
-   dcx h         ; $1380 2b      
-   ldax b        ; $1381 0a      
-   cmc           ; $1382 3f      
-   nop           ; $1383 00      
-   rz            ; $1384 c8      
-   .byte 0x08    ; $1385 08      
-   mov c,d       ; $1386 4a      
-   inr b         ; $1387 04      
-   dcr d         ; $1388 15      
-   inx b         ; $1389 03      
-   dcr b         ; $138a 05      
-   mov c,m       ; $138b 4e      
-   mov b,c       ; $138c 41      
-   mov c,l       ; $138d 4d      
-   mov b,l       ; $138e 45      
-   mvi a,$72     ; $138f 3e 72   
-   inx d         ; $1391 13      
-   call $02e4    ; $1392 cd e4 02
-   mov a,e       ; $1395 7b      
-   inx d         ; $1396 13      
-   mov l,e       ; $1397 6b      
-   inx d         ; $1398 13      
-   dcr d         ; $1399 15      
-   inx b         ; $139a 03      
-   mvi b,$4c     ; $139b 06 4c   
-   mvi a,$4e     ; $139d 3e 4e   
-   mov b,c       ; $139f 41      
-   mov c,l       ; $13a0 4d      
-   mov b,l       ; $13a1 45      
-   adc d         ; $13a2 8a      
-   inx d         ; $13a3 13      
-   call $02e4    ; $13a4 cd e4 02
-   dcx h         ; $13a7 2b      
-   ldax b        ; $13a8 0a      
-   .byte 0x20    ; $13a9 20      
-   nop           ; $13aa 00      
-   jc $e50e      ; $13ab da 0e e5
-   ldax b        ; $13ae 0a      
-   out $13       ; $13af d3 13   
-   out $03       ; $13b1 d3 03   
-   sbb a         ; $13b3 9f      
-   ldax b        ; $13b4 0a      
-   mov d,l       ; $13b5 55      
-   inr b         ; $13b6 04      
-   sub c         ; $13b7 91      
-   dad b         ; $13b8 09      
-   dcx h         ; $13b9 2b      
-   ldax b        ; $13ba 0a      
-   mov a,a       ; $13bb 7f      
-   nop           ; $13bc 00      
-   rz            ; $13bd c8      
-   .byte 0x08    ; $13be 08      
-   mov m,a       ; $13bf 77      
-   inr b         ; $13c0 04      
-   sbb a         ; $13c1 9f      
-   ldax b        ; $13c2 0a      
-   mov h,m       ; $13c3 66      
-   dcr b         ; $13c4 05      
-   mov a,d       ; $13c5 7a      
-   ldax b        ; $13c6 0a      
-   rst 1         ; $13c7 cf      
-   inx d         ; $13c8 13      
-   sbb a         ; $13c9 9f      
-   ldax b        ; $13ca 0a      
-   mov d,l       ; $13cb 55      
-   inr b         ; $13cc 04      
-   mov a,c       ; $13cd 79      
-   inr e         ; $13ce 1c      
-   mvi l,$0b     ; $13cf 2e 0b   
-   ora c         ; $13d1 b1      
-   inx d         ; $13d2 13      
-   dcr d         ; $13d3 15      
-   inx b         ; $13d4 03      
-   dcr b         ; $13d5 05      
-   mvi a,$4e     ; $13d6 3e 4e   
-   mov b,c       ; $13d8 41      
-   mov c,l       ; $13d9 4d      
-   mov b,l       ; $13da 45      
-   sbb e         ; $13db 9b      
-   inx d         ; $13dc 13      
-   call $02e4    ; $13dd cd e4 02
-   mov e,h       ; $13e0 5c      
-   inx d         ; $13e1 13      
-   ana h         ; $13e2 a4      
-   inx d         ; $13e3 13      
-   dcr d         ; $13e4 15      
-   inx b         ; $13e5 03      
-   inr b         ; $13e6 04      
-   mov d,a       ; $13e7 57      
-   mov c,a       ; $13e8 4f      
-   mov d,d       ; $13e9 52      
-   mov b,h       ; $13ea 44      
-   push d        ; $13eb d5      
-   inx d         ; $13ec 13      
-   call $02e4    ; $13ed cd e4 02
-   dcx h         ; $13f0 2b      
-   ldax b        ; $13f1 0a      
-   mvi d,$34     ; $13f2 16 34   
-   add h         ; $13f4 84      
-   dad b         ; $13f5 09      
-   rpo           ; $13f6 e0      
-   inx b         ; $13f7 03      
-   mov a,d       ; $13f8 7a      
-   ldax b        ; $13f9 0a      
-   nop           ; $13fa 00      
-   inr d         ; $13fb 14      
-   inr l         ; $13fc 2c      
-   inx b         ; $13fd 03      
-   dcr d         ; $13fe 15      
-   inx b         ; $13ff 03      
-   ora c         ; $1400 b1      
-   stax b        ; $1401 02      
-   add h         ; $1402 84      
-   dad b         ; $1403 09      
-   rpo           ; $1404 e0      
-   inx b         ; $1405 03      
-   mov a,d       ; $1406 7a      
-   ldax b        ; $1407 0a      
-   mvi d,$14     ; $1408 16 14   
-   .byte 0xfd    ; $140a fd      
-   inr l         ; $140b 2c      
-   out $03       ; $140c d3 03   
-   mov e,a       ; $140e 5f      
-   stax b        ; $140f 02      
-   sbb l         ; $1410 9d      
-   dad b         ; $1411 09      
-   mov l,b       ; $1412 68      
-   ldax b        ; $1413 0a      
-   .byte 0x18    ; $1414 18      
-   inr d         ; $1415 14      
-   .byte 0xcb    ; $1416 cb      
-   stax b        ; $1417 02      
-   hlt           ; $1418 76      
-   stax b        ; $1419 02      
-   add h         ; $141a 84      
-   dad b         ; $141b 09      
-   mov c,d       ; $141c 4a      
-   inr b         ; $141d 04      
-   mov l,e       ; $141e 6b      
-   stax b        ; $141f 02      
-   add h         ; $1420 84      
-   dad b         ; $1421 09      
-   hlt           ; $1422 76      
-   stax b        ; $1423 02      
-   add h         ; $1424 84      
-   dad b         ; $1425 09      
-   mov d,l       ; $1426 55      
-   inr b         ; $1427 04      
-   inx sp        ; $1428 33      
-   inr c         ; $1429 0c      
-   mov a,d       ; $142a 7a      
-   ldax b        ; $142b 0a      
-   inr a         ; $142c 3c      
-   inr d         ; $142d 14      
-   mov e,a       ; $142e 5f      
-   stax b        ; $142f 02      
-   add h         ; $1430 84      
-   dad b         ; $1431 09      
-   mov d,l       ; $1432 55      
-   inr b         ; $1433 04      
-   hlt           ; $1434 76      
-   stax b        ; $1435 02      
-   sbb l         ; $1436 9d      
-   dad b         ; $1437 09      
-   mov l,b       ; $1438 68      
-   ldax b        ; $1439 0a      
-   mov c,b       ; $143a 48      
-   inr d         ; $143b 14      
-   mov l,e       ; $143c 6b      
-   stax b        ; $143d 02      
-   add h         ; $143e 84      
-   dad b         ; $143f 09      
-   hlt           ; $1440 76      
-   stax b        ; $1441 02      
-   sbb l         ; $1442 9d      
-   dad b         ; $1443 09      
-   rz            ; $1444 c8      
-   mvi c,$c8     ; $1445 0e c8   
-   mvi c,$d3     ; $1447 0e d3   
-   inx b         ; $1449 03      
-   rst 7         ; $144a ff      
-   mvi c,$aa     ; $144b 0e aa   
-   dad b         ; $144d 09      
-   rst 7         ; $144e ff      
-   mvi c,$77     ; $144f 0e 77   
-   inr b         ; $1451 04      
-   adc l         ; $1452 8d      
-   inx b         ; $1453 03      
-   mov a,h       ; $1454 7c      
-   dcx b         ; $1455 0b      
-   rst 7         ; $1456 ff      
-   mvi c,$a6     ; $1457 0e a6   
-   mvi d,$62     ; $1459 16 62   
-   inx b         ; $145b 03      
-   out $03       ; $145c d3 03   
-   sub c         ; $145e 91      
-   dad b         ; $145f 09      
-   mov m,a       ; $1460 77      
-   inr b         ; $1461 04      
-   mov c,d       ; $1462 4a      
-   inr b         ; $1463 04      
-   xra d         ; $1464 aa      
-   dad b         ; $1465 09      
-   dcr d         ; $1466 15      
-   inx b         ; $1467 03      
-   inx b         ; $1468 03      
-   mov b,e       ; $1469 43      
-   cma           ; $146a 2f      
-   mov c,h       ; $146b 4c      
-   ani $13       ; $146c e6 13   
+
+NFA__3EBODY:     ; 1332
+   .byte 5,">BODY"
+   .word NFA_CFL          ; 1327
+__3EBODY:        ; 133A - 1343
+   call _FCALL            ; 133A
+   .word _CFL             ; $133d 132D - CFL
+   .word __2B             ; $133f 044A - +
+   .word _EXIT            ; $1341 0315 - EXIT
+
+NFA_BODY_3E:     ; 1343
+   .byte 5,"BODY>"
+   .word NFA__3EBODY        ; 1332
+_BODY_3E:        ; 134B - 1354
+   call _FCALL            ; 134B
+   .word _CFL             ; $134e 132D - CFL
+   .word __2D             ; $1350 0455 - -
+   .word _EXIT            ; $1352 0315 - EXIT
+
+NFA__3ELINK:     ; 1354
+   .byte 5,">LINK"
+   .word NFA_BODY_3E        ; 1343
+__3ELINK:        ; 135C - 1363
+   call _FCALL            ; 135C
+   .word _2_2D            ; $135f 0499 - 2-
+   .word _EXIT            ; $1361 0315 - EXIT
+
+NFA_LINK_3E:     ; 1363
+   .byte 5,"LINK>"
+   .word NFA__3ELINK        ; 1354
+_LINK_3E:        ; 136B - 1372
+   call _FCALL            ; 136B
+   .word _2_2B            ; $136e 0482 - 2+
+   .word _EXIT            ; $1370 0315 - EXIT
+
+NFA_N_3ELINK:    ; 1372
+   .byte 6,"N>LINK"
+   .word NFA_LINK_3E        ; 1363
+_N_3ELINK:       ; 137B - 138A
+   call _FCALL            ; 137B
+   .word _COUNT           ; $137e 0F6F - COUNT
+   .word _LIT             ; $1380 0A2B - LIT
+   .word $003F            ; $1382 003F
+   .word _AND             ; $1384 08C8 - AND
+   .word __2B             ; $1386 044A - +
+   .word _EXIT            ; $1388 0315 - EXIT
+
+NFA_NAME_3E:     ; 138A
+   .byte 5,"NAME>"
+   .word NFA_N_3ELINK       ; 1372
+_NAME_3E:        ; 1392 - 139B
+   call _FCALL            ; 1392
+   .word _N_3ELINK        ; $1395 137B - N>LINK
+   .word _LINK_3E         ; $1397 136B - LINK>
+   .word _EXIT            ; $1399 0315 - EXIT
+
+NFA_L_3ENAME:    ; 139B
+   .byte 6,"L>NAME"
+   .word NFA_NAME_3E        ; 138A
+_L_3ENAME:       ; 13A4 - 13D5
+   call _FCALL            ; 13A4
+   .word _LIT             ; $13a7 0A2B - LIT
+   .word $0020            ; $13a9 0020
+   .word _2               ; $13ab 0EDA - 2
+   .word __28DO_29        ; $13ad 0AE5 - (DO)
+   .word $13D3            ; $13af 13D3
+   .word _DUP             ; $13b1 03D3 - DUP
+   .word _I               ; $13b3 0A9F - I
+   .word __2D             ; $13b5 0455 - -
+   .word _C_40            ; $13b7 0991 - C@
+   .word _LIT             ; $13b9 0A2B - LIT
+   .word $007F            ; $13bb 007F
+   .word _AND             ; $13bd 08C8 - AND
+   .word _1_2B            ; $13bf 0477 - 1+
+   .word _I               ; $13c1 0A9F - I
+   .word __3D             ; $13c3 0566 - =
+   .word __3FBRANCH       ; $13c5 0A7A - ?BRANCH
+   .word $13CF            ; $13c7 13CF
+   .word _I               ; $13c9 0A9F - I
+   .word __2D             ; $13cb 0455 - -
+   .word _LEAVE           ; $13cd 1C79 - LEAVE
+   .word __28LOOP_29      ; $13cf 0B2E - (LOOP)
+   .word $13B1            ; $13d1 13B1
+   .word _EXIT            ; $13d3 0315 - EXIT
+
+NFA__3ENAME:     ; 13D5
+   .byte 5,">NAME"
+   .word NFA_L_3ENAME       ; 139B
+__3ENAME:        ; 13DD - 13E6
+   call _FCALL            ; 13DD
+   .word __3ELINK         ; $13e0 135C - >LINK
+   .word _L_3ENAME        ; $13e2 13A4 - L>NAME
+   .word _EXIT            ; $13e4 0315 - EXIT
+
+NFA_WORD:        ; 13E6
+   .byte 4,"WORD"
+   .word NFA__3ENAME        ; 13D5
+_WORD:           ; 13ED - 1468
+   call _FCALL            ; 13ED
+   .word _LIT             ; $13f0 0A2B - LIT
+   .word $3416            ; $13f2 3416
+   .word __40             ; $13f4 0984 - @
+   .word __3FDUP          ; $13f6 03E0 - ?DUP
+   .word __3FBRANCH       ; $13f8 0A7A - ?BRANCH
+   .word $1400            ; $13fa 1400
+   .word _EXECUTE         ; $13fc 032C - EXECUTE
+   .word _EXIT            ; $13fe 0315 - EXIT
+   .word _BLK             ; $1400 02B1 - BLK
+   .word __40             ; $1402 0984 - @
+   .word __3FDUP          ; $1404 03E0 - ?DUP
+   .word __3FBRANCH       ; $1406 0A7A - ?BRANCH
+   .word $1416            ; $1408 1416
+   .word _BLOCK           ; $140a 2CFD - BLOCK
+   .word _DUP             ; $140c 03D3 - DUP
+   .word _INB             ; $140e 025F - INB
+   .word __21             ; $1410 099D - !
+   .word _BRANCH          ; $1412 0A68 - BRANCH
+   .word $1418            ; $1414 1418
+   .word _TIB             ; $1416 02CB - TIB
+   .word __3EIN           ; $1418 0276 - >IN
+   .word __40             ; $141a 0984 - @
+   .word __2B             ; $141c 044A - +
+   .word __23TIB          ; $141e 026B - #TIB
+   .word __40             ; $1420 0984 - @
+   .word __3EIN           ; $1422 0276 - >IN
+   .word __40             ; $1424 0984 - @
+   .word __2D             ; $1426 0455 - -
+   .word _ENCLOSE         ; $1428 0C33 - ENCLOSE
+   .word __3FBRANCH       ; $142a 0A7A - ?BRANCH
+   .word $143C            ; $142c 143C
+   .word _INB             ; $142e 025F - INB
+   .word __40             ; $1430 0984 - @
+   .word __2D             ; $1432 0455 - -
+   .word __3EIN           ; $1434 0276 - >IN
+   .word __21             ; $1436 099D - !
+   .word _BRANCH          ; $1438 0A68 - BRANCH
+   .word $1448            ; $143a 1448
+   .word __23TIB          ; $143c 026B - #TIB
+   .word __40             ; $143e 0984 - @
+   .word __3EIN           ; $1440 0276 - >IN
+   .word __21             ; $1442 099D - !
+   .word _0               ; $1444 0EC8 - 0
+   .word _0               ; $1446 0EC8 - 0
+   .word _DUP             ; $1448 03D3 - DUP
+   .word _HERE            ; $144a 0EFF - HERE
+   .word _C_21            ; $144c 09AA - C!
+   .word _HERE            ; $144e 0EFF - HERE
+   .word _1_2B            ; $1450 0477 - 1+
+   .word _SWAP            ; $1452 038D - SWAP
+   .word _CMOVE           ; $1454 0B7C - CMOVE
+   .word _HERE            ; $1456 0EFF - HERE
+   .word _BL              ; $1458 16A6 - BL
+   .word _OVER            ; $145a 0362 - OVER
+   .word _DUP             ; $145c 03D3 - DUP
+   .word _C_40            ; $145e 0991 - C@
+   .word _1_2B            ; $1460 0477 - 1+
+   .word __2B             ; $1462 044A - +
+   .word _C_21            ; $1464 09AA - C!
+   .word _EXIT            ; $1466 0315 - EXIT
+
+NFA_C_2FL:       ; 1468
+   .byte 3,"C/L"
+   .word NFA_WORD         ; 13E6
+_C_2FL:          ; 146E - 1473
    call $0984    ; $146e cd 84 09
    mov b,b       ; $1471 40      
    nop           ; $1472 00      
@@ -3787,21 +3136,16 @@ _KEY:            ; 1554 - 1561
 
 NFA_CR:          ; 1561
    .byte 2,"CR"
-   .word $154E   ; NFA_KEY          ; 154E
-_CR:             ; 1566
-   call _FCALL   ; $1566 cd e4 02
-   dcx h         ; $1569 2b      
-   ldax b        ; $156a 0a      
-   .byte 0x10    ; $156b 10      
-   inr m         ; $156c 34      
-   add h         ; $156d 84      
-   dad b         ; $156e 09      
-   inr l         ; $156f 2c      
-   inx b         ; $1570 03      
-   ana m         ; $1571 a6      
-   stax b        ; $1572 02      
-   cm $1509      ; $1573 fc 09 15
-   inx b         ; $1576 03      
+   .word NFA_KEY          ; 154E
+_CR:             ; 1566 - 1577
+   call _FCALL            ; 1566
+   .word _LIT             ; 1569 0A2B - LIT
+   .word $3410            ; 156B 3410
+   .word __40             ; 156D 0984 - @
+   .word _EXECUTE         ; 156F 032C - EXECUTE
+   .word __3EOUT          ; 1571 02A6 - >OUT
+   .word _0_21            ; 1573 09FC - 0!
+   .word _EXIT            ; 1575 0315 - EXIT
 
 NFA_TYPE:        ; 1577
    .byte 4,"TYPE"
@@ -3834,1091 +3178,640 @@ l15A3:
 NFA_FORTH_2D83:  ; 15A7
    .byte 8,"FORTH-83"
    .word NFA_TYPE         ; 1577
-_FORTH_2D83:     ; 15B2
-   call $02e4    ; $15b2 cd e4 02
-   mov h,m       ; $15b5 66      
-   dcr d         ; $15b6 15      
-   mvi a,$18     ; $15b7 3e 18   
-   lxi d,$5443   ; $15b9 11 43 54
-   mov b,c       ; $15bc 41      
-   mov c,b       ; $15bd 48      
-   mov h,h       ; $15be 64      
-   mov b,c       ; $15bf 41      
-   mov d,b       ; $15c0 50      
-   mov d,h       ; $15c1 54      
-   .byte 0x20    ; $15c2 20      
-   mov b,m       ; $15c3 46      
-   mov c,a       ; $15c4 4f      
-   mov d,d       ; $15c5 52      
-   mov d,h       ; $15c6 54      
-   mov c,b       ; $15c7 48      
-   dcr l         ; $15c8 2d      
-   .byte 0x38    ; $15c9 38      
-   inx sp        ; $15ca 33      
-   dcr d         ; $15cb 15      
-   inx b         ; $15cc 03      
-   .byte 0xfd    ; $15cd fd      
-   .byte 0x08    ; $15ce 08      
-   .byte 0xd9    ; $15cf d9      
-   .byte 0x08    ; $15d0 08      
-   mov a,d       ; $15d1 7a      
-   ldax b        ; $15d2 0a      
-   in $15        ; $15d3 db 15   
-   add d         ; $15d5 82      
-   inx b         ; $15d6 03      
-   dcx h         ; $15d7 2b      
-   ldax b        ; $15d8 0a      
-   mvi l,$00     ; $15d9 2e 00   
-   dcr d         ; $15db 15      
-   inx b         ; $15dc 03      
-   nop           ; $15dd 00      
-   nop           ; $15de 00      
-   nop           ; $15df 00      
-   nop           ; $15e0 00      
-   nop           ; $15e1 00      
-   nop           ; $15e2 00      
-   nop           ; $15e3 00      
-   nop           ; $15e4 00      
-   nop           ; $15e5 00      
-   nop           ; $15e6 00      
-   nop           ; $15e7 00      
-   nop           ; $15e8 00      
-   dcr b         ; $15e9 05      
-   mov d,c       ; $15ea 51      
-   mov d,l       ; $15eb 55      
-   mov b,l       ; $15ec 45      
-   mov d,d       ; $15ed 52      
-   mov e,c       ; $15ee 59      
-   ana a         ; $15ef a7      
-   dcr d         ; $15f0 15      
-   call $02e4    ; $15f1 cd e4 02
-   mov h,m       ; $15f4 66      
-   dcr d         ; $15f5 15      
-   dcx h         ; $15f6 2b      
-   ldax b        ; $15f7 0a      
-   mvi a,$00     ; $15f8 3e 00   
-   dcr a         ; $15fa 3d      
-   dcr d         ; $15fb 15      
-   .byte 0xcb    ; $15fc cb      
-   stax b        ; $15fd 02      
-   mov l,m       ; $15fe 6e      
-   inr d         ; $15ff 14      
-   adc m         ; $1600 8e      
-   inr b         ; $1601 04      
-   sbb a         ; $1602 9f      
-   inr d         ; $1603 14      
-   sbb d         ; $1604 9a      
-   stax b        ; $1605 02      
-   add h         ; $1606 84      
-   dad b         ; $1607 09      
-   out $03       ; $1608 d3 03   
-   mov l,e       ; $160a 6b      
-   stax b        ; $160b 02      
-   sbb l         ; $160c 9d      
-   dad b         ; $160d 09      
-   mov a,d       ; $160e 7a      
-   ldax b        ; $160f 0a      
-   inr d         ; $1610 14      
-   mvi d,$66     ; $1611 16 66   
-   dcr d         ; $1613 15      
-   hlt           ; $1614 76      
-   stax b        ; $1615 02      
-   cm $cb09      ; $1616 fc 09 cb
-   stax b        ; $1619 02      
-   mov e,a       ; $161a 5f      
-   stax b        ; $161b 02      
-   sbb l         ; $161c 9d      
-   dad b         ; $161d 09      
-   dcr d         ; $161e 15      
-   inx b         ; $161f 03      
-   rlc           ; $1620 07      
-   mov b,e       ; $1621 43      
-   mov c,a       ; $1622 4f      
-   mov c,m       ; $1623 4e      
-   mov d,e       ; $1624 53      
-   mov c,a       ; $1625 4f      
-   mov c,h       ; $1626 4c      
-   mov b,l       ; $1627 45      
-   pchl          ; $1628 e9      
-   dcr d         ; $1629 15      
+_FORTH_2D83:     ; 15B2 - 15E9
+   call _FCALL            ; 15B2
+   .word _CR              ; $15b5 1566 - CR
+   .word __28_2E_22_29    ; $15b7 183E - (.")
+   .byte 17,"CTAHdAPT FORTH-83"
+   .word _EXIT            ; $15cb 0315 - EXIT
+   .word _NOT             ; $15cd 08FD - NOT
+   .word _OR              ; $15cf 08D9 - OR
+   .word __3FBRANCH       ; $15d1 0A7A - ?BRANCH
+   .word $15DB            ; $15d3 15DB
+   .word _DROP            ; $15d5 0382 - DROP
+   .word _LIT             ; $15d7 0A2B - LIT
+   .word $002E            ; $15d9 002E
+   .word _EXIT            ; $15db 0315 - EXIT
+
+.storage 12,0x00
+
+NFA_QUERY:       ; 15E9
+   .byte 5,"QUERY"
+   .word NFA_FORTH_2D83     ; 15A7
+_QUERY:          ; 15F1 - 166B
+   call _FCALL            ; 15F1
+   .word _CR              ; $15f4 1566 - CR
+   .word _LIT             ; $15f6 0A2B - LIT
+   .word $003E            ; $15f8 003E
+   .word _EMIT            ; $15fa 153D - EMIT
+   .word _TIB             ; $15fc 02CB - TIB
+   .word _C_2FL           ; $15fe 146E - C/L
+   .word _1_2D            ; $1600 048E - 1-
+   .word _EXPECT          ; $1602 149F - EXPECT
+   .word _SPAN            ; $1604 029A - SPAN
+   .word __40             ; $1606 0984 - @
+   .word _DUP             ; $1608 03D3 - DUP
+   .word __23TIB          ; $160a 026B - #TIB
+   .word __21             ; $160c 099D - !
+   .word __3FBRANCH       ; $160e 0A7A - ?BRANCH
+   .word $1614            ; $1610 1614
+   .word _CR              ; $1612 1566 - CR
+   .word __3EIN           ; $1614 0276 - >IN
+   .word _0_21            ; $1616 09FC - 0!
+   .word _TIB             ; $1618 02CB - TIB
+   .word _INB             ; $161a 025F - INB
+   .word __21             ; $161c 099D - !
+   .word _EXIT            ; $161e 0315 - EXIT
+
+NFA_CONSOLE:     ; 1620
+   .byte 7,"CONSOLE"
+   .word NFA_QUERY        ; 15E9
+_CONSOLE:        ; 162A - None
+l162a:
    call $02e4    ; $162a cd e4 02
-   dcx h         ; $162d 2b      
-   ldax b        ; $162e 0a      
-   inr d         ; $162f 14      
-   inr m         ; $1630 34      
-   add h         ; $1631 84      
-   dad b         ; $1632 09      
-   rpo           ; $1633 e0      
-   inx b         ; $1634 03      
-   mov a,d       ; $1635 7a      
-   ldax b        ; $1636 0a      
-   dcr a         ; $1637 3d      
-   mvi d,$2c     ; $1638 16 2c   
-   inx b         ; $163a 03      
-   dcr d         ; $163b 15      
-   inx b         ; $163c 03      
-   ora c         ; $163d b1      
-   stax b        ; $163e 02      
-   cm $2b09      ; $163f fc 09 2b
-   ldax b        ; $1642 0a      
-   adc e         ; $1643 8b      
-   inr c         ; $1644 0c      
-   dcx h         ; $1645 2b      
-   ldax b        ; $1646 0a      
-   mvi c,$34     ; $1647 0e 34   
-   sbb l         ; $1649 9d      
-   dad b         ; $164a 09      
-   dcx h         ; $164b 2b      
-   ldax b        ; $164c 0a      
-   sbb l         ; $164d 9d      
-   inr c         ; $164e 0c      
-   dcx h         ; $164f 2b      
-   ldax b        ; $1650 0a      
-   inr c         ; $1651 0c      
-   inr m         ; $1652 34      
-   sbb l         ; $1653 9d      
-   dad b         ; $1654 09      
-   dcx h         ; $1655 2b      
-   ldax b        ; $1656 0a      
-   ora b         ; $1657 b0      
-   inr c         ; $1658 0c      
-   dcx h         ; $1659 2b      
-   ldax b        ; $165a 0a      
-   .byte 0x10    ; $165b 10      
-   inr m         ; $165c 34      
-   sbb l         ; $165d 9d      
-   dad b         ; $165e 09      
-   mov h,m       ; $165f 66      
-   dcr d         ; $1660 15      
-   mov l,e       ; $1661 6b      
-   stax b        ; $1662 02      
-   cm $7609      ; $1663 fc 09 76
-   stax b        ; $1666 02      
-   cm $1509      ; $1667 fc 09 15
-   inx b         ; $166a 03      
-   stax b        ; $166b 02      
-   dcx sp        ; $166c 3b      
-   mov d,e       ; $166d 53      
-   pchl          ; $166e e9      
-   dcr d         ; $166f 15      
-   call $02e4    ; $1670 cd e4 02
-   mov m,l       ; $1673 75      
-   dad b         ; $1674 09      
-   dcr d         ; $1675 15      
-   inx b         ; $1676 03      
-   inx b         ; $1677 03      
-   mov c,b       ; $1678 48      
-   mov b,l       ; $1679 45      
-   mov e,b       ; $167a 58      
-   mov l,e       ; $167b 6b      
-   mvi d,$cd     ; $167c 16 cd   
-   cpo $2b02     ; $167e e4 02 2b
-   ldax b        ; $1681 0a      
-   .byte 0x10    ; $1682 10      
-   nop           ; $1683 00      
-   .byte 0x08    ; $1684 08      
-   stax b        ; $1685 02      
-   sbb l         ; $1686 9d      
-   dad b         ; $1687 09      
-   dcr d         ; $1688 15      
-   inx b         ; $1689 03      
-   rlc           ; $168a 07      
-   mov b,h       ; $168b 44      
-   mov b,l       ; $168c 45      
-   mov b,e       ; $168d 43      
-   mov c,c       ; $168e 49      
-   mov c,l       ; $168f 4d      
-   mov b,c       ; $1690 41      
-   mov c,h       ; $1691 4c      
-   mov m,a       ; $1692 77      
-   mvi d,$cd     ; $1693 16 cd   
-   cpo $2b02     ; $1695 e4 02 2b
-   ldax b        ; $1698 0a      
-   ldax b        ; $1699 0a      
-   nop           ; $169a 00      
-   .byte 0x08    ; $169b 08      
-   stax b        ; $169c 02      
-   sbb l         ; $169d 9d      
-   dad b         ; $169e 09      
-   dcr d         ; $169f 15      
-   inx b         ; $16a0 03      
+   .word _LIT             ; $162d 0A2B - LIT
+   .word $3414            ; $162f 3414
+   .word __40             ; $1631 0984 - @
+   .word __3FDUP          ; $1633 03E0 - ?DUP
+   .word __3FBRANCH       ; $1635 0A7A - ?BRANCH
+   .word $163D            ; $1637 163D
+   .word _EXECUTE         ; $1639 032C - EXECUTE
+   .word _EXIT            ; $163b 0315 - EXIT
+   .word _BLK             ; $163d 02B1 - BLK
+   .word _0_21            ; $163f 09FC - 0!
+   .word _LIT             ; $1641 0A2B - LIT
+   .word __28EMIT_29      ; $1643 0C8B - (EMIT)
+   .word _LIT             ; $1645 0A2B - LIT
+   .word $340E            ; $1647 340E
+   .word __21             ; $1649 099D - !
+   .word _LIT             ; $164b 0A2B - LIT
+   .word __28KEY_29       ; $164d 0C9D - (KEY)
+   .word _LIT             ; $164f 0A2B - LIT
+   .word $340C            ; $1651 340C
+   .word __21             ; $1653 099D - !
+   .word _LIT             ; $1655 0A2B - LIT
+   .word __28CR_29        ; $1657 0CB0 - (CR)
+   .word _LIT             ; $1659 0A2B - LIT
+   .word $3410            ; $165b 3410
+   .word __21             ; $165d 099D - !
+   .word _CR              ; $165f 1566 - CR
+   .word __23TIB          ; $1661 026B - #TIB
+   .word _0_21            ; $1663 09FC - 0!
+   .word __3EIN           ; $1665 0276 - >IN
+   .word _0_21            ; $1667 09FC - 0!
+   .word _EXIT            ; $1669 0315 - EXIT
+
+NFA__3BS:        ; 166B
+   .byte 2,";S"
+   .word NFA_QUERY        ; 15E9
+__3BS:           ; 1670 - 1677
+   call _FCALL            ; 1670
+   .word _RDROP           ; $1673 0975 - RDROP
+   .word _EXIT            ; $1675 0315 - EXIT
+
+NFA_HEX:         ; 1677
+   .byte 3,"HEX"
+   .word NFA__3BS           ; 166B
+_HEX:            ; 167D - 168A
+   call _FCALL            ; 167D
+   .word _LIT             ; $1680 0A2B - LIT
+   .word $0010            ; $1682 0010
+   .word _BASE            ; $1684 0208 - BASE
+   .word __21             ; $1686 099D - !
+   .word _EXIT            ; $1688 0315 - EXIT
+
+NFA_DECIMAL:     ; 168A
+   .byte 7,"DECIMAL"
+   .word NFA_HEX          ; 1677
+_DECIMAL:        ; 1694 - 16A1
+   call _FCALL            ; 1694
+   .word _LIT             ; $1697 0A2B - LIT
+   .word $000A            ; $1699 000A
+   .word _BASE            ; $169b 0208 - BASE
+   .word __21             ; $169d 099D - !
+   .word _EXIT            ; $169f 0315 - EXIT
 
 NFA_BL:          ; 16A1
    .byte 2,"BL"
-   .word $168A   ; NFA_DECIMAL      ; 168A
+   .word NFA_DECIMAL      ; 168A
 _BL:             ; 16A6 - 16AB
    call $0984    ; cd   
    .word 0x0020  ; $16a9 0020      
 
-   dcr b         ; $16ab 05      
-   mov b,d       ; $16ac 42      
-   mov c,h       ; $16ad 4c      
-   mov b,c       ; $16ae 41      
-   mov c,m       ; $16af 4e      
-   mov c,e       ; $16b0 4b      
-   ana c         ; $16b1 a1      
-   mvi d,$cd     ; $16b2 16 cd   
-   cpo $a602     ; $16b4 e4 02 a6
-   mvi d,$f5     ; $16b7 16 f5   
-   dcx b         ; $16b9 0b      
-   dcr d         ; $16ba 15      
-   inx b         ; $16bb 03      
-   dcr b         ; $16bc 05      
-   mov d,e       ; $16bd 53      
-   mov d,b       ; $16be 50      
-   mov b,c       ; $16bf 41      
-   mov b,e       ; $16c0 43      
-   mov b,l       ; $16c1 45      
-   xra e         ; $16c2 ab      
-   mvi d,$cd     ; $16c3 16 cd   
-   cpo $a602     ; $16c5 e4 02 a6
-   mvi d,$3d     ; $16c8 16 3d   
-   dcr d         ; $16ca 15      
-   dcr d         ; $16cb 15      
-   inx b         ; $16cc 03      
-   mvi b,$53     ; $16cd 06 53   
-   mov d,b       ; $16cf 50      
-   mov b,c       ; $16d0 41      
-   mov b,e       ; $16d1 43      
-   mov b,l       ; $16d2 45      
-   mov d,e       ; $16d3 53      
-   cmp h         ; $16d4 bc      
-   mvi d,$cd     ; $16d5 16 cd   
-   cpo $c802     ; $16d7 e4 02 c8
-   mvi c,$0c     ; $16da 0e 0c   
-   dcx b         ; $16dc 0b      
-   push h        ; $16dd e5      
-   mvi d,$c4     ; $16de 16 c4   
-   mvi d,$2e     ; $16e0 16 2e   
-   dcx b         ; $16e2 0b      
-   rst 3         ; $16e3 df      
-   mvi d,$15     ; $16e4 16 15   
-   inx b         ; $16e6 03      
-   inx b         ; $16e7 03      
-   mov c,c       ; $16e8 49      
-   mov b,h       ; $16e9 44      
-   mvi l,$cd     ; $16ea 2e cd   
-   mvi d,$cd     ; $16ec 16 cd   
-   cpo $6f02     ; $16ee e4 02 6f
-   rrc           ; $16f1 0f      
-   dcx h         ; $16f2 2b      
-   ldax b        ; $16f3 0a      
-   cmc           ; $16f4 3f      
-   nop           ; $16f5 00      
-   rz            ; $16f6 c8      
-   .byte 0x08    ; $16f7 08      
-   mov a,m       ; $16f8 7e      
-   dcr d         ; $16f9 15      
-   dcr d         ; $16fa 15      
-   inx b         ; $16fb 03      
-   dcx b         ; $16fc 0b      
-   mov b,h       ; $16fd 44      
-   mov b,l       ; $16fe 45      
-   mov b,m       ; $16ff 46      
-   mov c,c       ; $1700 49      
-   mov c,m       ; $1701 4e      
-   mov c,c       ; $1702 49      
-   mov d,h       ; $1703 54      
-   mov c,c       ; $1704 49      
-   mov c,a       ; $1705 4f      
-   mov c,m       ; $1706 4e      
-   mov d,e       ; $1707 53      
-   rst 4         ; $1708 e7      
-   mvi d,$cd     ; $1709 16 cd   
-   cpo $2402     ; $170b e4 02 24
-   stax b        ; $170e 02      
-   add h         ; $170f 84      
-   dad b         ; $1710 09      
-   inx sp        ; $1711 33      
-   stax b        ; $1712 02      
-   sbb l         ; $1713 9d      
-   dad b         ; $1714 09      
-   dcr d         ; $1715 15      
-   inx b         ; $1716 03      
-   mvi b,$4c     ; $1717 06 4c   
-   mov b,c       ; $1719 41      
-   mov d,h       ; $171a 54      
-   mov b,l       ; $171b 45      
-   mov d,e       ; $171c 53      
-   mov d,h       ; $171d 54      
-   cm $cd16      ; $171e fc 16 cd
-   cpo $3302     ; $1721 e4 02 33
-   stax b        ; $1724 02      
-   add h         ; $1725 84      
-   dad b         ; $1726 09      
-   add h         ; $1727 84      
-   dad b         ; $1728 09      
-   dcr d         ; $1729 15      
-   inx b         ; $172a 03      
-   inx b         ; $172b 03      
-   lxi h,$4643   ; $172c 21 43 46
-   ral           ; $172f 17      
-   ral           ; $1730 17      
+NFA_BLANK:       ; 16AB
+   .byte 5,"BLANK"
+   .word NFA_BL           ; 16A1
+_BLANK:          ; 16B3 - 16BC
+   call _FCALL            ; 16B3
+   .word _BL              ; $16b6 16A6 - BL
+   .word _FILL            ; $16b8 0BF5 - FILL
+   .word _EXIT            ; $16ba 0315 - EXIT
+
+NFA_SPACE:       ; 16BC
+   .byte 5,"SPACE"
+   .word NFA_BLANK        ; 16AB
+_SPACE:          ; 16C4 - 16CD
+   call _FCALL            ; 16C4
+   .word _BL              ; $16c7 16A6 - BL
+   .word _EMIT            ; $16c9 153D - EMIT
+   .word _EXIT            ; $16cb 0315 - EXIT
+
+NFA_SPACES:      ; 16CD
+   .byte 6,"SPACES"
+   .word NFA_SPACE        ; 16BC
+_SPACES:         ; 16D6 - 16E7
+   call _FCALL            ; 16D6
+   .word _0               ; $16d9 0EC8 - 0
+   .word __28_3FDO_29     ; $16db 0B0C - (?DO)
+   .word $16E5            ; $16dd 16E5
+   .word _SPACE           ; $16df 16C4 - SPACE
+   .word __28LOOP_29      ; $16e1 0B2E - (LOOP)
+   .word $16DF            ; $16e3 16DF
+   .word _EXIT            ; $16e5 0315 - EXIT
+
+NFA_ID_2E:       ; 16E7
+   .byte 3,"ID."
+   .word NFA_SPACES       ; 16CD
+_ID_2E:          ; 16ED - 16FC
+   call _FCALL            ; 16ED
+   .word _COUNT           ; $16f0 0F6F - COUNT
+   .word _LIT             ; $16f2 0A2B - LIT
+   .word $003F            ; $16f4 003F
+   .word _AND             ; $16f6 08C8 - AND
+   .word _TYPE            ; $16f8 157E - TYPE
+   .word _EXIT            ; $16fa 0315 - EXIT
+
+NFA_DEFINITIONS: ; 16FC
+   .byte 11,"DEFINITIONS"
+   .word NFA_ID_2E          ; 16E7
+_DEFINITIONS:    ; 170A - 1717
+   call _FCALL            ; 170A
+   .word _CONTEXT         ; $170d 0224 - CONTEXT
+   .word __40             ; $170f 0984 - @
+   .word _CURRENT         ; $1711 0233 - CURRENT
+   .word __21             ; $1713 099D - !
+   .word _EXIT            ; $1715 0315 - EXIT
+
+NFA_LATEST:      ; 1717
+   .byte 6,"LATEST"
+   .word $16FC   ; NFA_DEFINITIONS  ; 16FC
+_LATEST:         ; 1720 - 1757
+   call _FCALL            ; 1720
+   .word _CURRENT         ; $1723 0233 - CURRENT
+   .word __40             ; $1725 0984 - @
+   .word __40             ; $1727 0984 - @
+   .word _EXIT            ; $1729 0315 - EXIT
+
+NFA__21CF:       ; 172B
+   .byte 3,"!CF"
+   .word NFA_LATEST       ; 1717
+__21CF:          ; 1731 - None
    call $02e4    ; $1731 cd e4 02
-   dcx h         ; $1734 2b      
-   ldax b        ; $1735 0a      
-   call $6200    ; $1736 cd 00 62
-   inx b         ; $1739 03      
-   xra d         ; $173a aa      
-   dad b         ; $173b 09      
-   mov m,a       ; $173c 77      
-   inr b         ; $173d 04      
-   sbb l         ; $173e 9d      
-   dad b         ; $173f 09      
-   dcr d         ; $1740 15      
-   inx b         ; $1741 03      
-   rlc           ; $1742 07      
-   .byte 0x28    ; $1743 28      
-   lxi h,$4f43   ; $1744 21 43 4f
-   mov b,h       ; $1747 44      
-   mov b,l       ; $1748 45      
-   dad h         ; $1749 29      
-   ral           ; $174a 17      
-   ral           ; $174b 17      
+   .word _LIT             ; $1734 0A2B - LIT
+   .word $00CD            ; $1736 00CD
+   .word _OVER            ; $1738 0362 - OVER
+   .word _C_21            ; $173a 09AA - C!
+   .word _1_2B            ; $173c 0477 - 1+
+   .word __21             ; $173e 099D - !
+   .word _EXIT            ; $1740 0315 - EXIT
+
+NFA__28_21CODE_29:; 1742
+   .byte 7,"(!CODE)"
+   .word NFA_LATEST       ; 1717
+__28_21CODE_29:  ; 174C - None
    call $02e4    ; $174c cd e4 02
-   .byte 0x20    ; $174f 20      
-   ral           ; $1750 17      
-   sub d         ; $1751 92      
-   inx d         ; $1752 13      
-   lxi sp,$1517  ; $1753 31 17 15
-   inx b         ; $1756 03      
-   mvi b,$53     ; $1757 06 53   
-   mov c,l       ; $1759 4d      
-   mov d,l       ; $175a 55      
-   mov b,h       ; $175b 44      
-   mov b,a       ; $175c 47      
-   mov b,l       ; $175d 45      
-   ral           ; $175e 17      
-   ral           ; $175f 17      
-   call $02e4    ; $1760 cd e4 02
-   .byte 0x20    ; $1763 20      
-   ral           ; $1764 17      
-   dcx h         ; $1765 2b      
-   ldax b        ; $1766 0a      
-   mov b,b       ; $1767 40      
-   nop           ; $1768 00      
-   sui $0a       ; $1769 d6 0a   
-   dcr d         ; $176b 15      
-   inx b         ; $176c 03      
-   add c         ; $176d 81      
-   mov e,e       ; $176e 5b      
-   mov d,a       ; $176f 57      
-   ral           ; $1770 17      
-   call $02e4    ; $1771 cd e4 02
-   dcr d         ; $1774 15      
-   stax b        ; $1775 02      
-   cm $1509      ; $1776 fc 09 15
-   inx b         ; $1779 03      
-   lxi b,$6d5d   ; $177a 01 5d 6d
-   ral           ; $177d 17      
-   call $02e4    ; $177e cd e4 02
-   cmp a         ; $1781 bf      
-   mvi c,$15     ; $1782 0e 15   
-   stax b        ; $1784 02      
-   sbb l         ; $1785 9d      
-   dad b         ; $1786 09      
-   dcr d         ; $1787 15      
-   inx b         ; $1788 03      
-   inr b         ; $1789 04      
-   mov b,m       ; $178a 46      
-   mov c,c       ; $178b 49      
-   mov c,m       ; $178c 4e      
-   mov b,h       ; $178d 44      
-   mov a,d       ; $178e 7a      
-   ral           ; $178f 17      
-   call $02e4    ; $1790 cd e4 02
-   dcx h         ; $1793 2b      
-   ldax b        ; $1794 0a      
-   mvi b,$34     ; $1795 06 34   
-   add h         ; $1797 84      
-   dad b         ; $1798 09      
-   rpo           ; $1799 e0      
-   inx b         ; $179a 03      
-   mov a,d       ; $179b 7a      
-   ldax b        ; $179c 0a      
-   ana e         ; $179d a3      
-   ral           ; $179e 17      
-   inr l         ; $179f 2c      
-   inx b         ; $17a0 03      
-   dcr d         ; $17a1 15      
-   inx b         ; $17a2 03      
-   inr h         ; $17a3 24      
-   stax b        ; $17a4 02      
-   add h         ; $17a5 84      
-   dad b         ; $17a6 09      
-   cmc           ; $17a7 3f      
-   .byte 0x08    ; $17a8 08      
-   mov a,d       ; $17a9 7a      
-   ldax b        ; $17aa 0a      
-   ora e         ; $17ab b3      
-   ral           ; $17ac 17      
-   ani $0e       ; $17ad e6 0e   
-   mov l,b       ; $17af 68      
-   ldax b        ; $17b0 0a      
-   call $3317    ; $17b1 cd 17 33
-   stax b        ; $17b4 02      
-   add h         ; $17b5 84      
-   dad b         ; $17b6 09      
-   out $03       ; $17b7 d3 03   
-   inr h         ; $17b9 24      
-   stax b        ; $17ba 02      
-   add h         ; $17bb 84      
-   dad b         ; $17bc 09      
-   mov h,m       ; $17bd 66      
-   dcr b         ; $17be 05      
-   sub b         ; $17bf 90      
-   ldax b        ; $17c0 0a      
-   ret           ; $17c1 c9      
-   ral           ; $17c2 17      
-   cmc           ; $17c3 3f      
-   .byte 0x08    ; $17c4 08      
-   mov l,b       ; $17c5 68      
-   ldax b        ; $17c6 0a      
-   call $8217    ; $17c7 cd 17 82
-   inx b         ; $17ca 03      
-   di            ; $17cb f3      
-   mvi c,$7a     ; $17cc 0e 7a   
-   ldax b        ; $17ce 0a      
-   rst 5         ; $17cf ef      
-   ral           ; $17d0 17      
-   out $03       ; $17d1 d3 03   
-   sub d         ; $17d3 92      
-   inx d         ; $17d4 13      
-   adc l         ; $17d5 8d      
-   inx b         ; $17d6 03      
-   sub c         ; $17d7 91      
-   dad b         ; $17d8 09      
-   dcx h         ; $17d9 2b      
-   ldax b        ; $17da 0a      
-   add b         ; $17db 80      
-   nop           ; $17dc 00      
-   rz            ; $17dd c8      
-   .byte 0x08    ; $17de 08      
-   mov a,d       ; $17df 7a      
-   ldax b        ; $17e0 0a      
-   pchl          ; $17e1 e9      
-   ral           ; $17e2 17      
-   pop d         ; $17e3 d1      
-   mvi c,$68     ; $17e4 0e 68   
-   ldax b        ; $17e6 0a      
-   xchg          ; $17e7 eb      
-   ral           ; $17e8 17      
-   cmp a         ; $17e9 bf      
-   mvi c,$68     ; $17ea 0e 68   
-   ldax b        ; $17ec 0a      
-   pop psw       ; $17ed f1      
-   ral           ; $17ee 17      
-   di            ; $17ef f3      
-   mvi c,$15     ; $17f0 0e 15   
-   inx b         ; $17f2 03      
-   dcr b         ; $17f3 05      
-   dcx h         ; $17f4 2b      
-   mov d,a       ; $17f5 57      
-   mov c,a       ; $17f6 4f      
-   mov d,d       ; $17f7 52      
-   mov b,h       ; $17f8 44      
-   adc c         ; $17f9 89      
-   ral           ; $17fa 17      
+   .word _LATEST          ; $174f 1720 - LATEST
+   .word _NAME_3E         ; $1751 1392 - NAME>
+   .word __21CF           ; $1753 1731 - !CF
+   .word _EXIT            ; $1755 0315 - EXIT
+
+NFA_SMUDGE:      ; 1757
+   .byte 6,"SMUDGE"
+   .word NFA_LATEST       ; 1717
+_SMUDGE:         ; 1760 - 176D
+   call _FCALL            ; 1760
+   .word _LATEST          ; $1763 1720 - LATEST
+   .word _LIT             ; $1765 0A2B - LIT
+   .word $0040            ; $1767 0040
+   .word _TOGGLE          ; $1769 0AD6 - TOGGLE
+   .word _EXIT            ; $176b 0315 - EXIT
+
+NFA__5B:         ; 176D
+   .byte 0x81,"[" ; IMMEDIATE
+   .word NFA_SMUDGE       ; 1757
+__5B:            ; 1771 - 177A
+   call _FCALL            ; 1771
+   .word _STATE           ; $1774 0215 - STATE
+   .word _0_21            ; $1776 09FC - 0!
+   .word _EXIT            ; $1778 0315 - EXIT
+
+NFA__5D:         ; 177A
+   .byte 1,"]"
+   .word NFA__5B            ; 176D
+__5D:            ; 177E - 1789
+   call _FCALL            ; 177E
+   .word __2D1            ; $1781 0EBF - -1
+   .word _STATE           ; $1783 0215 - STATE
+   .word __21             ; $1785 099D - !
+   .word _EXIT            ; $1787 0315 - EXIT
+
+NFA_FIND:        ; 1789
+   .byte 4,"FIND"
+   .word NFA__5D            ; 177A
+_FIND:           ; 1790 - 1837
+   call _FCALL            ; 1790
+   .word _LIT             ; $1793 0A2B - LIT
+   .word $3406            ; $1795 3406
+   .word __40             ; $1797 0984 - @
+   .word __3FDUP          ; $1799 03E0 - ?DUP
+   .word __3FBRANCH       ; $179b 0A7A - ?BRANCH
+   .word $17A3            ; $179d 17A3
+   .word _EXECUTE         ; $179f 032C - EXECUTE
+   .word _EXIT            ; $17a1 0315 - EXIT
+   .word _CONTEXT         ; $17a3 0224 - CONTEXT
+   .word __40             ; $17a5 0984 - @
+   .word __3FWORD         ; $17a7 083F - ?WORD
+   .word __3FBRANCH       ; $17a9 0A7A - ?BRANCH
+   .word $17B3            ; $17ab 17B3
+   .word _TRUE            ; $17ad 0EE6 - TRUE
+   .word _BRANCH          ; $17af 0A68 - BRANCH
+   .word $17CD            ; $17b1 17CD
+   .word _CURRENT         ; $17b3 0233 - CURRENT
+   .word __40             ; $17b5 0984 - @
+   .word _DUP             ; $17b7 03D3 - DUP
+   .word _CONTEXT         ; $17b9 0224 - CONTEXT
+   .word __40             ; $17bb 0984 - @
+   .word __3D             ; $17bd 0566 - =
+   .word _N_3FBRANCH      ; $17bf 0A90 - N?BRANCH
+   .word $17C9            ; $17c1 17C9
+   .word __3FWORD         ; $17c3 083F - ?WORD
+   .word _BRANCH          ; $17c5 0A68 - BRANCH
+   .word $17CD            ; $17c7 17CD
+   .word _DROP            ; $17c9 0382 - DROP
+   .word _FALSE           ; $17cb 0EF3 - FALSE
+   .word __3FBRANCH       ; $17cd 0A7A - ?BRANCH
+   .word $17EF            ; $17cf 17EF
+   .word _DUP             ; $17d1 03D3 - DUP
+   .word _NAME_3E         ; $17d3 1392 - NAME>
+   .word _SWAP            ; $17d5 038D - SWAP
+   .word _C_40            ; $17d7 0991 - C@
+   .word _LIT             ; $17d9 0A2B - LIT
+   .word $0080            ; $17db 0080
+   .word _AND             ; $17dd 08C8 - AND
+   .word __3FBRANCH       ; $17df 0A7A - ?BRANCH
+   .word $17E9            ; $17e1 17E9
+   .word _1               ; $17e3 0ED1 - 1
+   .word _BRANCH          ; $17e5 0A68 - BRANCH
+   .word $17EB            ; $17e7 17EB
+   .word __2D1            ; $17e9 0EBF - -1
+   .word _BRANCH          ; $17eb 0A68 - BRANCH
+   .word $17F1            ; $17ed 17F1
+   .word _FALSE           ; $17ef 0EF3 - FALSE
+   .word _EXIT            ; $17f1 0315 - EXIT
+
+NFA__2BWORD:     ; 17F3
+   .byte 5,"+WORD"
+   .word NFA_FIND         ; 1789
+__2BWORD:        ; 17FB - None
    call $02e4    ; $17fb cd e4 02
-   rst 7         ; $17fe ff      
-   mvi c,$b6     ; $17ff 0e b6   
-   inx b         ; $1801 03      
-   mov b,c       ; $1802 41      
-   rrc           ; $1803 0f      
-   adc l         ; $1804 8d      
-   inx b         ; $1805 03      
-   out $03       ; $1806 d3 03   
-   add h         ; $1808 84      
-   dad b         ; $1809 09      
-   dcr e         ; $180a 1d      
-   rrc           ; $180b 0f      
-   sbb l         ; $180c 9d      
-   dad b         ; $180d 09      
-   dcr d         ; $180e 15      
-   inx b         ; $180f 03      
-   dcr b         ; $1810 05      
-   dcr l         ; $1811 2d      
-   mov d,a       ; $1812 57      
-   mov c,a       ; $1813 4f      
-   mov d,d       ; $1814 52      
-   mov b,h       ; $1815 44      
-   adc c         ; $1816 89      
-   ral           ; $1817 17      
+   .word _HERE            ; $17fe 0EFF - HERE
+   .word _ROT             ; $1800 03B6 - ROT
+   .word __22_2C          ; $1802 0F41 - ",
+   .word _SWAP            ; $1804 038D - SWAP
+   .word _DUP             ; $1806 03D3 - DUP
+   .word __40             ; $1808 0984 - @
+   .word __2C             ; $180a 0F1D - ,
+   .word __21             ; $180c 099D - !
+   .word _EXIT            ; $180e 0315 - EXIT
+
+NFA__2DWORD:     ; 1810
+   .byte 5,"-WORD"
+   .word NFA_FIND         ; 1789
+__2DWORD:        ; 1818 - None
    call $02e4    ; $1818 cd e4 02
-   cmc           ; $181b 3f      
-   .byte 0x08    ; $181c 08      
-   mov a,d       ; $181d 7a      
-   ldax b        ; $181e 0a      
-   lxi sp,$7b18  ; $181f 31 18 7b
-   inx d         ; $1822 13      
-   add h         ; $1823 84      
-   dad b         ; $1824 09      
-   cm $8401      ; $1825 fc 01 84
-   dad b         ; $1828 09      
-   sbb l         ; $1829 9d      
-   dad b         ; $182a 09      
-   ani $0e       ; $182b e6 0e   
-   mov l,b       ; $182d 68      
-   ldax b        ; $182e 0a      
-   dcr m         ; $182f 35      
-   .byte 0x18    ; $1830 18      
-   add d         ; $1831 82      
-   inx b         ; $1832 03      
-   di            ; $1833 f3      
-   mvi c,$15     ; $1834 0e 15   
-   inx b         ; $1836 03      
-   inr b         ; $1837 04      
-   .byte 0x28    ; $1838 28      
-   mvi l,$22     ; $1839 2e 22   
-   dad h         ; $183b 29      
-   adc c         ; $183c 89      
-   ral           ; $183d 17      
-   call $02e4    ; $183e cd e4 02
-   inx sp        ; $1841 33      
-   dad b         ; $1842 09      
-   mov l,a       ; $1843 6f      
-   rrc           ; $1844 0f      
-   out $03       ; $1845 d3 03   
-   mov m,a       ; $1847 77      
-   inr b         ; $1848 04      
-   .byte 0x20    ; $1849 20      
-   dad b         ; $184a 09      
-   mov c,d       ; $184b 4a      
-   inr b         ; $184c 04      
-   dcr c         ; $184d 0d      
-   dad b         ; $184e 09      
-   mov a,m       ; $184f 7e      
-   dcr d         ; $1850 15      
-   dcr d         ; $1851 15      
-   inx b         ; $1852 03      
-   dcr b         ; $1853 05      
-   mov b,l       ; $1854 45      
-   mov d,d       ; $1855 52      
-   mov b,c       ; $1856 41      
-   mov d,e       ; $1857 53      
-   mov b,l       ; $1858 45      
-   stc           ; $1859 37      
-   .byte 0x18    ; $185a 18      
-   call $02e4    ; $185b cd e4 02
-   rz            ; $185e c8      
-   mvi c,$f5     ; $185f 0e f5   
-   dcx b         ; $1861 0b      
-   dcr d         ; $1862 15      
-   inx b         ; $1863 03      
-   lxi b,$5327   ; $1864 01 27 53
-   .byte 0x18    ; $1867 18      
-   call $02e4    ; $1868 cd e4 02
-   ana m         ; $186b a6      
-   mvi d,$ed     ; $186c 16 ed   
-   inx d         ; $186e 13      
-   sub b         ; $186f 90      
-   ral           ; $1870 17      
-   mov a,m       ; $1871 7e      
-   dcr b         ; $1872 05      
-   mov c,d       ; $1873 4a      
-   lxi d,$2d03   ; $1874 11 03 2d
-   cmc           ; $1877 3f      
-   .byte 0x20    ; $1878 20      
-   dcr d         ; $1879 15      
-   inx b         ; $187a 03      
-   add e         ; $187b 83      
-   mov e,e       ; $187c 5b      
-   daa           ; $187d 27      
-   mov e,l       ; $187e 5d      
-   mov h,h       ; $187f 64      
-   .byte 0x18    ; $1880 18      
-   call $02e4    ; $1881 cd e4 02
-   mov l,b       ; $1884 68      
-   .byte 0x18    ; $1885 18      
-   sub h         ; $1886 94      
-   .byte 0x18    ; $1887 18      
-   dcr d         ; $1888 15      
-   inx b         ; $1889 03      
-   add a         ; $188a 87      
-   mov c,h       ; $188b 4c      
-   mov c,c       ; $188c 49      
-   mov d,h       ; $188d 54      
-   mov b,l       ; $188e 45      
-   mov d,d       ; $188f 52      
-   mov b,c       ; $1890 41      
-   mov c,h       ; $1891 4c      
-   mov a,e       ; $1892 7b      
-   .byte 0x18    ; $1893 18      
-   call $02e4    ; $1894 cd e4 02
-   dcr d         ; $1897 15      
-   stax b        ; $1898 02      
-   add h         ; $1899 84      
-   dad b         ; $189a 09      
-   mov a,d       ; $189b 7a      
-   ldax b        ; $189c 0a      
-   ana l         ; $189d a5      
-   .byte 0x18    ; $189e 18      
-   add e         ; $189f 83      
-   rrc           ; $18a0 0f      
-   dcx h         ; $18a1 2b      
-   ldax b        ; $18a2 0a      
-   dcr e         ; $18a3 1d      
-   rrc           ; $18a4 0f      
-   dcr d         ; $18a5 15      
-   inx b         ; $18a6 03      
-   adc b         ; $18a7 88      
-   mov b,h       ; $18a8 44      
-   mov c,h       ; $18a9 4c      
-   mov c,c       ; $18aa 49      
-   mov d,h       ; $18ab 54      
-   mov b,l       ; $18ac 45      
-   mov d,d       ; $18ad 52      
-   mov b,c       ; $18ae 41      
-   mov c,h       ; $18af 4c      
-   adc d         ; $18b0 8a      
-   .byte 0x18    ; $18b1 18      
-   call $02e4    ; $18b2 cd e4 02
-   dcr d         ; $18b5 15      
-   stax b        ; $18b6 02      
-   add h         ; $18b7 84      
-   dad b         ; $18b8 09      
-   mov a,d       ; $18b9 7a      
-   ldax b        ; $18ba 0a      
-   push b        ; $18bb c5      
-   .byte 0x18    ; $18bc 18      
-   add e         ; $18bd 83      
-   rrc           ; $18be 0f      
-   inr a         ; $18bf 3c      
-   ldax b        ; $18c0 0a      
-   dcr e         ; $18c1 1d      
-   rrc           ; $18c2 0f      
-   dcr e         ; $18c3 1d      
-   rrc           ; $18c4 0f      
-   dcr d         ; $18c5 15      
-   inx b         ; $18c6 03      
-   adc c         ; $18c7 89      
-   mov e,e       ; $18c8 5b      
-   mov b,e       ; $18c9 43      
-   mov c,a       ; $18ca 4f      
-   mov c,l       ; $18cb 4d      
-   mov d,b       ; $18cc 50      
-   mov c,c       ; $18cd 49      
-   mov c,h       ; $18ce 4c      
-   mov b,l       ; $18cf 45      
-   mov e,l       ; $18d0 5d      
-   ana a         ; $18d1 a7      
-   .byte 0x18    ; $18d2 18      
-   call $02e4    ; $18d3 cd e4 02
-   mov l,b       ; $18d6 68      
-   .byte 0x18    ; $18d7 18      
-   dcr e         ; $18d8 1d      
-   rrc           ; $18d9 0f      
-   dcr d         ; $18da 15      
-   inx b         ; $18db 03      
-   rlc           ; $18dc 07      
-   mov b,e       ; $18dd 43      
-   mov c,a       ; $18de 4f      
-   mov c,m       ; $18df 4e      
-   mov d,m       ; $18e0 56      
-   mov b,l       ; $18e1 45      
-   mov d,d       ; $18e2 52      
-   mov d,h       ; $18e3 54      
-   rst 0         ; $18e4 c7      
-   .byte 0x18    ; $18e5 18      
-   call $02e4    ; $18e6 cd e4 02
-   mov m,a       ; $18e9 77      
-   inr b         ; $18ea 04      
-   out $03       ; $18eb d3 03   
-   dcr c         ; $18ed 0d      
-   dad b         ; $18ee 09      
-   sub c         ; $18ef 91      
-   dad b         ; $18f0 09      
-   .byte 0x08    ; $18f1 08      
-   stax b        ; $18f2 02      
-   add h         ; $18f3 84      
-   dad b         ; $18f4 09      
-   sub e         ; $18f5 93      
-   .byte 0x08    ; $18f6 08      
-   mov a,d       ; $18f7 7a      
-   ldax b        ; $18f8 0a      
-   lxi h,$8d19   ; $18f9 21 19 8d
-   inx b         ; $18fc 03      
-   .byte 0x08    ; $18fd 08      
-   stax b        ; $18fe 02      
-   add h         ; $18ff 84      
-   dad b         ; $1900 09      
-   sbb e         ; $1901 9b      
-   mvi b,$b6     ; $1902 06 b6   
-   inx b         ; $1904 03      
-   .byte 0x08    ; $1905 08      
-   stax b        ; $1906 02      
-   add h         ; $1907 84      
-   dad b         ; $1908 09      
-   rst 0         ; $1909 c7      
-   mvi b,$cf     ; $190a 06 cf   
-   dcr b         ; $190c 05      
-   mvi a,$02     ; $190d 3e 02   
-   add h         ; $190f 84      
-   dad b         ; $1910 09      
-   mov m,a       ; $1911 77      
-   inr b         ; $1912 04      
-   mov a,d       ; $1913 7a      
-   ldax b        ; $1914 0a      
-   dcx d         ; $1915 1b      
-   dad d         ; $1916 19      
-   mvi a,$02     ; $1917 3e 02   
-   ldax b        ; $1919 0a      
-   ldax b        ; $191a 0a      
-   .byte 0x20    ; $191b 20      
-   dad b         ; $191c 09      
-   mov l,b       ; $191d 68      
-   ldax b        ; $191e 0a      
-   pchl          ; $191f e9      
-   .byte 0x18    ; $1920 18      
-   .byte 0x20    ; $1921 20      
-   dad b         ; $1922 09      
-   dcr d         ; $1923 15      
-   inx b         ; $1924 03      
-   mvi b,$4e     ; $1925 06 4e   
-   mov d,l       ; $1927 55      
-   mov c,l       ; $1928 4d      
-   mov b,d       ; $1929 42      
-   mov b,l       ; $192a 45      
-   mov d,d       ; $192b 52      
-   cc $cd18      ; $192c dc 18 cd
-   cpo $c802     ; $192f e4 02 c8
-   mvi c,$c8     ; $1932 0e c8   
-   mvi c,$b6     ; $1934 0e b6   
-   inx b         ; $1936 03      
-   out $03       ; $1937 d3 03   
-   mov m,a       ; $1939 77      
-   inr b         ; $193a 04      
-   sub c         ; $193b 91      
-   dad b         ; $193c 09      
-   dcx h         ; $193d 2b      
-   ldax b        ; $193e 0a      
-   dcr l         ; $193f 2d      
-   nop           ; $1940 00      
-   mov h,m       ; $1941 66      
-   dcr b         ; $1942 05      
-   out $03       ; $1943 d3 03   
-   dcr c         ; $1945 0d      
-   dad b         ; $1946 09      
-   mov d,l       ; $1947 55      
-   inr b         ; $1948 04      
-   cmp a         ; $1949 bf      
-   mvi c,$3e     ; $194a 0e 3e   
-   stax b        ; $194c 02      
-   sbb l         ; $194d 9d      
-   dad b         ; $194e 09      
-   ani $18       ; $194f e6 18   
-   out $03       ; $1951 d3 03   
-   out $03       ; $1953 d3 03   
-   sub c         ; $1955 91      
-   dad b         ; $1956 09      
-   ana m         ; $1957 a6      
-   mvi d,$94     ; $1958 16 94   
-   .byte 0x10    ; $195a 10      
-   adc l         ; $195b 8d      
-   inx b         ; $195c 03      
-   mov a,m       ; $195d 7e      
-   dcr b         ; $195e 05      
-   mov a,m       ; $195f 7e      
-   dcr b         ; $1960 05      
-   rz            ; $1961 c8      
-   .byte 0x08    ; $1962 08      
-   mov a,d       ; $1963 7a      
-   ldax b        ; $1964 0a      
-   mov a,m       ; $1965 7e      
-   dad d         ; $1966 19      
-   out $03       ; $1967 d3 03   
-   sub c         ; $1969 91      
-   dad b         ; $196a 09      
-   dcx h         ; $196b 2b      
-   ldax b        ; $196c 0a      
-   mvi l,$00     ; $196d 2e 00   
-   sub h         ; $196f 94      
-   .byte 0x10    ; $1970 10      
-   mov c,d       ; $1971 4a      
-   lxi d,$2004   ; $1972 11 04 20
-   dcr l         ; $1975 2d      
-   cmc           ; $1976 3f      
-   .byte 0x20    ; $1977 20      
-   rz            ; $1978 c8      
-   mvi c,$68     ; $1979 0e 68   
-   ldax b        ; $197b 0a      
-   mov c,e       ; $197c 4b      
-   dad d         ; $197d 19      
-   add d         ; $197e 82      
-   inx b         ; $197f 03      
-   .byte 0x20    ; $1980 20      
-   dad b         ; $1981 09      
-   mov a,d       ; $1982 7a      
-   ldax b        ; $1983 0a      
-   adc b         ; $1984 88      
-   dad d         ; $1985 19      
-   .byte 0x20    ; $1986 20      
-   mvi b,$15     ; $1987 06 15   
-   inx b         ; $1989 03      
-   mvi b,$3f     ; $198a 06 3f   
-   mov d,e       ; $198c 53      
-   mov d,h       ; $198d 54      
-   mov b,c       ; $198e 41      
-   mov b,e       ; $198f 43      
-   mov c,e       ; $1990 4b      
-   dcr h         ; $1991 25      
-   dad d         ; $1992 19      
-   call $02e4    ; $1993 cd e4 02
-   inx sp        ; $1996 33      
-   inr b         ; $1997 04      
-   cmp m         ; $1998 be      
-   lxi b,$0984   ; $1999 01 84 09
-   adc l         ; $199c 8d      
-   inx b         ; $199d 03      
-   jm $4a04      ; $199e fa 04 4a
-   lxi d,$e910   ; $19a1 11 10 e9
-   mov b,e       ; $19a4 43      
-   cpi $45       ; $19a5 fe 45   
-   mov d,b       ; $19a7 50      
-   rp            ; $19a8 f0      
-   mov b,c       ; $19a9 41      
-   mov c,b       ; $19aa 48      
-   pchl          ; $19ab e9      
-   mov b,l       ; $19ac 45      
-   .byte 0x20    ; $19ad 20      
-   mov b,e       ; $19ae 43      
-   mov d,h       ; $19af 54      
-   mov b,l       ; $19b0 45      
-   mov c,e       ; $19b1 4b      
-   mov b,c       ; $19b2 41      
-   dcr d         ; $19b3 15      
-   inx b         ; $19b4 03      
-   dad b         ; $19b5 09      
-   mov c,c       ; $19b6 49      
-   mov c,m       ; $19b7 4e      
-   mov d,h       ; $19b8 54      
-   mov b,l       ; $19b9 45      
-   mov d,d       ; $19ba 52      
-   mov d,b       ; $19bb 50      
-   mov d,d       ; $19bc 52      
-   mov b,l       ; $19bd 45      
-   mov d,h       ; $19be 54      
-   adc d         ; $19bf 8a      
-   dad d         ; $19c0 19      
-   call $02e4    ; $19c1 cd e4 02
-   dcx h         ; $19c4 2b      
-   ldax b        ; $19c5 0a      
-   inr b         ; $19c6 04      
-   inr m         ; $19c7 34      
-   add h         ; $19c8 84      
-   dad b         ; $19c9 09      
-   rpo           ; $19ca e0      
-   inx b         ; $19cb 03      
-   mov a,d       ; $19cc 7a      
-   ldax b        ; $19cd 0a      
-   cnc $2c19     ; $19ce d4 19 2c
-   inx b         ; $19d1 03      
-   dcr d         ; $19d2 15      
-   inx b         ; $19d3 03      
-   ana m         ; $19d4 a6      
-   mvi d,$ed     ; $19d5 16 ed   
-   inx d         ; $19d7 13      
-   sub b         ; $19d8 90      
-   ral           ; $19d9 17      
-   out $03       ; $19da d3 03   
-   mov a,d       ; $19dc 7a      
-   ldax b        ; $19dd 0a      
-   rm            ; $19de f8      
-   dad d         ; $19df 19      
-   dcr a         ; $19e0 3d      
-   dcr b         ; $19e1 05      
-   dcr d         ; $19e2 15      
-   stax b        ; $19e3 02      
-   add h         ; $19e4 84      
-   dad b         ; $19e5 09      
-   rz            ; $19e6 c8      
-   .byte 0x08    ; $19e7 08      
-   mov a,d       ; $19e8 7a      
-   ldax b        ; $19e9 0a      
-   jp $1d19      ; $19ea f2 19 1d
-   rrc           ; $19ed 0f      
-   mov l,b       ; $19ee 68      
-   ldax b        ; $19ef 0a      
-   cp $2c19      ; $19f0 f4 19 2c
-   inx b         ; $19f3 03      
-   mov l,b       ; $19f4 68      
-   ldax b        ; $19f5 0a      
-   .byte 0x10    ; $19f6 10      
-   ldax d        ; $19f7 1a      
-   add d         ; $19f8 82      
-   inx b         ; $19f9 03      
-   mvi l,$19     ; $19fa 2e 19   
-   mvi a,$02     ; $19fc 3e 02   
-   add h         ; $19fe 84      
-   dad b         ; $19ff 09      
-   mov m,a       ; $1a00 77      
-   inr b         ; $1a01 04      
-   mov a,d       ; $1a02 7a      
-   ldax b        ; $1a03 0a      
-   inr c         ; $1a04 0c      
-   ldax d        ; $1a05 1a      
-   ora d         ; $1a06 b2      
-   .byte 0x18    ; $1a07 18      
-   mov l,b       ; $1a08 68      
-   ldax b        ; $1a09 0a      
-   .byte 0x10    ; $1a0a 10      
-   ldax d        ; $1a0b 1a      
-   add d         ; $1a0c 82      
-   inx b         ; $1a0d 03      
-   sub h         ; $1a0e 94      
-   .byte 0x18    ; $1a0f 18      
-   sub e         ; $1a10 93      
-   dad d         ; $1a11 19      
-   mov l,b       ; $1a12 68      
-   ldax b        ; $1a13 0a      
-   cnc $1519     ; $1a14 d4 19 15
-   inx b         ; $1a17 03      
-   mvi b,$43     ; $1a18 06 43   
-   mov d,d       ; $1a1a 52      
-   mov b,l       ; $1a1b 45      
-   mov b,c       ; $1a1c 41      
-   mov d,h       ; $1a1d 54      
-   mov b,l       ; $1a1e 45      
-   ora l         ; $1a1f b5      
-   dad d         ; $1a20 19      
-   call $02e4    ; $1a21 cd e4 02
-   ana m         ; $1a24 a6      
-   mvi d,$ed     ; $1a25 16 ed   
-   inx d         ; $1a27 13      
-   rnz           ; $1a28 c0      
-   stax b        ; $1a29 02      
-   add h         ; $1a2a 84      
-   dad b         ; $1a2b 09      
-   mov a,d       ; $1a2c 7a      
-   ldax b        ; $1a2d 0a      
-   mov d,d       ; $1a2e 52      
-   ldax d        ; $1a2f 1a      
-   out $03       ; $1a30 d3 03   
-   sub b         ; $1a32 90      
-   ral           ; $1a33 17      
-   .byte 0x10    ; $1a34 10      
-   inr b         ; $1a35 04      
-   mov a,d       ; $1a36 7a      
-   ldax b        ; $1a37 0a      
-   mov d,d       ; $1a38 52      
-   ldax d        ; $1a39 1a      
-   out $03       ; $1a3a d3 03   
-   .byte 0xed    ; $1a3c ed      
-   mvi d,$3e     ; $1a3d 16 3e   
-   .byte 0x18    ; $1a3f 18      
-   rrc           ; $1a40 0f      
-   .byte 0x20    ; $1a41 20      
-   push psw      ; $1a42 f5      
-   ori $45       ; $1a43 f6 45   
-   .byte 0x20    ; $1a45 20      
-   mov c,a       ; $1a46 4f      
-   rp            ; $1a47 f0      
-   mov d,b       ; $1a48 50      
-   mov b,l       ; $1a49 45      
-   cpo $ec45     ; $1a4a e4 45 ec
-   mov b,l       ; $1a4d 45      
-   mov c,b       ; $1a4e 48      
-   .byte 0x20    ; $1a4f 20      
-   mov h,m       ; $1a50 66      
-   dcr d         ; $1a51 15      
-   inx sp        ; $1a52 33      
-   stax b        ; $1a53 02      
-   add h         ; $1a54 84      
-   dad b         ; $1a55 09      
-   ei            ; $1a56 fb      
-   ral           ; $1a57 17      
-   dcr l         ; $1a58 2d      
-   inx d         ; $1a59 13      
-   .byte 0x10    ; $1a5a 10      
-   rrc           ; $1a5b 0f      
-   .byte 0xfd    ; $1a5c fd      
-   stax b        ; $1a5d 02      
-   mov c,h       ; $1a5e 4c      
-   ral           ; $1a5f 17      
-   dcr d         ; $1a60 15      
-   inx b         ; $1a61 03      
-   rlc           ; $1a62 07      
-   inr a         ; $1a63 3c      
-   mov b,d       ; $1a64 42      
-   mov d,l       ; $1a65 55      
-   mov c,c       ; $1a66 49      
-   mov c,h       ; $1a67 4c      
-   mov b,h       ; $1a68 44      
-   mov d,e       ; $1a69 53      
-   .byte 0x18    ; $1a6a 18      
-   ldax d        ; $1a6b 1a      
-   call $02e4    ; $1a6c cd e4 02
-   lxi h,$151a   ; $1a6f 21 1a 15
-   inx b         ; $1a72 03      
-   rlc           ; $1a73 07      
-   .byte 0x28    ; $1a74 28      
-   mov b,h       ; $1a75 44      
-   mov c,a       ; $1a76 4f      
-   mov b,l       ; $1a77 45      
-   mov d,e       ; $1a78 53      
-   mvi a,$29     ; $1a79 3e 29   
-   mov h,d       ; $1a7b 62      
-   ldax d        ; $1a7c 1a      
-   call $02e4    ; $1a7d cd e4 02
-   .byte 0x20    ; $1a80 20      
-   dad b         ; $1a81 09      
-   mov c,h       ; $1a82 4c      
-   ral           ; $1a83 17      
-   dcr d         ; $1a84 15      
-   inx b         ; $1a85 03      
-   add l         ; $1a86 85      
-   mov b,h       ; $1a87 44      
-   mov c,a       ; $1a88 4f      
-   mov b,l       ; $1a89 45      
-   mov d,e       ; $1a8a 53      
-   mvi a,$73     ; $1a8b 3e 73   
-   ldax d        ; $1a8d 1a      
-   call $02e4    ; $1a8e cd e4 02
-   add e         ; $1a91 83      
-   rrc           ; $1a92 0f      
-   mov a,l       ; $1a93 7d      
-   ldax d        ; $1a94 1a      
-   dad b         ; $1a95 09      
-   inx b         ; $1a96 03      
-   rst 7         ; $1a97 ff      
-   mvi c,$31     ; $1a98 0e 31   
-   ral           ; $1a9a 17      
-   dcr l         ; $1a9b 2d      
-   inx d         ; $1a9c 13      
-   .byte 0x10    ; $1a9d 10      
-   rrc           ; $1a9e 0f      
-   dcr d         ; $1a9f 15      
-   inx b         ; $1aa0 03      
-   .byte 0x08    ; $1aa1 08      
-   mov b,e       ; $1aa2 43      
-   mov c,a       ; $1aa3 4f      
-   mov c,m       ; $1aa4 4e      
-   mov d,e       ; $1aa5 53      
-   mov d,h       ; $1aa6 54      
-   mov b,c       ; $1aa7 41      
-   mov c,m       ; $1aa8 4e      
-   mov d,h       ; $1aa9 54      
-   add m         ; $1aaa 86      
-   ldax d        ; $1aab 1a      
-   call $02e4    ; $1aac cd e4 02
-   lxi h,$1d1a   ; $1aaf 21 1a 1d
-   rrc           ; $1ab2 0f      
-   dcx h         ; $1ab3 2b      
-   ldax b        ; $1ab4 0a      
-   add h         ; $1ab5 84      
-   dad b         ; $1ab6 09      
-   mov c,h       ; $1ab7 4c      
-   ral           ; $1ab8 17      
-   dcr d         ; $1ab9 15      
-   inx b         ; $1aba 03      
-   mvi b,$54     ; $1abb 06 54   
-   mov c,a       ; $1abd 4f      
-   mov b,e       ; $1abe 43      
-   mov c,a       ; $1abf 4f      
-   mov b,h       ; $1ac0 44      
-   mov b,l       ; $1ac1 45      
-   ana c         ; $1ac2 a1      
-   ldax d        ; $1ac3 1a      
+   .word __3FWORD         ; $181b 083F - ?WORD
+   .word __3FBRANCH       ; $181d 0A7A - ?BRANCH
+   .word $1831            ; $181f 1831
+   .word _N_3ELINK        ; $1821 137B - N>LINK
+   .word __40             ; $1823 0984 - @
+   .word _W_2DLINK        ; $1825 01FC - W-LINK
+   .word __40             ; $1827 0984 - @
+   .word __21             ; $1829 099D - !
+   .word _TRUE            ; $182b 0EE6 - TRUE
+   .word _BRANCH          ; $182d 0A68 - BRANCH
+   .word $1835            ; $182f 1835
+   .word _DROP            ; $1831 0382 - DROP
+   .word _FALSE           ; $1833 0EF3 - FALSE
+   .word _EXIT            ; $1835 0315 - EXIT
+
+NFA__28_2E_22_29:; 1837
+   .byte 4,"(.\")"
+   .word NFA_FIND         ; 1789
+__28_2E_22_29:   ; 183E - 1853
+   call _FCALL            ; 183E
+   .word _R_40            ; $1841 0933 - R@
+   .word _COUNT           ; $1843 0F6F - COUNT
+   .word _DUP             ; $1845 03D3 - DUP
+   .word _1_2B            ; $1847 0477 - 1+
+   .word _R_3E            ; $1849 0920 - R>
+   .word __2B             ; $184b 044A - +
+   .word __3ER            ; $184d 090D - >R
+   .word _TYPE            ; $184f 157E - TYPE
+   .word _EXIT            ; $1851 0315 - EXIT
+
+NFA_ERASE:       ; 1853
+   .byte 5,"ERASE"
+   .word NFA__28_2E_22_29         ; 1837
+_ERASE:          ; 185B - 1864
+   call _FCALL            ; 185B
+   .word _0               ; $185e 0EC8 - 0
+   .word _FILL            ; $1860 0BF5 - FILL
+   .word _EXIT            ; $1862 0315 - EXIT
+
+NFA__27:         ; 1864
+   .byte 1,"'"
+   .word NFA_ERASE        ; 1853
+__27:            ; 1868 - 187B
+   call _FCALL            ; 1868
+   .word _BL              ; $186b 16A6 - BL
+   .word _WORD            ; $186d 13ED - WORD
+   .word _FIND            ; $186f 1790 - FIND
+   .word _0_3D            ; $1871 057E - 0=
+   .word __28ABORT_22_29  ; $1873 114A - (ABORT")
+   .byte 3,"-? "
+   .word _EXIT            ; $1879 0315 - EXIT
+
+NFA__5B_27_5D:   ; 187B
+   .byte 0x83,"[']" ; IMMEDIATE
+   .word NFA__27            ; 1864
+__5B_27_5D:      ; 1881 - 188A
+   call _FCALL            ; 1881
+   .word __27             ; $1884 1868 - '
+   .word _LITERAL         ; $1886 1894 - LITERAL
+   .word _EXIT            ; $1888 0315 - EXIT
+
+NFA_LITERAL:     ; 188A
+   .byte 0x87,"LITERAL" ; IMMEDIATE
+   .word NFA__5B_27_5D          ; 187B
+_LITERAL:        ; 1894 - 18A7
+   call _FCALL            ; 1894
+   .word _STATE           ; $1897 0215 - STATE
+   .word __40             ; $1899 0984 - @
+   .word __3FBRANCH       ; $189b 0A7A - ?BRANCH
+   .word $18A5            ; $189d 18A5
+   .word _COMPILE         ; $189f 0F83 - COMPILE
+   .word _LIT             ; $18a1 0A2B - LIT
+   .word __2C             ; $18a3 0F1D - ,
+   .word _EXIT            ; $18a5 0315 - EXIT
+
+NFA_DLITERAL:    ; 18A7
+   .byte 0x88,"DLITERAL" ; IMMEDIATE
+   .word NFA_LITERAL      ; 188A
+_DLITERAL:       ; 18B2 - 18C7
+   call _FCALL            ; 18B2
+   .word _STATE           ; $18b5 0215 - STATE
+   .word __40             ; $18b7 0984 - @
+   .word __3FBRANCH       ; $18b9 0A7A - ?BRANCH
+   .word $18C5            ; $18bb 18C5
+   .word _COMPILE         ; $18bd 0F83 - COMPILE
+   .word _DLIT            ; $18bf 0A3C - DLIT
+   .word __2C             ; $18c1 0F1D - ,
+   .word __2C             ; $18c3 0F1D - ,
+   .word _EXIT            ; $18c5 0315 - EXIT
+
+NFA__5BCOMPILE_5D:; 18C7
+   .byte 0x89,"[COMPILE]" ; IMMEDIATE
+   .word NFA_DLITERAL     ; 18A7
+__5BCOMPILE_5D:  ; 18D3 - 18DC
+   call _FCALL            ; 18D3
+   .word __27             ; $18d6 1868 - '
+   .word __2C             ; $18d8 0F1D - ,
+   .word _EXIT            ; $18da 0315 - EXIT
+
+NFA_CONVERT:     ; 18DC
+   .byte 7,"CONVERT"
+   .word NFA__5BCOMPILE_5D    ; 18C7
+_CONVERT:        ; 18E6 - 1925
+   call _FCALL            ; 18E6
+   .word _1_2B            ; $18e9 0477 - 1+
+   .word _DUP             ; $18eb 03D3 - DUP
+   .word __3ER            ; $18ed 090D - >R
+   .word _C_40            ; $18ef 0991 - C@
+   .word _BASE            ; $18f1 0208 - BASE
+   .word __40             ; $18f3 0984 - @
+   .word _DIGIT           ; $18f5 0893 - DIGIT
+   .word __3FBRANCH       ; $18f7 0A7A - ?BRANCH
+   .word $1921            ; $18f9 1921
+   .word _SWAP            ; $18fb 038D - SWAP
+   .word _BASE            ; $18fd 0208 - BASE
+   .word __40             ; $18ff 0984 - @
+   .word __2A             ; $1901 069B - *
+   .word _ROT             ; $1903 03B6 - ROT
+   .word _BASE            ; $1905 0208 - BASE
+   .word __40             ; $1907 0984 - @
+   .word _UM_2A           ; $1909 06C7 - UM*
+   .word _D_2B            ; $190b 05CF - D+
+   .word _DPL             ; $190d 023E - DPL
+   .word __40             ; $190f 0984 - @
+   .word _1_2B            ; $1911 0477 - 1+
+   .word __3FBRANCH       ; $1913 0A7A - ?BRANCH
+   .word $191B            ; $1915 191B
+   .word _DPL             ; $1917 023E - DPL
+   .word _1_2B_21         ; $1919 0A0A - 1+!
+   .word _R_3E            ; $191b 0920 - R>
+   .word _BRANCH          ; $191d 0A68 - BRANCH
+   .word $18E9            ; $191f 18E9
+   .word _R_3E            ; $1921 0920 - R>
+   .word _EXIT            ; $1923 0315 - EXIT
+
+NFA_NUMBER:      ; 1925
+   .byte 6,"NUMBER"
+   .word NFA_CONVERT      ; 18DC
+_NUMBER:         ; 192E - 198A
+   call _FCALL            ; 192E
+   .word _0               ; $1931 0EC8 - 0
+   .word _0               ; $1933 0EC8 - 0
+   .word _ROT             ; $1935 03B6 - ROT
+   .word _DUP             ; $1937 03D3 - DUP
+   .word _1_2B            ; $1939 0477 - 1+
+   .word _C_40            ; $193b 0991 - C@
+   .word _LIT             ; $193d 0A2B - LIT
+   .word $002D            ; $193f 002D
+   .word __3D             ; $1941 0566 - =
+   .word _DUP             ; $1943 03D3 - DUP
+   .word __3ER            ; $1945 090D - >R
+   .word __2D             ; $1947 0455 - -
+   .word __2D1            ; $1949 0EBF - -1
+   .word _DPL             ; $194b 023E - DPL
+   .word __21             ; $194d 099D - !
+   .word _CONVERT         ; $194f 18E6 - CONVERT
+   .word _DUP             ; $1951 03D3 - DUP
+   .word _DUP             ; $1953 03D3 - DUP
+   .word _C_40            ; $1955 0991 - C@
+   .word _BL              ; $1957 16A6 - BL
+   .word __3C_3E          ; $1959 1094 - <>
+   .word _SWAP            ; $195b 038D - SWAP
+   .word _0_3D            ; $195d 057E - 0=
+   .word _0_3D            ; $195f 057E - 0=
+   .word _AND             ; $1961 08C8 - AND
+   .word __3FBRANCH       ; $1963 0A7A - ?BRANCH
+   .word $197E            ; $1965 197E
+   .word _DUP             ; $1967 03D3 - DUP
+   .word _C_40            ; $1969 0991 - C@
+   .word _LIT             ; $196b 0A2B - LIT
+   .word $002E            ; $196d 002E
+   .word __3C_3E          ; $196f 1094 - <>
+   .word __28ABORT_22_29  ; $1971 114A - (ABORT")
+   .byte 4," -? "
+   .word _0               ; $1978 0EC8 - 0
+   .word _BRANCH          ; $197a 0A68 - BRANCH
+   .word $194B            ; $197c 194B
+   .word _DROP            ; $197e 0382 - DROP
+   .word _R_3E            ; $1980 0920 - R>
+   .word __3FBRANCH       ; $1982 0A7A - ?BRANCH
+   .word $1988            ; $1984 1988
+   .word _DNEGATE         ; $1986 0620 - DNEGATE
+   .word _EXIT            ; $1988 0315 - EXIT
+
+NFA__3FSTACK:    ; 198A
+   .byte 6,"?STACK"
+   .word NFA_NUMBER       ; 1925
+__3FSTACK:       ; 1993 - 19B5
+   call _FCALL            ; 1993
+   .word _SP_40           ; $1996 0433 - SP@
+   .word _S0              ; $1998 01BE - S0
+   .word __40             ; $199a 0984 - @
+   .word _SWAP            ; $199c 038D - SWAP
+   .word _U_3C            ; $199e 04FA - U<
+   .word __28ABORT_22_29  ; $19a0 114A - (ABORT")
+   .byte 16,0xe9,"C",0xfe,"EP",0xf0,"AH",0xe9,"E CTEKA"
+   .word _EXIT            ; $19b3 0315 - EXIT
+
+NFA_INTERPRET:   ; 19B5
+   .byte 9,"INTERPRET"
+   .word NFA__3FSTACK       ; 198A
+_INTERPRET:      ; 19C1 - 1A18
+   call _FCALL            ; 19C1
+   .word _LIT             ; $19c4 0A2B - LIT
+   .word $3404            ; $19c6 3404
+   .word __40             ; $19c8 0984 - @
+   .word __3FDUP          ; $19ca 03E0 - ?DUP
+   .word __3FBRANCH       ; $19cc 0A7A - ?BRANCH
+   .word $19D4            ; $19ce 19D4
+   .word _EXECUTE         ; $19d0 032C - EXECUTE
+   .word _EXIT            ; $19d2 0315 - EXIT
+   .word _BL              ; $19d4 16A6 - BL
+   .word _WORD            ; $19d6 13ED - WORD
+   .word _FIND            ; $19d8 1790 - FIND
+   .word _DUP             ; $19da 03D3 - DUP
+   .word __3FBRANCH       ; $19dc 0A7A - ?BRANCH
+   .word $19F8            ; $19de 19F8
+   .word _0_3C            ; $19e0 053D - 0<
+   .word _STATE           ; $19e2 0215 - STATE
+   .word __40             ; $19e4 0984 - @
+   .word _AND             ; $19e6 08C8 - AND
+   .word __3FBRANCH       ; $19e8 0A7A - ?BRANCH
+   .word $19F2            ; $19ea 19F2
+   .word __2C             ; $19ec 0F1D - ,
+   .word _BRANCH          ; $19ee 0A68 - BRANCH
+   .word $19F4            ; $19f0 19F4
+   .word _EXECUTE         ; $19f2 032C - EXECUTE
+   .word _BRANCH          ; $19f4 0A68 - BRANCH
+   .word $1A10            ; $19f6 1A10
+   .word _DROP            ; $19f8 0382 - DROP
+   .word _NUMBER          ; $19fa 192E - NUMBER
+   .word _DPL             ; $19fc 023E - DPL
+   .word __40             ; $19fe 0984 - @
+   .word _1_2B            ; $1a00 0477 - 1+
+   .word __3FBRANCH       ; $1a02 0A7A - ?BRANCH
+   .word $1A0C            ; $1a04 1A0C
+   .word _DLITERAL        ; $1a06 18B2 - DLITERAL
+   .word _BRANCH          ; $1a08 0A68 - BRANCH
+   .word $1A10            ; $1a0a 1A10
+   .word _DROP            ; $1a0c 0382 - DROP
+   .word _LITERAL         ; $1a0e 1894 - LITERAL
+   .word __3FSTACK        ; $1a10 1993 - ?STACK
+   .word _BRANCH          ; $1a12 0A68 - BRANCH
+   .word $19D4            ; $1a14 19D4
+   .word _EXIT            ; $1a16 0315 - EXIT
+
+NFA_CREATE:      ; 1A18
+   .byte 6,"CREATE"
+   .word NFA_INTERPRET    ; 19B5
+_CREATE:         ; 1A21 - 1A62
+   call _FCALL            ; 1A21
+   .word _BL              ; $1a24 16A6 - BL
+   .word _WORD            ; $1a26 13ED - WORD
+   .word _WARNING         ; $1a28 02C0 - WARNING
+   .word __40             ; $1a2a 0984 - @
+   .word __3FBRANCH       ; $1a2c 0A7A - ?BRANCH
+   .word $1A52            ; $1a2e 1A52
+   .word _DUP             ; $1a30 03D3 - DUP
+   .word _FIND            ; $1a32 1790 - FIND
+   .word _PRESS           ; $1a34 0410 - PRESS
+   .word __3FBRANCH       ; $1a36 0A7A - ?BRANCH
+   .word $1A52            ; $1a38 1A52
+   .word _DUP             ; $1a3a 03D3 - DUP
+   .word _ID_2E           ; $1a3c 16ED - ID.
+   .word __28_2E_22_29    ; $1a3e 183E - (.")
+   .byte 15," ",0xf5,0xf6,"E O",0xf0,"PE",0xe4,"E",0xec,"EH "
+   .word _CR              ; $1a50 1566 - CR
+   .word _CURRENT         ; $1a52 0233 - CURRENT
+   .word __40             ; $1a54 0984 - @
+   .word $17FB            ; $1a56 17FB
+   .word _CFL             ; $1a58 132D - CFL
+   .word _ALLOT           ; $1a5a 0F10 - ALLOT
+   .word _NEXT            ; $1a5c 02FD - NEXT
+   .word $174C            ; $1a5e 174C - (!CODE)
+   .word _EXIT            ; $1a60 0315 - EXIT
+
+NFA__3CBUILDS:   ; 1A62
+   .byte 7,"<BUILDS"
+   .word NFA_CREATE       ; 1A18
+__3CBUILDS:      ; 1A6C - 1A73
+   call _FCALL            ; 1A6C
+   .word _CREATE          ; $1a6f 1A21 - CREATE
+   .word _EXIT            ; $1a71 0315 - EXIT
+
+NFA__28DOES_3E_29:; 1A73
+   .byte 7,"(DOES>)"
+   .word NFA__3CBUILDS      ; 1A62
+__28DOES_3E_29:  ; 1A7D - 1A86
+   call _FCALL            ; 1A7D
+   .word _R_3E            ; $1a80 0920 - R>
+   .word __28_21CODE_29   ; $1a82 174C - (!CODE)
+   .word _EXIT            ; $1a84 0315 - EXIT
+
+NFA_DOES_3E:     ; 1A86
+   .byte 0x85,"DOES>" ; IMMEDIATE
+   .word NFA__28DOES_3E_29      ; 1A73
+_DOES_3E:        ; 1A8E - 1AA1
+   call _FCALL            ; 1A8E
+   .word _COMPILE         ; $1a91 0F83 - COMPILE
+   .word __28DOES_3E_29   ; $1a93 1A7D - (DOES>)
+   .word _CALL            ; $1a95 0309 - CALL
+   .word _HERE            ; $1a97 0EFF - HERE
+   .word __21CF           ; $1a99 1731 - !CF
+   .word _CFL             ; $1a9b 132D - CFL
+   .word _ALLOT           ; $1a9d 0F10 - ALLOT
+   .word _EXIT            ; $1a9f 0315 - EXIT
+
+NFA_CONSTANT:    ; 1AA1
+   .byte 8,"CONSTANT"
+   .word NFA_DOES_3E        ; 1A86
+_CONSTANT:       ; 1AAC - 1AD0
+   call _FCALL            ; 1AAC
+   .word _CREATE          ; $1aaf 1A21 - CREATE
+   .word __2C             ; $1ab1 0F1D - ,
+   .word _LIT             ; $1ab3 0A2B - LIT
+   .word __40             ; $1ab5 0984 - @
+   .word $174C            ; $1ab7 174C - (!CODE)
+   .word _EXIT            ; $1ab9 0315 - EXIT
+
+NFA_TOCODE:      ; 1ABB
+   .byte 6,"TOCODE"
+   .word NFA_CONSTANT     ; 1AA1
+_TOCODE:         ; 1AC4 - None
    pop h         ; $1ac4 e1      
    dcx h         ; $1ac5 2b      
    dcx h         ; $1ac6 2b      
@@ -4929,347 +3822,180 @@ _BL:             ; 16A6 - 16AB
    dcx h         ; $1acb 2b      
    mov m,e       ; $1acc 73      
    jmp $02ef     ; $1acd c3 ef 02
-   .byte 0x08    ; $1ad0 08      
-   mov b,b       ; $1ad1 40      
-   mov b,l       ; $1ad2 45      
-   mov e,b       ; $1ad3 58      
-   mov b,l       ; $1ad4 45      
-   mov b,e       ; $1ad5 43      
-   mov d,l       ; $1ad6 55      
-   mov d,h       ; $1ad7 54      
-   mov b,l       ; $1ad8 45      
-   ana c         ; $1ad9 a1      
-   ldax d        ; $1ada 1a      
+
+NFA__40EXECUTE:  ; 1AD0
+   .byte 8,"@EXECUTE"
+   .word NFA_CONSTANT     ; 1AA1
+__40EXECUTE:     ; 1ADB - 1AE1
    pop h         ; $1adb e1      
    mov e,m       ; $1adc 5e      
    inx h         ; $1add 23      
    mov d,m       ; $1ade 56      
    xchg          ; $1adf eb      
    pchl          ; $1ae0 e9      
-   inr b         ; $1ae1 04      
-   mov d,c       ; $1ae2 51      
-   mov d,l       ; $1ae3 55      
-   mov b,c       ; $1ae4 41      
-   mov c,m       ; $1ae5 4e      
-   rnc           ; $1ae6 d0      
-   ldax d        ; $1ae7 1a      
-   call $02e4    ; $1ae8 cd e4 02
-   rz            ; $1aeb c8      
-   mvi c,$ac     ; $1aec 0e ac   
-   ldax d        ; $1aee 1a      
-   dcx h         ; $1aef 2b      
-   ldax b        ; $1af0 0a      
-   cnz $ff1a     ; $1af1 c4 1a ff
-   mvi c,$2d     ; $1af4 0e 2d   
-   inx d         ; $1af6 13      
-   .byte 0x10    ; $1af7 10      
-   rrc           ; $1af8 0f      
-   lxi sp,$1517  ; $1af9 31 17 15
-   inx b         ; $1afc 03      
-   inr b         ; $1afd 04      
-   mov d,m       ; $1afe 56      
-   mov b,l       ; $1aff 45      
-   mov b,e       ; $1b00 43      
-   mov d,h       ; $1b01 54      
-   pop h         ; $1b02 e1      
-   ldax d        ; $1b03 1a      
-   call $02e4    ; $1b04 cd e4 02
-   rpe           ; $1b07 e8      
-   ldax d        ; $1b08 1a      
-   dcx h         ; $1b09 2b      
-   ldax b        ; $1b0a 0a      
-   in $1a        ; $1b0b db 1a   
-   mov c,h       ; $1b0d 4c      
-   ral           ; $1b0e 17      
-   dcr d         ; $1b0f 15      
-   inx b         ; $1b10 03      
-   add d         ; $1b11 82      
-   mov d,h       ; $1b12 54      
-   mov c,a       ; $1b13 4f      
-   .byte 0xfd    ; $1b14 fd      
-   ldax d        ; $1b15 1a      
-   call $02e4    ; $1b16 cd e4 02
-   ana m         ; $1b19 a6      
-   mvi d,$ed     ; $1b1a 16 ed   
-   inx d         ; $1b1c 13      
-   sub b         ; $1b1d 90      
-   ral           ; $1b1e 17      
-   rpo           ; $1b1f e0      
-   inx b         ; $1b20 03      
-   mov a,m       ; $1b21 7e      
-   dcr b         ; $1b22 05      
-   mov c,d       ; $1b23 4a      
-   lxi d,$2003   ; $1b24 11 03 20
-   dcr l         ; $1b27 2d      
-   cmc           ; $1b28 3f      
-   dcr a         ; $1b29 3d      
-   dcr b         ; $1b2a 05      
-   dcr d         ; $1b2b 15      
-   stax b        ; $1b2c 02      
-   add h         ; $1b2d 84      
-   dad b         ; $1b2e 09      
-   rz            ; $1b2f c8      
-   .byte 0x08    ; $1b30 08      
-   mov a,d       ; $1b31 7a      
-   ldax b        ; $1b32 0a      
-   cmc           ; $1b33 3f      
-   dcx d         ; $1b34 1b      
-   lda $8213     ; $1b35 3a 13 82
-   inr b         ; $1b38 04      
-   dcr e         ; $1b39 1d      
-   rrc           ; $1b3a 0f      
-   mov l,b       ; $1b3b 68      
-   ldax b        ; $1b3c 0a      
-   mov b,l       ; $1b3d 45      
-   dcx d         ; $1b3e 1b      
-   lda $8213     ; $1b3f 3a 13 82
-   inr b         ; $1b42 04      
-   inr l         ; $1b43 2c      
-   inx b         ; $1b44 03      
-   dcr d         ; $1b45 15      
-   inx b         ; $1b46 03      
-   .byte 0x08    ; $1b47 08      
-   mov d,m       ; $1b48 56      
-   mov b,c       ; $1b49 41      
-   mov d,d       ; $1b4a 52      
-   mov c,c       ; $1b4b 49      
-   mov b,c       ; $1b4c 41      
-   mov b,d       ; $1b4d 42      
-   mov c,h       ; $1b4e 4c      
-   mov b,l       ; $1b4f 45      
-   lxi d,$cd1b   ; $1b50 11 1b cd
-   cpo $2102     ; $1b53 e4 02 21
-   ldax d        ; $1b56 1a      
-   rz            ; $1b57 c8      
-   mvi c,$1d     ; $1b58 0e 1d   
-   rrc           ; $1b5a 0f      
-   .byte 0xfd    ; $1b5b fd      
-   stax b        ; $1b5c 02      
-   mov c,h       ; $1b5d 4c      
-   ral           ; $1b5e 17      
-   dcr d         ; $1b5f 15      
-   inx b         ; $1b60 03      
-   ldax b        ; $1b61 0a      
-   mov d,m       ; $1b62 56      
-   mov c,a       ; $1b63 4f      
-   mov b,e       ; $1b64 43      
-   mov b,c       ; $1b65 41      
-   mov b,d       ; $1b66 42      
-   mov d,l       ; $1b67 55      
-   mov c,h       ; $1b68 4c      
-   mov b,c       ; $1b69 41      
-   mov d,d       ; $1b6a 52      
-   mov e,c       ; $1b6b 59      
-   mov b,a       ; $1b6c 47      
-   dcx d         ; $1b6d 1b      
-   call $02e4    ; $1b6e cd e4 02
-   lxi h,$2b1a   ; $1b71 21 1a 2b
-   ldax b        ; $1b74 0a      
-   lxi b,$2f00   ; $1b75 01 00 2f
-   rrc           ; $1b78 0f      
-   dcx h         ; $1b79 2b      
-   ldax b        ; $1b7a 0a      
-   add b         ; $1b7b 80      
-   nop           ; $1b7c 00      
-   cma           ; $1b7d 2f      
-   rrc           ; $1b7e 0f      
-   inx sp        ; $1b7f 33      
-   stax b        ; $1b80 02      
-   add h         ; $1b81 84      
-   dad b         ; $1b82 09      
-   sbb c         ; $1b83 99      
-   inr b         ; $1b84 04      
-   dcr e         ; $1b85 1d      
-   rrc           ; $1b86 0f      
-   rst 7         ; $1b87 ff      
-   mvi c,$e1     ; $1b88 0e e1   
-   lxi b,$0984   ; $1b8a 01 84 09
-   dcr e         ; $1b8d 1d      
-   rrc           ; $1b8e 0f      
-   pop h         ; $1b8f e1      
-   lxi b,$099d   ; $1b90 01 9d 09
-   mov a,l       ; $1b93 7d      
-   ldax d        ; $1b94 1a      
+
+NFA_QUAN:        ; 1AE1
+   .byte 4,"QUAN"
+   .word NFA__40EXECUTE     ; 1AD0
+_QUAN:           ; 1AE8 - 1AFD
+   call _FCALL            ; 1AE8
+   .word _0               ; $1aeb 0EC8 - 0
+   .word _CONSTANT        ; $1aed 1AAC - CONSTANT
+   .word _LIT             ; $1aef 0A2B - LIT
+   .word _TOCODE          ; $1af1 1AC4 - TOCODE
+   .word _HERE            ; $1af3 0EFF - HERE
+   .word _CFL             ; $1af5 132D - CFL
+   .word _ALLOT           ; $1af7 0F10 - ALLOT
+   .word __21CF           ; $1af9 1731 - !CF
+   .word _EXIT            ; $1afb 0315 - EXIT
+
+NFA_VECT:        ; 1AFD
+   .byte 4,"VECT"
+   .word NFA_QUAN         ; 1AE1
+_VECT:           ; 1B04 - 1B11
+   call _FCALL            ; 1B04
+   .word _QUAN            ; $1b07 1AE8 - QUAN
+   .word _LIT             ; $1b09 0A2B - LIT
+   .word __40EXECUTE      ; $1b0b 1ADB - @EXECUTE
+   .word __28_21CODE_29   ; $1b0d 174C - (!CODE)
+   .word _EXIT            ; $1b0f 0315 - EXIT
+
+NFA_TO:          ; 1B11
+   .byte 0x82,"TO" ; IMMEDIATE
+   .word NFA_VECT         ; 1AFD
+_TO:             ; 1B16 - 1B47
+   call _FCALL            ; 1B16
+   .word _BL              ; $1b19 16A6 - BL
+   .word _WORD            ; $1b1b 13ED - WORD
+   .word _FIND            ; $1b1d 1790 - FIND
+   .word __3FDUP          ; $1b1f 03E0 - ?DUP
+   .word _0_3D            ; $1b21 057E - 0=
+   .word __28ABORT_22_29  ; $1b23 114A - (ABORT")
+   .byte 3," -?"
+   .word _0_3C            ; $1b29 053D - 0<
+   .word _STATE           ; $1b2b 0215 - STATE
+   .word __40             ; $1b2d 0984 - @
+   .word _AND             ; $1b2f 08C8 - AND
+   .word __3FBRANCH       ; $1b31 0A7A - ?BRANCH
+   .word $1B3F            ; $1b33 1B3F
+   .word __3EBODY         ; $1b35 133A - >BODY
+   .word _2_2B            ; $1b37 0482 - 2+
+   .word __2C             ; $1b39 0F1D - ,
+   .word _BRANCH          ; $1b3b 0A68 - BRANCH
+   .word $1B45            ; $1b3d 1B45
+   .word __3EBODY         ; $1b3f 133A - >BODY
+   .word _2_2B            ; $1b41 0482 - 2+
+   .word _EXECUTE         ; $1b43 032C - EXECUTE
+   .word _EXIT            ; $1b45 0315 - EXIT
+
+NFA_VARIABLE:    ; 1B47
+   .byte 8,"VARIABLE"
+   .word NFA_TO           ; 1B11
+_VARIABLE:       ; 1B52 - 1B61
+   call _FCALL            ; 1B52
+   .word _CREATE          ; $1b55 1A21 - CREATE
+   .word _0               ; $1b57 0EC8 - 0
+   .word __2C             ; $1b59 0F1D - ,
+   .word _NEXT            ; $1b5b 02FD - NEXT
+   .word __28_21CODE_29   ; $1b5d 174C - (!CODE)
+   .word _EXIT            ; $1b5f 0315 - EXIT
+
+NFA_VOCABULARY:  ; 1B61
+   .byte 10,"VOCABULARY"
+   .word NFA_VARIABLE     ; 1B47
+_VOCABULARY:     ; 1B6E - 1BA0
+   call _FCALL            ; 1B6E
+   .word _CREATE          ; $1b71 1A21 - CREATE
+   .word _LIT             ; $1b73 0A2B - LIT
+   .word $0001            ; $1b75 0001
+   .word _C_2C            ; $1b77 0F2F - C,
+   .word _LIT             ; $1b79 0A2B - LIT
+   .word $0080            ; $1b7b 0080
+   .word _C_2C            ; $1b7d 0F2F - C,
+   .word _CURRENT         ; $1b7f 0233 - CURRENT
+   .word __40             ; $1b81 0984 - @
+   .word _2_2D            ; $1b83 0499 - 2-
+   .word __2C             ; $1b85 0F1D - ,
+   .word _HERE            ; $1b87 0EFF - HERE
+   .word _VOC_2DLINK      ; $1b89 01E1 - VOC-LINK
+   .word __40             ; $1b8b 0984 - @
+   .word __2C             ; $1b8d 0F1D - ,
+   .word _VOC_2DLINK      ; $1b8f 01E1 - VOC-LINK
+   .word __21             ; $1b91 099D - !
+   .word __28DOES_3E_29   ; $1b93 1A7D - (DOES>)
 l1b95:
-   call $02e4    ; $1b95 cd e4 02
-   add d         ; $1b98 82      
-   inr b         ; $1b99 04      
-   inr h         ; $1b9a 24      
-   stax b        ; $1b9b 02      
-   sbb l         ; $1b9c 9d      
-   dad b         ; $1b9d 09      
-   dcr d         ; $1b9e 15      
-   inx b         ; $1b9f 03      
-l1ba0:
+   call $02e4
+   .word _2_2B            ; $1b98 0482 - 2+
+   .word _CONTEXT         ; $1b9a 0224 - CONTEXT
+   .word __21             ; $1b9c 099D - !
+   .word _EXIT            ; $1b9e 0315 - EXIT
+
+NFA_STRING:      ; 1BA0
    .byte 6,"STRING"
-   .word 0x1b61
-   call $02e4    ; $1ba9 cd e4 02
-   lxi h,$411a   ; $1bac 21 1a 41
-   rrc           ; $1baf 0f      
-   .byte 0xfd    ; $1bb0 fd      
-   stax b        ; $1bb1 02      
-   mov c,h       ; $1bb2 4c      
-   ral           ; $1bb3 17      
-   dcr d         ; $1bb4 15      
-   inx b         ; $1bb5 03      
-   inr b         ; $1bb6 04      
-   lxi h,$5343   ; $1bb7 21 43 53
-   mov d,b       ; $1bba 50      
-   ana b         ; $1bbb a0      
-   dcx d         ; $1bbc 1b      
-   call $02e4    ; $1bbd cd e4 02
-   inx sp        ; $1bc0 33      
-   inr b         ; $1bc1 04      
-   mov d,h       ; $1bc2 54      
-   stax b        ; $1bc3 02      
-   sbb l         ; $1bc4 9d      
-   dad b         ; $1bc5 09      
-   dcr d         ; $1bc6 15      
-   inx b         ; $1bc7 03      
-   inr b         ; $1bc8 04      
-   cmc           ; $1bc9 3f      
-   mov b,e       ; $1bca 43      
-   mov d,e       ; $1bcb 53      
-   mov d,b       ; $1bcc 50      
-   ora m         ; $1bcd b6      
-   dcx d         ; $1bce 1b      
-   call $02e4    ; $1bcf cd e4 02
-   inx sp        ; $1bd2 33      
-   inr b         ; $1bd3 04      
-   mov d,h       ; $1bd4 54      
-   stax b        ; $1bd5 02      
-   add h         ; $1bd6 84      
-   dad b         ; $1bd7 09      
-   xchg          ; $1bd8 eb      
-   .byte 0x08    ; $1bd9 08      
-   mov c,d       ; $1bda 4a      
-   lxi d,$4311   ; $1bdb 11 11 43
-   jpo $ea4f     ; $1bde e2 4f ea
-   .byte 0x20    ; $1be1 20      
-   mov b,e       ; $1be2 43      
-   mov d,h       ; $1be3 54      
-   mov b,l       ; $1be4 45      
-   mov c,e       ; $1be5 4b      
-   mov b,c       ; $1be6 41      
-   .byte 0x20    ; $1be7 20      
-   rp            ; $1be8 f0      
-   mov c,a       ; $1be9 4f      
-   .byte 0x20    ; $1bea 20      
-   mov b,e       ; $1beb 43      
-   mov d,e       ; $1bec 53      
-   mov d,b       ; $1bed 50      
-   dcr d         ; $1bee 15      
-   inx b         ; $1bef 03      
-   dcr b         ; $1bf0 05      
-   cmc           ; $1bf1 3f      
-   mov b,l       ; $1bf2 45      
-   mov e,b       ; $1bf3 58      
-   mov b,l       ; $1bf4 45      
-   mov b,e       ; $1bf5 43      
-   rz            ; $1bf6 c8      
-   dcx d         ; $1bf7 1b      
-   call $02e4    ; $1bf8 cd e4 02
-   dcr d         ; $1bfb 15      
-   stax b        ; $1bfc 02      
-   add h         ; $1bfd 84      
-   dad b         ; $1bfe 09      
-   mov c,d       ; $1bff 4a      
-   lxi d,$201a   ; $1c00 11 1a 20
-   mov d,h       ; $1c03 54      
-   mov d,b       ; $1c04 50      
-   mov b,l       ; $1c05 45      
-   jpo $45f5     ; $1c06 e2 f5 45
-   mov d,h       ; $1c09 54      
-   .byte 0x20    ; $1c0a 20      
-   mov d,b       ; $1c0b 50      
-   mov b,l       ; $1c0c 45      
-   ori $e9       ; $1c0d f6 e9   
-   mov c,l       ; $1c0f 4d      
-   mov b,c       ; $1c10 41      
-   .byte 0x20    ; $1c11 20      
-   mov b,d       ; $1c12 42      
-   mov a,c       ; $1c13 79      
-   mov m,b       ; $1c14 70      
-   mov c,a       ; $1c15 4f      
-   mov l,h       ; $1c16 6c      
-   mov c,b       ; $1c17 48      
-   mov b,l       ; $1c18 45      
-   mov c,b       ; $1c19 48      
-   mov l,c       ; $1c1a 69      
-   mov m,c       ; $1c1b 71      
-   dcr d         ; $1c1c 15      
-   inx b         ; $1c1d 03      
-   dcr b         ; $1c1e 05      
-   cmc           ; $1c1f 3f      
-   mov b,e       ; $1c20 43      
-   mov c,a       ; $1c21 4f      
-   mov c,l       ; $1c22 4d      
-   mov d,b       ; $1c23 50      
-   rp            ; $1c24 f0      
-   dcx d         ; $1c25 1b      
-   call $02e4    ; $1c26 cd e4 02
-   dcr d         ; $1c29 15      
-   stax b        ; $1c2a 02      
-   add h         ; $1c2b 84      
-   dad b         ; $1c2c 09      
-   mov a,m       ; $1c2d 7e      
-   dcr b         ; $1c2e 05      
-   mov c,d       ; $1c2f 4a      
-   lxi d,$201a   ; $1c30 11 1a 20
-   mov d,h       ; $1c33 54      
-   mov d,b       ; $1c34 50      
-   mov b,l       ; $1c35 45      
-   mov h,d       ; $1c36 62      
-   mov m,l       ; $1c37 75      
-   mov b,l       ; $1c38 45      
-   mov d,h       ; $1c39 54      
-   .byte 0x20    ; $1c3a 20      
-   mov d,b       ; $1c3b 50      
-   mov b,l       ; $1c3c 45      
-   hlt           ; $1c3d 76      
-   mov l,c       ; $1c3e 69      
-   mov c,l       ; $1c3f 4d      
-   mov b,c       ; $1c40 41      
-   .byte 0x20    ; $1c41 20      
-   mov c,e       ; $1c42 4b      
-   mov c,a       ; $1c43 4f      
-   mov c,l       ; $1c44 4d      
-   mov m,b       ; $1c45 70      
-   mov l,c       ; $1c46 69      
-   mov l,h       ; $1c47 6c      
-   mov m,c       ; $1c48 71      
-   mov h,e       ; $1c49 63      
-   mov l,c       ; $1c4a 69      
-   mov l,c       ; $1c4b 69      
-   dcr d         ; $1c4c 15      
-   inx b         ; $1c4d 03      
-   mvi b,$3f     ; $1c4e 06 3f   
-   mov d,b       ; $1c50 50      
-   mov b,c       ; $1c51 41      
-   mov c,c       ; $1c52 49      
-   mov d,d       ; $1c53 52      
-   mov d,e       ; $1c54 53      
-   mvi e,$1c     ; $1c55 1e 1c   
-   call $02e4    ; $1c57 cd e4 02
-   xchg          ; $1c5a eb      
-   .byte 0x08    ; $1c5b 08      
-   mov c,d       ; $1c5c 4a      
-   lxi d,$2010   ; $1c5d 11 10 20
-   mov c,b       ; $1c60 48      
-   mov b,l       ; $1c61 45      
-   rp            ; $1c62 f0      
-   mov b,c       ; $1c63 41      
-   mov d,b       ; $1c64 50      
-   mov c,b       ; $1c65 48      
-   mov b,c       ; $1c66 41      
-   pop psw       ; $1c67 f1      
-   .byte 0x20    ; $1c68 20      
-   mov b,e       ; $1c69 43      
-   mov c,e       ; $1c6a 4b      
-   mov c,a       ; $1c6b 4f      
-   jpo $414b     ; $1c6c e2 4b 41
-   dcr d         ; $1c6f 15      
-   inx b         ; $1c70 03      
+   .word NFA_VOCABULARY   ; 1B61
+_STRING:         ; 1BA9 - 1BB6
+   call _FCALL            ; 1BA9
+   .word _CREATE          ; $1bac 1A21 - CREATE
+   .word __22_2C          ; $1bae 0F41 - ",
+   .word _NEXT            ; $1bb0 02FD - NEXT
+   .word __28_21CODE_29   ; $1bb2 174C - (!CODE)
+   .word _EXIT            ; $1bb4 0315 - EXIT
+
+NFA__21CSP:      ; 1BB6
+   .byte 4,"!CSP"
+   .word $1BA0   ; NFA_STRING       ; 1BA0
+__21CSP:         ; 1BBD - 1BC8
+   call _FCALL            ; 1BBD
+   .word _SP_40           ; $1bc0 0433 - SP@
+   .word _CSP             ; $1bc2 0254 - CSP
+   .word __21             ; $1bc4 099D - !
+   .word _EXIT            ; $1bc6 0315 - EXIT
+
+NFA__3FCSP:      ; 1BC8
+   .byte 4,"?CSP"
+   .word NFA__21CSP         ; 1BB6
+__3FCSP:         ; 1BCF - 1BF0
+   call _FCALL            ; 1BCF
+   .word _SP_40           ; $1bd2 0433 - SP@
+   .word _CSP             ; $1bd4 0254 - CSP
+   .word __40             ; $1bd6 0984 - @
+   .word _XOR             ; $1bd8 08EB - XOR
+   .word __28ABORT_22_29  ; $1bda 114A - (ABORT")
+   .byte 17,"C",0xe2,"O",0xea," CTEKA ",0xf0,"O CSP"
+   .word _EXIT            ; $1bee 0315 - EXIT
+
+NFA__3FEXEC:     ; 1BF0
+   .byte 5,"?EXEC"
+   .word NFA__3FCSP         ; 1BC8
+__3FEXEC:        ; 1BF8 - 1C1E
+   call _FCALL            ; 1BF8
+   .word _STATE           ; $1bfb 0215 - STATE
+   .word __40             ; $1bfd 0984 - @
+   .word __28ABORT_22_29  ; $1bff 114A - (ABORT")
+   .byte 26," TPE",0xe2,0xf5,"ET PE",0xf6,0xe9,"MA BypOlHEHiq"
+   .word _EXIT            ; $1c1c 0315 - EXIT
+
+NFA__3FCOMP:     ; 1C1E
+   .byte 5,"?COMP"
+   .word NFA__3FEXEC        ; 1BF0
+__3FCOMP:        ; 1C26 - 1C4E
+   call _FCALL            ; 1C26
+   .word _STATE           ; $1c29 0215 - STATE
+   .word __40             ; $1c2b 0984 - @
+   .word _0_3D            ; $1c2d 057E - 0=
+   .word __28ABORT_22_29  ; $1c2f 114A - (ABORT")
+   .byte 26," TPEbuET PEviMA KOMpilqcii"
+   .word _EXIT            ; $1c4c 0315 - EXIT
+
+NFA__3FPAIRS:    ; 1C4E
+   .byte 6,"?PAIRS"
+   .word NFA__3FCOMP        ; 1C1E
+__3FPAIRS:       ; 1C57 - 1C71
+   call _FCALL            ; 1C57
+   .word _XOR             ; $1c5a 08EB - XOR
+   .word __28ABORT_22_29  ; $1c5c 114A - (ABORT")
+   .byte 16," HE",0xf0,"APHA",0xf1," CKO",0xe2,"KA"
+   .word _EXIT            ; $1c6f 0315 - EXIT
 
 NFA_LEAVE:       ; 1C71
    .byte 5,"LEAVE"
@@ -5281,1181 +4007,734 @@ _LEAVE:          ; 1C79 - 1C84
    .word _RDROP           ; 1C80 0975 - RDROP
    .word _EXIT            ; 1C82 0315 - EXIT
 
-   add c         ; $1c84 81      
-   lda $1c71     ; $1c85 3a 71 1c
-   call $02e4    ; $1c88 cd e4 02
-   rm            ; $1c8b f8      
-   dcx d         ; $1c8c 1b      
-   cmp l         ; $1c8d bd      
-   dcx d         ; $1c8e 1b      
-   inx sp        ; $1c8f 33      
-   stax b        ; $1c90 02      
-   add h         ; $1c91 84      
-   dad b         ; $1c92 09      
-   inr h         ; $1c93 24      
-   stax b        ; $1c94 02      
-   sbb l         ; $1c95 9d      
-   dad b         ; $1c96 09      
-   lxi h,$601a   ; $1c97 21 1a 60
-   ral           ; $1c9a 17      
-   mov a,m       ; $1c9b 7e      
-   ral           ; $1c9c 17      
-   dad b         ; $1c9d 09      
-   inx b         ; $1c9e 03      
-   mov c,h       ; $1c9f 4c      
-   ral           ; $1ca0 17      
-   dcr d         ; $1ca1 15      
-   inx b         ; $1ca2 03      
-   add c         ; $1ca3 81      
-   dcx sp        ; $1ca4 3b      
-   add h         ; $1ca5 84      
-   inr e         ; $1ca6 1c      
-   call $02e4    ; $1ca7 cd e4 02
-   mvi h,$1c     ; $1caa 26 1c   
-   rst 1         ; $1cac cf      
-   dcx d         ; $1cad 1b      
-   add e         ; $1cae 83      
-   rrc           ; $1caf 0f      
-   dcr d         ; $1cb0 15      
-   inx b         ; $1cb1 03      
-   mov h,b       ; $1cb2 60      
-   ral           ; $1cb3 17      
-   mov m,c       ; $1cb4 71      
-   ral           ; $1cb5 17      
-   dcr d         ; $1cb6 15      
-   inx b         ; $1cb7 03      
-   dad b         ; $1cb8 09      
-   mov c,c       ; $1cb9 49      
-   mov c,l       ; $1cba 4d      
-   mov c,l       ; $1cbb 4d      
-   mov b,l       ; $1cbc 45      
-   mov b,h       ; $1cbd 44      
-   mov c,c       ; $1cbe 49      
-   mov b,c       ; $1cbf 41      
-   mov d,h       ; $1cc0 54      
-   mov b,l       ; $1cc1 45      
-   ana e         ; $1cc2 a3      
-   inr e         ; $1cc3 1c      
-   call $02e4    ; $1cc4 cd e4 02
-   .byte 0x20    ; $1cc7 20      
-   ral           ; $1cc8 17      
-   dcx h         ; $1cc9 2b      
-   ldax b        ; $1cca 0a      
-   add b         ; $1ccb 80      
-   nop           ; $1ccc 00      
-   sui $0a       ; $1ccd d6 0a   
-   dcr d         ; $1ccf 15      
-   inx b         ; $1cd0 03      
-   dcr b         ; $1cd1 05      
-   mov b,h       ; $1cd2 44      
-   mov b,l       ; $1cd3 45      
-   mov d,b       ; $1cd4 50      
-   mov d,h       ; $1cd5 54      
-   mov c,b       ; $1cd6 48      
-   cmp b         ; $1cd7 b8      
-   inr e         ; $1cd8 1c      
-   call $02e4    ; $1cd9 cd e4 02
-   inx sp        ; $1cdc 33      
-   inr b         ; $1cdd 04      
-   cmp m         ; $1cde be      
-   lxi b,$0984   ; $1cdf 01 84 09
-   adc l         ; $1ce2 8d      
-   inx b         ; $1ce3 03      
-   mov d,l       ; $1ce4 55      
-   inr b         ; $1ce5 04      
-   cmp l         ; $1ce6 bd      
-   dcr b         ; $1ce7 05      
-   rz            ; $1ce8 c8      
-   mvi c,$de     ; $1ce9 0e de   
-   inr b         ; $1ceb 04      
-   dcr d         ; $1cec 15      
-   inx b         ; $1ced 03      
-   add d         ; $1cee 82      
-   mov b,e       ; $1cef 43      
-   shld $1cd1    ; $1cf0 22 d1 1c
-   call $02e4    ; $1cf3 cd e4 02
-   ana m         ; $1cf6 a6      
-   mvi d,$ed     ; $1cf7 16 ed   
-   inx d         ; $1cf9 13      
-   mov m,a       ; $1cfa 77      
-   inr b         ; $1cfb 04      
-   sub c         ; $1cfc 91      
-   dad b         ; $1cfd 09      
-   sub h         ; $1cfe 94      
-   .byte 0x18    ; $1cff 18      
-   dcr d         ; $1d00 15      
-   inx b         ; $1d01 03      
-   add d         ; $1d02 82      
-   mvi l,$22     ; $1d03 2e 22   
-   xri $1c       ; $1d05 ee 1c   
-   call $02e4    ; $1d07 cd e4 02
-   mvi h,$1c     ; $1d0a 26 1c   
-   add e         ; $1d0c 83      
-   rrc           ; $1d0d 0f      
-   mvi a,$18     ; $1d0e 3e 18   
-   dcx h         ; $1d10 2b      
-   ldax b        ; $1d11 0a      
-   shld $ed00    ; $1d12 22 00 ed
-   inx d         ; $1d15 13      
-   mov b,c       ; $1d16 41      
-   rrc           ; $1d17 0f      
-   dcr d         ; $1d18 15      
-   inx b         ; $1d19 03      
-   add c         ; $1d1a 81      
-   shld $1d02    ; $1d1b 22 02 1d
-   call $02e4    ; $1d1e cd e4 02
-   dcr d         ; $1d21 15      
-   stax b        ; $1d22 02      
-   add h         ; $1d23 84      
-   dad b         ; $1d24 09      
-   mov a,d       ; $1d25 7a      
-   ldax b        ; $1d26 0a      
-   dad sp        ; $1d27 39      
-   dcr e         ; $1d28 1d      
-   add e         ; $1d29 83      
-   rrc           ; $1d2a 0f      
-   mov d,e       ; $1d2b 53      
-   ldax b        ; $1d2c 0a      
-   dcx h         ; $1d2d 2b      
-   ldax b        ; $1d2e 0a      
-   shld $ed00    ; $1d2f 22 00 ed
-   inx d         ; $1d32 13      
-   mov b,c       ; $1d33 41      
-   rrc           ; $1d34 0f      
-   mov l,b       ; $1d35 68      
-   ldax b        ; $1d36 0a      
-   mov c,e       ; $1d37 4b      
-   dcr e         ; $1d38 1d      
-   dcx h         ; $1d39 2b      
-   ldax b        ; $1d3a 0a      
-   shld $ed00    ; $1d3b 22 00 ed
-   inx d         ; $1d3e 13      
-   mov e,d       ; $1d3f 5a      
-   rrc           ; $1d40 0f      
-   mov h,d       ; $1d41 62      
-   inx b         ; $1d42 03      
-   sub c         ; $1d43 91      
-   dad b         ; $1d44 09      
-   mov m,a       ; $1d45 77      
-   inr b         ; $1d46 04      
-   mov a,h       ; $1d47 7c      
-   dcx b         ; $1d48 0b      
-   mov e,d       ; $1d49 5a      
-   rrc           ; $1d4a 0f      
-   dcr d         ; $1d4b 15      
-   inx b         ; $1d4c 03      
-   add d         ; $1d4d 82      
-   mvi l,$28     ; $1d4e 2e 28   
-   ldax d        ; $1d50 1a      
-   dcr e         ; $1d51 1d      
-   call $02e4    ; $1d52 cd e4 02
-   dcx h         ; $1d55 2b      
-   ldax b        ; $1d56 0a      
-   dad h         ; $1d57 29      
-   nop           ; $1d58 00      
-   .byte 0xed    ; $1d59 ed      
-   inx d         ; $1d5a 13      
-   mov l,a       ; $1d5b 6f      
-   rrc           ; $1d5c 0f      
-   mov a,m       ; $1d5d 7e      
-   dcr d         ; $1d5e 15      
-   dcr d         ; $1d5f 15      
-   inx b         ; $1d60 03      
-   dcr b         ; $1d61 05      
-   mvi a,$4d     ; $1d62 3e 4d   
-   mov b,c       ; $1d64 41      
-   mov d,d       ; $1d65 52      
-   mov c,e       ; $1d66 4b      
-   mov c,l       ; $1d67 4d      
-   dcr e         ; $1d68 1d      
-   call $02e4    ; $1d69 cd e4 02
-   rst 7         ; $1d6c ff      
-   mvi c,$c8     ; $1d6d 0e c8   
-   mvi c,$1d     ; $1d6f 0e 1d   
-   rrc           ; $1d71 0f      
-   dcr d         ; $1d72 15      
-   inx b         ; $1d73 03      
-   .byte 0x08    ; $1d74 08      
-   mvi a,$52     ; $1d75 3e 52   
-   mov b,l       ; $1d77 45      
-   mov d,e       ; $1d78 53      
-   mov c,a       ; $1d79 4f      
-   mov c,h       ; $1d7a 4c      
-   mov d,m       ; $1d7b 56      
-   mov b,l       ; $1d7c 45      
-   mov h,c       ; $1d7d 61      
-   dcr e         ; $1d7e 1d      
-   call $02e4    ; $1d7f cd e4 02
-   rst 7         ; $1d82 ff      
-   mvi c,$8d     ; $1d83 0e 8d   
-   inx b         ; $1d85 03      
-   sbb l         ; $1d86 9d      
-   dad b         ; $1d87 09      
-   dcr d         ; $1d88 15      
-   inx b         ; $1d89 03      
-   dcr b         ; $1d8a 05      
-   inr a         ; $1d8b 3c      
-   mov c,l       ; $1d8c 4d      
-   mov b,c       ; $1d8d 41      
-   mov d,d       ; $1d8e 52      
-   mov c,e       ; $1d8f 4b      
-   mov m,h       ; $1d90 74      
-   dcr e         ; $1d91 1d      
-   call $02e4    ; $1d92 cd e4 02
-   rst 7         ; $1d95 ff      
-   mvi c,$15     ; $1d96 0e 15   
-   inx b         ; $1d98 03      
-   .byte 0x08    ; $1d99 08      
-   inr a         ; $1d9a 3c      
-   mov d,d       ; $1d9b 52      
-   mov b,l       ; $1d9c 45      
-   mov d,e       ; $1d9d 53      
-   mov c,a       ; $1d9e 4f      
-   mov c,h       ; $1d9f 4c      
-   mov d,m       ; $1da0 56      
-   mov b,l       ; $1da1 45      
-   adc d         ; $1da2 8a      
-   dcr e         ; $1da3 1d      
-   call $02e4    ; $1da4 cd e4 02
-   dcr e         ; $1da7 1d      
-   rrc           ; $1da8 0f      
-   dcr d         ; $1da9 15      
-   inx b         ; $1daa 03      
-   add d         ; $1dab 82      
-   mov c,c       ; $1dac 49      
-   mov b,m       ; $1dad 46      
-   sbb c         ; $1dae 99      
-   dcr e         ; $1daf 1d      
-   call $02e4    ; $1db0 cd e4 02
-   mvi h,$1c     ; $1db3 26 1c   
-   add e         ; $1db5 83      
-   rrc           ; $1db6 0f      
-   mov a,d       ; $1db7 7a      
-   ldax b        ; $1db8 0a      
-   mov l,c       ; $1db9 69      
-   dcr e         ; $1dba 1d      
-   jc $150e      ; $1dbb da 0e 15
-   inx b         ; $1dbe 03      
-   add l         ; $1dbf 85      
-   mov c,c       ; $1dc0 49      
-   mov b,m       ; $1dc1 46      
-   mov c,m       ; $1dc2 4e      
-   mov c,a       ; $1dc3 4f      
-   mov d,h       ; $1dc4 54      
-   xra e         ; $1dc5 ab      
-   dcr e         ; $1dc6 1d      
-   call $02e4    ; $1dc7 cd e4 02
-   mvi h,$1c     ; $1dca 26 1c   
-   add e         ; $1dcc 83      
-   rrc           ; $1dcd 0f      
-   sub b         ; $1dce 90      
-   ldax b        ; $1dcf 0a      
-   mov l,c       ; $1dd0 69      
-   dcr e         ; $1dd1 1d      
-   jc $150e      ; $1dd2 da 0e 15
-   inx b         ; $1dd5 03      
-   add h         ; $1dd6 84      
-   mov b,l       ; $1dd7 45      
-   mov c,h       ; $1dd8 4c      
-   mov d,e       ; $1dd9 53      
-   mov b,l       ; $1dda 45      
-   cmp a         ; $1ddb bf      
-   dcr e         ; $1ddc 1d      
-   call $02e4    ; $1ddd cd e4 02
-   mvi h,$1c     ; $1de0 26 1c   
-   jc $570e      ; $1de2 da 0e 57
-   inr e         ; $1de5 1c      
-   add e         ; $1de6 83      
-   rrc           ; $1de7 0f      
-   mov l,b       ; $1de8 68      
-   ldax b        ; $1de9 0a      
-   mov l,c       ; $1dea 69      
-   dcr e         ; $1deb 1d      
-   adc l         ; $1dec 8d      
-   inx b         ; $1ded 03      
-   mov a,a       ; $1dee 7f      
-   dcr e         ; $1def 1d      
-   jc $150e      ; $1df0 da 0e 15
-   inx b         ; $1df3 03      
-   add h         ; $1df4 84      
-   mov d,h       ; $1df5 54      
-   mov c,b       ; $1df6 48      
-   mov b,l       ; $1df7 45      
-   mov c,m       ; $1df8 4e      
-   sui $1d       ; $1df9 d6 1d   
-   call $02e4    ; $1dfb cd e4 02
-   mvi h,$1c     ; $1dfe 26 1c   
-   jc $570e      ; $1e00 da 0e 57
-   inr e         ; $1e03 1c      
-   mov a,a       ; $1e04 7f      
-   dcr e         ; $1e05 1d      
-   dcr d         ; $1e06 15      
-   inx b         ; $1e07 03      
-   add l         ; $1e08 85      
-   mov b,d       ; $1e09 42      
-   mov b,l       ; $1e0a 45      
-   mov b,a       ; $1e0b 47      
-   mov c,c       ; $1e0c 49      
-   mov c,m       ; $1e0d 4e      
-   cp $cd1d      ; $1e0e f4 1d cd
-   cpo $2602     ; $1e11 e4 02 26
-   inr e         ; $1e14 1c      
-   sub d         ; $1e15 92      
-   dcr e         ; $1e16 1d      
-   pop d         ; $1e17 d1      
-   mvi c,$15     ; $1e18 0e 15   
-   inx b         ; $1e1a 03      
-   add l         ; $1e1b 85      
-   mov b,c       ; $1e1c 41      
-   mov b,a       ; $1e1d 47      
-   mov b,c       ; $1e1e 41      
-   mov c,c       ; $1e1f 49      
-   mov c,m       ; $1e20 4e      
-   .byte 0x08    ; $1e21 08      
-   mvi e,$cd     ; $1e22 1e cd   
-   cpo $2602     ; $1e24 e4 02 26
-   inr e         ; $1e27 1c      
-   pop d         ; $1e28 d1      
-   mvi c,$57     ; $1e29 0e 57   
-   inr e         ; $1e2b 1c      
-   add e         ; $1e2c 83      
-   rrc           ; $1e2d 0f      
-   mov l,b       ; $1e2e 68      
-   ldax b        ; $1e2f 0a      
-   ana h         ; $1e30 a4      
-   dcr e         ; $1e31 1d      
-   dcr d         ; $1e32 15      
-   inx b         ; $1e33 03      
-   add d         ; $1e34 82      
-   mov b,h       ; $1e35 44      
-   mov c,a       ; $1e36 4f      
-   dcx d         ; $1e37 1b      
-   mvi e,$cd     ; $1e38 1e cd   
-   cpo $2602     ; $1e3a e4 02 26
-   inr e         ; $1e3d 1c      
-   add e         ; $1e3e 83      
-   rrc           ; $1e3f 0f      
-   push h        ; $1e40 e5      
-   ldax b        ; $1e41 0a      
-   mov l,c       ; $1e42 69      
-   dcr e         ; $1e43 1d      
-   sub d         ; $1e44 92      
-   dcr e         ; $1e45 1d      
-   dcx h         ; $1e46 2b      
-   ldax b        ; $1e47 0a      
-   inx b         ; $1e48 03      
-   nop           ; $1e49 00      
-   dcr d         ; $1e4a 15      
-   inx b         ; $1e4b 03      
-   add e         ; $1e4c 83      
-   cmc           ; $1e4d 3f      
-   mov b,h       ; $1e4e 44      
-   mov c,a       ; $1e4f 4f      
-   inr m         ; $1e50 34      
-   mvi e,$cd     ; $1e51 1e cd   
-   cpo $2602     ; $1e53 e4 02 26
-   inr e         ; $1e56 1c      
-   add e         ; $1e57 83      
-   rrc           ; $1e58 0f      
-   inr c         ; $1e59 0c      
-   dcx b         ; $1e5a 0b      
-   mov l,c       ; $1e5b 69      
-   dcr e         ; $1e5c 1d      
-   sub d         ; $1e5d 92      
-   dcr e         ; $1e5e 1d      
-   dcx h         ; $1e5f 2b      
-   ldax b        ; $1e60 0a      
-   inx b         ; $1e61 03      
-   nop           ; $1e62 00      
-   dcr d         ; $1e63 15      
-   inx b         ; $1e64 03      
-   add h         ; $1e65 84      
-   mov c,h       ; $1e66 4c      
-   mov c,a       ; $1e67 4f      
-   mov c,a       ; $1e68 4f      
-   mov d,b       ; $1e69 50      
-   mov c,h       ; $1e6a 4c      
-   mvi e,$cd     ; $1e6b 1e cd   
-   cpo $2602     ; $1e6d e4 02 26
-   inr e         ; $1e70 1c      
-   dcx h         ; $1e71 2b      
-   ldax b        ; $1e72 0a      
-   inx b         ; $1e73 03      
-   nop           ; $1e74 00      
-   mov d,a       ; $1e75 57      
-   inr e         ; $1e76 1c      
-   add e         ; $1e77 83      
-   rrc           ; $1e78 0f      
-   mvi l,$0b     ; $1e79 2e 0b   
-   ana h         ; $1e7b a4      
-   dcr e         ; $1e7c 1d      
-   mov a,a       ; $1e7d 7f      
-   dcr e         ; $1e7e 1d      
-   dcr d         ; $1e7f 15      
-   inx b         ; $1e80 03      
-   add l         ; $1e81 85      
-   dcx h         ; $1e82 2b      
-   mov c,h       ; $1e83 4c      
-   mov c,a       ; $1e84 4f      
-   mov c,a       ; $1e85 4f      
-   mov d,b       ; $1e86 50      
-   mov h,l       ; $1e87 65      
-   mvi e,$cd     ; $1e88 1e cd   
-   cpo $2602     ; $1e8a e4 02 26
-   inr e         ; $1e8d 1c      
-   dcx h         ; $1e8e 2b      
-   ldax b        ; $1e8f 0a      
-   inx b         ; $1e90 03      
-   nop           ; $1e91 00      
-   mov d,a       ; $1e92 57      
-   inr e         ; $1e93 1c      
-   add e         ; $1e94 83      
-   rrc           ; $1e95 0f      
-   mov h,e       ; $1e96 63      
-   dcx b         ; $1e97 0b      
-   ana h         ; $1e98 a4      
-   dcr e         ; $1e99 1d      
-   mov a,a       ; $1e9a 7f      
-   dcr e         ; $1e9b 1d      
-   dcr d         ; $1e9c 15      
-   inx b         ; $1e9d 03      
-   add l         ; $1e9e 85      
-   mov d,l       ; $1e9f 55      
-   mov c,m       ; $1ea0 4e      
-   mov d,h       ; $1ea1 54      
-   mov c,c       ; $1ea2 49      
-   mov c,h       ; $1ea3 4c      
-   add c         ; $1ea4 81      
-   mvi e,$cd     ; $1ea5 1e cd   
-   cpo $2602     ; $1ea7 e4 02 26
-   inr e         ; $1eaa 1c      
-   pop d         ; $1eab d1      
-   mvi c,$57     ; $1eac 0e 57   
-   inr e         ; $1eae 1c      
-   add e         ; $1eaf 83      
-   rrc           ; $1eb0 0f      
-   mov a,d       ; $1eb1 7a      
-   ldax b        ; $1eb2 0a      
-   ana h         ; $1eb3 a4      
-   dcr e         ; $1eb4 1d      
-   dcr d         ; $1eb5 15      
-   inx b         ; $1eb6 03      
-   add l         ; $1eb7 85      
-   mov d,a       ; $1eb8 57      
-   mov c,b       ; $1eb9 48      
-   mov c,c       ; $1eba 49      
-   mov c,h       ; $1ebb 4c      
-   mov b,l       ; $1ebc 45      
-   sbb m         ; $1ebd 9e      
-   mvi e,$cd     ; $1ebe 1e cd   
-   cpo $2602     ; $1ec0 e4 02 26
-   inr e         ; $1ec3 1c      
-   pop d         ; $1ec4 d1      
-   mvi c,$57     ; $1ec5 0e 57   
-   inr e         ; $1ec7 1c      
-   pop d         ; $1ec8 d1      
-   mvi c,$b0     ; $1ec9 0e b0   
-   dcr e         ; $1ecb 1d      
-   add d         ; $1ecc 82      
-   inr b         ; $1ecd 04      
-   dcr d         ; $1ece 15      
-   inx b         ; $1ecf 03      
-   add m         ; $1ed0 86      
-   mov d,d       ; $1ed1 52      
-   mov b,l       ; $1ed2 45      
-   mov d,b       ; $1ed3 50      
-   mov b,l       ; $1ed4 45      
-   mov b,c       ; $1ed5 41      
-   mov d,h       ; $1ed6 54      
-   ora a         ; $1ed7 b7      
-   mvi e,$cd     ; $1ed8 1e cd   
-   cpo $2602     ; $1eda e4 02 26
-   inr e         ; $1edd 1c      
-   dcr c         ; $1ede 0d      
-   dad b         ; $1edf 09      
-   dcr c         ; $1ee0 0d      
-   dad b         ; $1ee1 09      
-   inx h         ; $1ee2 23      
-   mvi e,$20     ; $1ee3 1e 20   
-   dad b         ; $1ee5 09      
-   .byte 0x20    ; $1ee6 20      
-   dad b         ; $1ee7 09      
-   sbb c         ; $1ee8 99      
-   inr b         ; $1ee9 04      
-   ei            ; $1eea fb      
-   dcr e         ; $1eeb 1d      
-   dcr d         ; $1eec 15      
-   inx b         ; $1eed 03      
-   inr b         ; $1eee 04      
-   mvi a,$50     ; $1eef 3e 50   
-   mov d,d       ; $1ef1 52      
-   mov d,h       ; $1ef2 54      
-   rnc           ; $1ef3 d0      
-   mvi e,$cd     ; $1ef4 1e cd   
-   cpo $d302     ; $1ef6 e4 02 d3
-   inx b         ; $1ef9 03      
-   ana m         ; $1efa a6      
-   mvi d,$fa     ; $1efb 16 fa   
-   inr b         ; $1efd 04      
-   mov h,d       ; $1efe 62      
-   inx b         ; $1eff 03      
-   dcx h         ; $1f00 2b      
-   ldax b        ; $1f01 0a      
-   add b         ; $1f02 80      
-   nop           ; $1f03 00      
-   jm $6804      ; $1f04 fa 04 68
-   ldax b        ; $1f07 0a      
-   call $0515    ; $1f08 cd 15 05
-   mov d,b       ; $1f0b 50      
-   mov d,h       ; $1f0c 54      
-   mov e,c       ; $1f0d 59      
-   mov d,b       ; $1f0e 50      
-   mov b,l       ; $1f0f 45      
-   xri $1e       ; $1f10 ee 1e   
-   call $02e4    ; $1f12 cd e4 02
-   rz            ; $1f15 c8      
-   mvi c,$0c     ; $1f16 0e 0c   
-   dcx b         ; $1f18 0b      
-   dad h         ; $1f19 29      
-   rar           ; $1f1a 1f      
-   out $03       ; $1f1b d3 03   
-   sub c         ; $1f1d 91      
-   dad b         ; $1f1e 09      
-   push psw      ; $1f1f f5      
-   mvi e,$3d     ; $1f20 1e 3d   
-   dcr d         ; $1f22 15      
-   mov m,a       ; $1f23 77      
-   inr b         ; $1f24 04      
-   mvi l,$0b     ; $1f25 2e 0b   
-   dcx d         ; $1f27 1b      
-   rar           ; $1f28 1f      
-   add d         ; $1f29 82      
-   inx b         ; $1f2a 03      
-   dcr d         ; $1f2b 15      
-   inx b         ; $1f2c 03      
-   dcr b         ; $1f2d 05      
-   mov b,d       ; $1f2e 42      
-   mov d,d       ; $1f2f 52      
-   mov b,l       ; $1f30 45      
-   mov b,c       ; $1f31 41      
-   mov c,e       ; $1f32 4b      
-   ldax b        ; $1f33 0a      
-   rar           ; $1f34 1f      
-   call $02e4    ; $1f35 cd e4 02
-   push h        ; $1f38 e5      
-   inr c         ; $1f39 0c      
-   mov a,d       ; $1f3a 7a      
-   ldax b        ; $1f3b 0a      
-   mov e,l       ; $1f3c 5d      
-   rar           ; $1f3d 1f      
-   add d         ; $1f3e 82      
-   inx b         ; $1f3f 03      
-   mov d,h       ; $1f40 54      
-   dcr d         ; $1f41 15      
-   dcx h         ; $1f42 2b      
-   ldax b        ; $1f43 0a      
-   mov b,e       ; $1f44 43      
-   nop           ; $1f45 00      
-   mov h,m       ; $1f46 66      
-   dcr b         ; $1f47 05      
-   rpo           ; $1f48 e0      
-   inx b         ; $1f49 03      
-   mov a,d       ; $1f4a 7a      
-   ldax b        ; $1f4b 0a      
-   mov e,l       ; $1f4c 5d      
-   rar           ; $1f4d 1f      
-   mov h,m       ; $1f4e 66      
-   dcr d         ; $1f4f 15      
-   mov c,d       ; $1f50 4a      
-   lxi d,$200a   ; $1f51 11 0a 20
-   dcr l         ; $1f54 2d      
-   .byte 0x20    ; $1f55 20      
-   rp            ; $1f56 f0      
-   mov d,b       ; $1f57 50      
-   mov b,l       ; $1f58 45      
-   mov d,b       ; $1f59 50      
-   mov b,d       ; $1f5a 42      
-   mov b,c       ; $1f5b 41      
-   mov c,b       ; $1f5c 48      
-   dcr d         ; $1f5d 15      
-   inx b         ; $1f5e 03      
-   inr b         ; $1f5f 04      
-   mov b,h       ; $1f60 44      
-   mov d,l       ; $1f61 55      
-   mov c,l       ; $1f62 4d      
-   mov d,b       ; $1f63 50      
-   dcr l         ; $1f64 2d      
-   rar           ; $1f65 1f      
-   call $02e4    ; $1f66 cd e4 02
-   dcx h         ; $1f69 2b      
-   ldax b        ; $1f6a 0a      
-   rlc           ; $1f6b 07      
-   nop           ; $1f6c 00      
-   mov c,d       ; $1f6d 4a      
-   inr b         ; $1f6e 04      
-   dcx h         ; $1f6f 2b      
-   ldax b        ; $1f70 0a      
-   .byte 0x08    ; $1f71 08      
-   nop           ; $1f72 00      
-   cm $c80f      ; $1f73 fc 0f c8
-   mvi c,$0c     ; $1f76 0e 0c   
-   dcx b         ; $1f78 0b      
-   pop b         ; $1f79 c1      
-   rar           ; $1f7a 1f      
-   mov h,m       ; $1f7b 66      
-   dcr d         ; $1f7c 15      
-   dcr m         ; $1f7d 35      
-   rar           ; $1f7e 1f      
-   .byte 0x08    ; $1f7f 08      
-   stax b        ; $1f80 02      
-   add h         ; $1f81 84      
-   dad b         ; $1f82 09      
-   adc l         ; $1f83 8d      
-   inx b         ; $1f84 03      
-   mov a,l       ; $1f85 7d      
-   mvi d,$d3     ; $1f86 16 d3   
-   inx b         ; $1f88 03      
-   dcx h         ; $1f89 2b      
-   ldax b        ; $1f8a 0a      
-   inr b         ; $1f8b 04      
-   nop           ; $1f8c 00      
-   out $12       ; $1f8d d3 12   
-   cnz $c416     ; $1f8f c4 16 c4
-   mvi d,$d3     ; $1f92 16 d3   
-   inx b         ; $1f94 03      
-   dcx h         ; $1f95 2b      
-   ldax b        ; $1f96 0a      
-   .byte 0x08    ; $1f97 08      
-   nop           ; $1f98 00      
-   rz            ; $1f99 c8      
-   mvi c,$e5     ; $1f9a 0e e5   
-   ldax b        ; $1f9c 0a      
-   xra a         ; $1f9d af      
-   rar           ; $1f9e 1f      
-   out $03       ; $1f9f d3 03   
-   sub c         ; $1fa1 91      
-   dad b         ; $1fa2 09      
-   jc $d30e      ; $1fa3 da 0e d3
-   stax d        ; $1fa6 12      
-   cnz $7716     ; $1fa7 c4 16 77
-   inr b         ; $1faa 04      
-   mvi l,$0b     ; $1fab 2e 0b   
-   sbb a         ; $1fad 9f      
-   rar           ; $1fae 1f      
-   adc l         ; $1faf 8d      
-   inx b         ; $1fb0 03      
-   dcx h         ; $1fb1 2b      
-   ldax b        ; $1fb2 0a      
-   .byte 0x08    ; $1fb3 08      
-   nop           ; $1fb4 00      
-   stax d        ; $1fb5 12      
-   rar           ; $1fb6 1f      
-   adc l         ; $1fb7 8d      
-   inx b         ; $1fb8 03      
-   .byte 0x08    ; $1fb9 08      
-   stax b        ; $1fba 02      
-   sbb l         ; $1fbb 9d      
-   dad b         ; $1fbc 09      
-   mvi l,$0b     ; $1fbd 2e 0b   
-   mov a,e       ; $1fbf 7b      
-   rar           ; $1fc0 1f      
-   add d         ; $1fc1 82      
-   inx b         ; $1fc2 03      
-   dcr d         ; $1fc3 15      
-   inx b         ; $1fc4 03      
-   dcr b         ; $1fc5 05      
-   mov d,h       ; $1fc6 54      
-   mov d,d       ; $1fc7 52      
-   mov b,c       ; $1fc8 41      
-   mov c,c       ; $1fc9 49      
-   mov c,h       ; $1fca 4c      
-   mov e,a       ; $1fcb 5f      
-   rar           ; $1fcc 1f      
-   call $02e4    ; $1fcd cd e4 02
-   mov l,m       ; $1fd0 6e      
-   inr d         ; $1fd1 14      
-   ana m         ; $1fd2 a6      
-   stax b        ; $1fd3 02      
-   add h         ; $1fd4 84      
-   dad b         ; $1fd5 09      
-   mov d,l       ; $1fd6 55      
-   inr b         ; $1fd7 04      
-   dcr d         ; $1fd8 15      
-   inx b         ; $1fd9 03      
-   dcr b         ; $1fda 05      
-   mov c,m       ; $1fdb 4e      
-   mov c,h       ; $1fdc 4c      
-   mov c,c       ; $1fdd 49      
-   mov d,e       ; $1fde 53      
-   mov d,h       ; $1fdf 54      
-   push b        ; $1fe0 c5      
-   rar           ; $1fe1 1f      
+NFA__3A:         ; 1C84
+   .byte 0x81,":" ; IMMEDIATE
+   .word NFA_LEAVE        ; 1C71
+__3A:            ; 1C88 - 1CA3
+   call _FCALL            ; 1C88
+   .word __3FEXEC         ; $1c8b 1BF8 - ?EXEC
+   .word __21CSP          ; $1c8d 1BBD - !CSP
+   .word _CURRENT         ; $1c8f 0233 - CURRENT
+   .word __40             ; $1c91 0984 - @
+   .word _CONTEXT         ; $1c93 0224 - CONTEXT
+   .word __21             ; $1c95 099D - !
+   .word _CREATE          ; $1c97 1A21 - CREATE
+   .word _SMUDGE          ; $1c99 1760 - SMUDGE
+   .word __5D             ; $1c9b 177E - ]
+   .word _CALL            ; $1c9d 0309 - CALL
+   .word __28_21CODE_29   ; $1c9f 174C - (!CODE)
+   .word _EXIT            ; $1ca1 0315 - EXIT
+
+NFA__3B:         ; 1CA3
+   .byte 0x81,";"  ; IMMEDIATE
+   .word NFA__3A            ; 1C84
+__3B:            ; 1CA7 - 1CB8
+   call _FCALL            ; 1CA7
+   .word __3FCOMP         ; $1caa 1C26 - ?COMP
+   .word __3FCSP          ; $1cac 1BCF - ?CSP
+   .word _COMPILE         ; $1cae 0F83 - COMPILE
+   .word _EXIT            ; $1cb0 0315 - EXIT
+   .word _SMUDGE          ; $1cb2 1760 - SMUDGE
+   .word __5B             ; $1cb4 1771 - [
+   .word _EXIT            ; $1cb6 0315 - EXIT
+
+NFA_IMMEDIATE:   ; 1CB8
+   .byte 9,"IMMEDIATE"
+   .word NFA__3B            ; 1CA3
+_IMMEDIATE:      ; 1CC4 - 1CD1
+   call _FCALL            ; 1CC4
+   .word _LATEST          ; $1cc7 1720 - LATEST
+   .word _LIT             ; $1cc9 0A2B - LIT
+   .word $0080            ; $1ccb 0080
+   .word _TOGGLE          ; $1ccd 0AD6 - TOGGLE
+   .word _EXIT            ; $1ccf 0315 - EXIT
+
+NFA_DEPTH:       ; 1CD1
+   .byte 5,"DEPTH"
+   .word NFA_IMMEDIATE    ; 1CB8
+_DEPTH:          ; 1CD9 - 1CEE
+   call _FCALL            ; 1CD9
+   .word _SP_40           ; $1cdc 0433 - SP@
+   .word _S0              ; $1cde 01BE - S0
+   .word __40             ; $1ce0 0984 - @
+   .word _SWAP            ; $1ce2 038D - SWAP
+   .word __2D             ; $1ce4 0455 - -
+   .word _2_2F            ; $1ce6 05BD - 2/
+   .word _0               ; $1ce8 0EC8 - 0
+   .word _MAX             ; $1cea 04DE - MAX
+   .word _EXIT            ; $1cec 0315 - EXIT
+
+NFA_C_22:        ; 1CEE
+   .byte 0x82,"C\"" ; IMMEDIATE
+   .word NFA_DEPTH        ; 1CD1
+_C_22:           ; 1CF3 - 1D02
+   call _FCALL            ; 1CF3
+   .word _BL              ; $1cf6 16A6 - BL
+   .word _WORD            ; $1cf8 13ED - WORD
+   .word _1_2B            ; $1cfa 0477 - 1+
+   .word _C_40            ; $1cfc 0991 - C@
+   .word _LITERAL         ; $1cfe 1894 - LITERAL
+   .word _EXIT            ; $1d00 0315 - EXIT
+
+NFA__2E_22:      ; 1D02
+   .byte 0x82,".\"" ; IMMEDIATE
+   .word NFA_C_22           ; 1CEE
+__2E_22:         ; 1D07 - 1D1A
+   call _FCALL            ; 1D07
+   .word __3FCOMP         ; $1d0a 1C26 - ?COMP
+   .word _COMPILE         ; $1d0c 0F83 - COMPILE
+   .word __28_2E_22_29    ; $1d0e 183E - (.")
+   .word _LIT             ; $1d10 0A2B - LIT
+   .word $0022            ; $1d12 0022
+   .word _WORD            ; $1d14 13ED - WORD
+   .word __22_2C          ; $1d16 0F41 - ",
+   .word _EXIT            ; $1d18 0315 - EXIT
+
+NFA__22:         ; 1D1A
+   .byte 0x81,"\"" ; IMMEDIATE
+   .word NFA__2E_22           ; 1D02
+__22:            ; 1D1E - 1D4D
+   call _FCALL            ; 1D1E
+   .word _STATE           ; $1d21 0215 - STATE
+   .word __40             ; $1d23 0984 - @
+   .word __3FBRANCH       ; $1d25 0A7A - ?BRANCH
+   .word $1D39            ; $1d27 1D39
+   .word _COMPILE         ; $1d29 0F83 - COMPILE
+   .word __28_22_29       ; $1d2b 0A53 - (")
+   .word _LIT             ; $1d2d 0A2B - LIT
+   .word $0022            ; $1d2f 0022
+   .word _WORD            ; $1d31 13ED - WORD
+   .word __22_2C          ; $1d33 0F41 - ",
+   .word _BRANCH          ; $1d35 0A68 - BRANCH
+   .word $1D4B            ; $1d37 1D4B
+   .word _LIT             ; $1d39 0A2B - LIT
+   .word $0022            ; $1d3b 0022
+   .word _WORD            ; $1d3d 13ED - WORD
+   .word _PAD             ; $1d3f 0F5A - PAD
+   .word _OVER            ; $1d41 0362 - OVER
+   .word _C_40            ; $1d43 0991 - C@
+   .word _1_2B            ; $1d45 0477 - 1+
+   .word _CMOVE           ; $1d47 0B7C - CMOVE
+   .word _PAD             ; $1d49 0F5A - PAD
+   .word _EXIT            ; $1d4b 0315 - EXIT
+
+NFA__2E_28:      ; 1D4D
+   .byte 0x82,".(" ; IMMEDIATE
+   .word NFA__22            ; 1D1A
+__2E_28:         ; 1D52 - 1D61
+   call _FCALL            ; 1D52
+   .word _LIT             ; $1d55 0A2B - LIT
+   .word $0029            ; $1d57 0029
+   .word _WORD            ; $1d59 13ED - WORD
+   .word _COUNT           ; $1d5b 0F6F - COUNT
+   .word _TYPE            ; $1d5d 157E - TYPE
+   .word _EXIT            ; $1d5f 0315 - EXIT
+
+NFA__3EMARK:     ; 1D61
+   .byte 5,">MARK"
+   .word NFA__2E_28           ; 1D4D
+__3EMARK:        ; 1D69 - 1D74
+   call _FCALL            ; 1D69
+   .word _HERE            ; $1d6c 0EFF - HERE
+   .word _0               ; $1d6e 0EC8 - 0
+   .word __2C             ; $1d70 0F1D - ,
+   .word _EXIT            ; $1d72 0315 - EXIT
+
+NFA__3ERESOLVE:  ; 1D74
+   .byte 8,">RESOLVE"
+   .word NFA__3EMARK        ; 1D61
+__3ERESOLVE:     ; 1D7F - 1D8A
+   call _FCALL            ; 1D7F
+   .word _HERE            ; $1d82 0EFF - HERE
+   .word _SWAP            ; $1d84 038D - SWAP
+   .word __21             ; $1d86 099D - !
+   .word _EXIT            ; $1d88 0315 - EXIT
+
+NFA__3CMARK:     ; 1D8A
+   .byte 5,"<MARK"
+   .word NFA__3ERESOLVE     ; 1D74
+__3CMARK:        ; 1D92 - 1D99
+   call _FCALL            ; 1D92
+   .word _HERE            ; $1d95 0EFF - HERE
+   .word _EXIT            ; $1d97 0315 - EXIT
+
+NFA__3CRESOLVE:  ; 1D99
+   .byte 8,"<RESOLVE"
+   .word NFA__3CMARK        ; 1D8A
+__3CRESOLVE:     ; 1DA4 - 1DAB
+   call _FCALL            ; 1DA4
+   .word __2C             ; $1da7 0F1D - ,
+   .word _EXIT            ; $1da9 0315 - EXIT
+
+NFA_IF:          ; 1DAB
+   .byte 0x82,"IF" ; IMMEDIATE
+   .word NFA__3CRESOLVE     ; 1D99
+_IF:             ; 1DB0 - 1DBF
+   call _FCALL            ; 1DB0
+   .word __3FCOMP         ; $1db3 1C26 - ?COMP
+   .word _COMPILE         ; $1db5 0F83 - COMPILE
+   .word __3FBRANCH       ; $1db7 0A7A - ?BRANCH
+   .word __3EMARK         ; $1db9 1D69 - >MARK
+   .word _2               ; $1dbb 0EDA - 2
+   .word _EXIT            ; $1dbd 0315 - EXIT
+
+NFA_IFNOT:       ; 1DBF
+   .byte 0x85,"IFNOT" ; IMMEDIATE
+   .word NFA_IF           ; 1DAB
+_IFNOT:          ; 1DC7 - 1DD6
+   call _FCALL            ; 1DC7
+   .word __3FCOMP         ; $1dca 1C26 - ?COMP
+   .word _COMPILE         ; $1dcc 0F83 - COMPILE
+   .word _N_3FBRANCH      ; $1dce 0A90 - N?BRANCH
+   .word __3EMARK         ; $1dd0 1D69 - >MARK
+   .word _2               ; $1dd2 0EDA - 2
+   .word _EXIT            ; $1dd4 0315 - EXIT
+
+NFA_ELSE:        ; 1DD6
+   .byte 0x84,"ELSE" ; IMMEDIATE
+   .word NFA_IFNOT        ; 1DBF
+_ELSE:           ; 1DDD - 1DF4
+   call _FCALL            ; 1DDD
+   .word __3FCOMP         ; $1de0 1C26 - ?COMP
+   .word _2               ; $1de2 0EDA - 2
+   .word __3FPAIRS        ; $1de4 1C57 - ?PAIRS
+   .word _COMPILE         ; $1de6 0F83 - COMPILE
+   .word _BRANCH          ; $1de8 0A68 - BRANCH
+   .word __3EMARK         ; $1dea 1D69 - >MARK
+   .word _SWAP            ; $1dec 038D - SWAP
+   .word __3ERESOLVE      ; $1dee 1D7F - >RESOLVE
+   .word _2               ; $1df0 0EDA - 2
+   .word _EXIT            ; $1df2 0315 - EXIT
+
+NFA_THEN:        ; 1DF4
+   .byte 0x84,"THEN" ; IMMEDIATE
+   .word NFA_ELSE         ; 1DD6
+_THEN:           ; 1DFB - 1E08
+   call _FCALL            ; 1DFB
+   .word __3FCOMP         ; $1dfe 1C26 - ?COMP
+   .word _2               ; $1e00 0EDA - 2
+   .word __3FPAIRS        ; $1e02 1C57 - ?PAIRS
+   .word __3ERESOLVE      ; $1e04 1D7F - >RESOLVE
+   .word _EXIT            ; $1e06 0315 - EXIT
+
+NFA_BEGIN:       ; 1E08
+   .byte 0x85,"BEGIN" ; IMMEDIATE
+   .word NFA_THEN         ; 1DF4
+_BEGIN:          ; 1E10 - 1E1B
+   call _FCALL            ; 1E10
+   .word __3FCOMP         ; $1e13 1C26 - ?COMP
+   .word __3CMARK         ; $1e15 1D92 - <MARK
+   .word _1               ; $1e17 0ED1 - 1
+   .word _EXIT            ; $1e19 0315 - EXIT
+
+NFA_AGAIN:       ; 1E1B
+   .byte 0x85,"AGAIN" ; IMMEDIATE
+   .word NFA_BEGIN        ; 1E08
+_AGAIN:          ; 1E23 - 1E34
+   call _FCALL            ; 1E23
+   .word __3FCOMP         ; $1e26 1C26 - ?COMP
+   .word _1               ; $1e28 0ED1 - 1
+   .word __3FPAIRS        ; $1e2a 1C57 - ?PAIRS
+   .word _COMPILE         ; $1e2c 0F83 - COMPILE
+   .word _BRANCH          ; $1e2e 0A68 - BRANCH
+   .word __3CRESOLVE      ; $1e30 1DA4 - <RESOLVE
+   .word _EXIT            ; $1e32 0315 - EXIT
+
+NFA_DO:          ; 1E34
+   .byte 0x82,"DO" ; IMMEDIATE
+   .word NFA_AGAIN        ; 1E1B
+_DO:             ; 1E39 - 1E4C
+   call _FCALL            ; 1E39
+   .word __3FCOMP         ; $1e3c 1C26 - ?COMP
+   .word _COMPILE         ; $1e3e 0F83 - COMPILE
+   .word __28DO_29        ; $1e40 0AE5 - (DO)
+   .word __3EMARK         ; $1e42 1D69 - >MARK
+   .word __3CMARK         ; $1e44 1D92 - <MARK
+   .word _LIT             ; $1e46 0A2B - LIT
+   .word $0003            ; $1e48 0003
+   .word _EXIT            ; $1e4a 0315 - EXIT
+
+NFA__3FDO:       ; 1E4C
+   .byte 0x83,"?DO" ; IMMEDIATE
+   .word NFA_DO           ; 1E34
+__3FDO:          ; 1E52 - 1E65
+   call _FCALL            ; 1E52
+   .word __3FCOMP         ; $1e55 1C26 - ?COMP
+   .word _COMPILE         ; $1e57 0F83 - COMPILE
+   .word __28_3FDO_29     ; $1e59 0B0C - (?DO)
+   .word __3EMARK         ; $1e5b 1D69 - >MARK
+   .word __3CMARK         ; $1e5d 1D92 - <MARK
+   .word _LIT             ; $1e5f 0A2B - LIT
+   .word $0003            ; $1e61 0003
+   .word _EXIT            ; $1e63 0315 - EXIT
+
+NFA_LOOP:        ; 1E65
+   .byte 0x84,"LOOP" ; IMMEDIATE
+   .word NFA__3FDO          ; 1E4C
+_LOOP:           ; 1E6C - 1E81
+   call _FCALL            ; 1E6C
+   .word __3FCOMP         ; $1e6f 1C26 - ?COMP
+   .word _LIT             ; $1e71 0A2B - LIT
+   .word $0003            ; $1e73 0003
+   .word __3FPAIRS        ; $1e75 1C57 - ?PAIRS
+   .word _COMPILE         ; $1e77 0F83 - COMPILE
+   .word __28LOOP_29      ; $1e79 0B2E - (LOOP)
+   .word __3CRESOLVE      ; $1e7b 1DA4 - <RESOLVE
+   .word __3ERESOLVE      ; $1e7d 1D7F - >RESOLVE
+   .word _EXIT            ; $1e7f 0315 - EXIT
+
+NFA__2BLOOP:     ; 1E81
+   .byte 0x85,"+LOOP" ; IMMEDIATE
+   .word NFA_LOOP         ; 1E65
+__2BLOOP:        ; 1E89 - 1E9E
+   call _FCALL            ; 1E89
+   .word __3FCOMP         ; $1e8c 1C26 - ?COMP
+   .word _LIT             ; $1e8e 0A2B - LIT
+   .word $0003            ; $1e90 0003
+   .word __3FPAIRS        ; $1e92 1C57 - ?PAIRS
+   .word _COMPILE         ; $1e94 0F83 - COMPILE
+   .word __28_2BLOOP_29   ; $1e96 0B63 - (+LOOP)
+   .word __3CRESOLVE      ; $1e98 1DA4 - <RESOLVE
+   .word __3ERESOLVE      ; $1e9a 1D7F - >RESOLVE
+   .word _EXIT            ; $1e9c 0315 - EXIT
+
+NFA_UNTIL:       ; 1E9E
+   .byte 0x85,"UNTIL" ; IMMEDIATE
+   .word NFA__2BLOOP        ; 1E81
+_UNTIL:          ; 1EA6 - 1EB7
+   call _FCALL            ; 1EA6
+   .word __3FCOMP         ; $1ea9 1C26 - ?COMP
+   .word _1               ; $1eab 0ED1 - 1
+   .word __3FPAIRS        ; $1ead 1C57 - ?PAIRS
+   .word _COMPILE         ; $1eaf 0F83 - COMPILE
+   .word __3FBRANCH       ; $1eb1 0A7A - ?BRANCH
+   .word __3CRESOLVE      ; $1eb3 1DA4 - <RESOLVE
+   .word _EXIT            ; $1eb5 0315 - EXIT
+
+NFA_WHILE:       ; 1EB7
+   .byte 0x85,"WHILE" ; IMMEDIATE
+   .word NFA_UNTIL        ; 1E9E
+_WHILE:          ; 1EBF - 1ED0
+   call _FCALL            ; 1EBF
+   .word __3FCOMP         ; $1ec2 1C26 - ?COMP
+   .word _1               ; $1ec4 0ED1 - 1
+   .word __3FPAIRS        ; $1ec6 1C57 - ?PAIRS
+   .word _1               ; $1ec8 0ED1 - 1
+   .word _IF              ; $1eca 1DB0 - IF
+   .word _2_2B            ; $1ecc 0482 - 2+
+   .word _EXIT            ; $1ece 0315 - EXIT
+
+NFA_REPEAT:      ; 1ED0
+   .byte 0x86,"REPEAT" ; IMMEDIATE
+   .word NFA_WHILE        ; 1EB7
+_REPEAT:         ; 1ED9 - 1EEE
+   call _FCALL            ; 1ED9
+   .word __3FCOMP         ; $1edc 1C26 - ?COMP
+   .word __3ER            ; $1ede 090D - >R
+   .word __3ER            ; $1ee0 090D - >R
+   .word _AGAIN           ; $1ee2 1E23 - AGAIN
+   .word _R_3E            ; $1ee4 0920 - R>
+   .word _R_3E            ; $1ee6 0920 - R>
+   .word _2_2D            ; $1ee8 0499 - 2-
+   .word _THEN            ; $1eea 1DFB - THEN
+   .word _EXIT            ; $1eec 0315 - EXIT
+
+NFA__3EPRT:      ; 1EEE
+   .byte 4,">PRT"
+   .word NFA_REPEAT       ; 1ED0
+__3EPRT:         ; 1EF5 - 1F0A
+   call _FCALL            ; 1EF5
+   .word _DUP             ; $1ef8 03D3 - DUP
+   .word _BL              ; $1efa 16A6 - BL
+   .word _U_3C            ; $1efc 04FA - U<
+   .word _OVER            ; $1efe 0362 - OVER
+   .word _LIT             ; $1f00 0A2B - LIT
+   .word $0080            ; $1f02 0080
+   .word _U_3C            ; $1f04 04FA - U<
+   .word _BRANCH          ; $1f06 0A68 - BRANCH
+   .word $15CD            ; $1f08 15CD !!! !!! !!!
+
+NFA_PTYPE:       ; 1F0A
+   .byte 5,"PTYPE"
+   .word NFA__3EPRT         ; 1EEE
+_PTYPE:          ; 1F12 - 1F2D
+   call _FCALL            ; 1F12
+   .word _0               ; $1f15 0EC8 - 0
+   .word __28_3FDO_29     ; $1f17 0B0C - (?DO)
+   .word $1F29            ; $1f19 1F29
+   .word _DUP             ; $1f1b 03D3 - DUP
+   .word _C_40            ; $1f1d 0991 - C@
+   .word __3EPRT          ; $1f1f 1EF5 - >PRT
+   .word _EMIT            ; $1f21 153D - EMIT
+   .word _1_2B            ; $1f23 0477 - 1+
+   .word __28LOOP_29      ; $1f25 0B2E - (LOOP)
+   .word $1F1B            ; $1f27 1F1B
+   .word _DROP            ; $1f29 0382 - DROP
+   .word _EXIT            ; $1f2b 0315 - EXIT
+
+NFA_BREAK:       ; 1F2D
+   .byte 5,"BREAK"
+   .word NFA_PTYPE        ; 1F0A
+_BREAK:          ; 1F35 - 1F5F
+   call _FCALL            ; 1F35
+   .word __3FKEY          ; $1f38 0CE5 - ?KEY
+   .word __3FBRANCH       ; $1f3a 0A7A - ?BRANCH
+   .word $1F5D            ; $1f3c 1F5D
+   .word _DROP            ; $1f3e 0382 - DROP
+   .word _KEY             ; $1f40 1554 - KEY
+   .word _LIT             ; $1f42 0A2B - LIT
+   .word $0043            ; $1f44 0043
+   .word __3D             ; $1f46 0566 - =
+   .word __3FDUP          ; $1f48 03E0 - ?DUP
+   .word __3FBRANCH       ; $1f4a 0A7A - ?BRANCH
+   .word $1F5D            ; $1f4c 1F5D
+   .word _CR              ; $1f4e 1566 - CR
+   .word __28ABORT_22_29  ; $1f50 114A - (ABORT")
+   .byte 10," - ",0xf0,"PEPBAH"
+   .word _EXIT            ; $1f5d 0315 - EXIT
+
+NFA_DUMP:        ; 1F5F
+   .byte 4,"DUMP"
+   .word NFA_BREAK        ; 1F2D
+_DUMP:           ; 1F66 - 1FC5
+   call _FCALL            ; 1F66
+   .word _LIT             ; $1f69 0A2B - LIT
+   .word $0007            ; $1f6b 0007
+   .word __2B             ; $1f6d 044A - +
+   .word _LIT             ; $1f6f 0A2B - LIT
+   .word $0008            ; $1f71 0008
+   .word _U_2F            ; $1f73 0FFC - U/
+   .word _0               ; $1f75 0EC8 - 0
+   .word __28_3FDO_29     ; $1f77 0B0C - (?DO)
+   .word $1FC1            ; $1f79 1FC1
+   .word _CR              ; $1f7b 1566 - CR
+   .word _BREAK           ; $1f7d 1F35 - BREAK
+   .word _BASE            ; $1f7f 0208 - BASE
+   .word __40             ; $1f81 0984 - @
+   .word _SWAP            ; $1f83 038D - SWAP
+   .word _HEX             ; $1f85 167D - HEX
+   .word _DUP             ; $1f87 03D3 - DUP
+   .word _LIT             ; $1f89 0A2B - LIT
+   .word $0004            ; $1f8b 0004
+   .word __2E0            ; $1f8d 12D3 - .0
+   .word _SPACE           ; $1f8f 16C4 - SPACE
+   .word _SPACE           ; $1f91 16C4 - SPACE
+   .word _DUP             ; $1f93 03D3 - DUP
+   .word _LIT             ; $1f95 0A2B - LIT
+   .word $0008            ; $1f97 0008
+   .word _0               ; $1f99 0EC8 - 0
+   .word __28DO_29        ; $1f9b 0AE5 - (DO)
+   .word $1FAF            ; $1f9d 1FAF
+   .word _DUP             ; $1f9f 03D3 - DUP
+   .word _C_40            ; $1fa1 0991 - C@
+   .word _2               ; $1fa3 0EDA - 2
+   .word __2E0            ; $1fa5 12D3 - .0
+   .word _SPACE           ; $1fa7 16C4 - SPACE
+   .word _1_2B            ; $1fa9 0477 - 1+
+   .word __28LOOP_29      ; $1fab 0B2E - (LOOP)
+   .word $1F9F            ; $1fad 1F9F
+   .word _SWAP            ; $1faf 038D - SWAP
+   .word _LIT             ; $1fb1 0A2B - LIT
+   .word $0008            ; $1fb3 0008
+   .word _PTYPE           ; $1fb5 1F12 - PTYPE
+   .word _SWAP            ; $1fb7 038D - SWAP
+   .word _BASE            ; $1fb9 0208 - BASE
+   .word __21             ; $1fbb 099D - !
+   .word __28LOOP_29      ; $1fbd 0B2E - (LOOP)
+   .word $1F7B            ; $1fbf 1F7B
+   .word _DROP            ; $1fc1 0382 - DROP
+   .word _EXIT            ; $1fc3 0315 - EXIT
+
+NFA_TRAIL:       ; 1FC5
+   .byte 5,"TRAIL"
+   .word NFA_DUMP         ; 1F5F
+_TRAIL:          ; 1FCD - 202F
+   call _FCALL            ; 1FCD
+   .word _C_2FL           ; $1fd0 146E - C/L
+   .word __3EOUT          ; $1fd2 02A6 - >OUT
+   .word __40             ; $1fd4 0984 - @
+   .word __2D             ; $1fd6 0455 - -
+   .word _EXIT            ; $1fd8 0315 - EXIT
+
+NFA_NLIST:       ; 1FDA
+   .byte 5,"NLIST"
+   .word NFA_TRAIL        ; 1FC5
+_NLIST:          ; 1FE2 - None
    call $02e4    ; $1fe2 cd e4 02
-   add h         ; $1fe5 84      
-   dad b         ; $1fe6 09      
-   out $03       ; $1fe7 d3 03   
-   mov a,d       ; $1fe9 7a      
-   ldax b        ; $1fea 0a      
-   dcx h         ; $1feb 2b      
-   .byte 0x20    ; $1fec 20      
-   out $03       ; $1fed d3 03   
-   mov l,a       ; $1fef 6f      
-   rrc           ; $1ff0 0f      
-   dcx h         ; $1ff1 2b      
-   ldax b        ; $1ff2 0a      
-   cmc           ; $1ff3 3f      
-   nop           ; $1ff4 00      
-   rz            ; $1ff5 c8      
-   .byte 0x08    ; $1ff6 08      
-   call $621f    ; $1ff7 cd 1f 62
-   inx b         ; $1ffa 03      
-   jm $7a04      ; $1ffb fa 04 7a
-   ldax b        ; $1ffe 0a      
-   inx b         ; $1fff 03      
-   .byte 0x20    ; $2000 20      
-   mov h,m       ; $2001 66      
-   dcr d         ; $2002 15      
-   out $03       ; $2003 d3 03   
-   dcx h         ; $2005 2b      
-   ldax b        ; $2006 0a      
-   .byte 0x08    ; $2007 08      
-   nop           ; $2008 00      
-   mov c,d       ; $2009 4a      
-   inr b         ; $200a 04      
-   dcx h         ; $200b 2b      
-   ldax b        ; $200c 0a      
-   rm            ; $200d f8      
-   rst 7         ; $200e ff      
-   rz            ; $200f c8      
-   .byte 0x08    ; $2010 08      
-   mov h,d       ; $2011 62      
-   inx b         ; $2012 03      
-   mov d,l       ; $2013 55      
-   inr b         ; $2014 04      
-   push b        ; $2015 c5      
-   inx b         ; $2016 03      
-   mov a,m       ; $2017 7e      
-   dcr d         ; $2018 15      
-   call $c11f    ; $2019 cd 1f c1
-   inr b         ; $201c 04      
-   rz            ; $201d c8      
-   mvi c,$de     ; $201e 0e de   
-   inr b         ; $2020 04      
-   sui $16       ; $2021 d6 16   
-   mov a,e       ; $2023 7b      
-   inx d         ; $2024 13      
-   dcr m         ; $2025 35      
-   rar           ; $2026 1f      
-   mov l,b       ; $2027 68      
-   ldax b        ; $2028 0a      
-   push h        ; $2029 e5      
-   rar           ; $202a 1f      
-   add d         ; $202b 82      
-   inx b         ; $202c 03      
-   dcr d         ; $202d 15      
-   inx b         ; $202e 03      
-   dcr b         ; $202f 05      
-   mov d,a       ; $2030 57      
-   mov c,a       ; $2031 4f      
-   mov d,d       ; $2032 52      
-   mov b,h       ; $2033 44      
-   mov d,e       ; $2034 53      
-   push b        ; $2035 c5      
-   rar           ; $2036 1f      
-   call $02e4    ; $2037 cd e4 02
-   inr h         ; $203a 24      
-   stax b        ; $203b 02      
-   add h         ; $203c 84      
-   dad b         ; $203d 09      
-   jpo $151f     ; $203e e2 1f 15
-   inx b         ; $2041 03      
-   dcr b         ; $2042 05      
-   mov d,m       ; $2043 56      
-   mov c,h       ; $2044 4c      
-   mov c,c       ; $2045 49      
-   mov d,e       ; $2046 53      
-   mov d,h       ; $2047 54      
-   cma           ; $2048 2f      
-   .byte 0x20    ; $2049 20      
-   call $02e4    ; $204a cd e4 02
-   stc           ; $204d 37      
-   .byte 0x20    ; $204e 20      
-   dcr d         ; $204f 15      
-   inx b         ; $2050 03      
-   add d         ; $2051 82      
-   dcr l         ; $2052 2d      
-   dcr l         ; $2053 2d      
-   mov b,d       ; $2054 42      
-   .byte 0x20    ; $2055 20      
-   call $02e4    ; $2056 cd e4 02
-   ora c         ; $2059 b1      
-   stax b        ; $205a 02      
-   add h         ; $205b 84      
-   dad b         ; $205c 09      
-   mov a,d       ; $205d 7a      
-   ldax b        ; $205e 0a      
-   mov m,l       ; $205f 75      
-   .byte 0x20    ; $2060 20      
-   hlt           ; $2061 76      
-   stax b        ; $2062 02      
-   add h         ; $2063 84      
-   dad b         ; $2064 09      
-   dcx h         ; $2065 2b      
-   ldax b        ; $2066 0a      
-   cmc           ; $2067 3f      
-   nop           ; $2068 00      
-   mov c,d       ; $2069 4a      
-   inr b         ; $206a 04      
-   dcx h         ; $206b 2b      
-   ldax b        ; $206c 0a      
-   rnz           ; $206d c0      
-   rst 7         ; $206e ff      
-   rz            ; $206f c8      
-   .byte 0x08    ; $2070 08      
-   mov l,b       ; $2071 68      
-   ldax b        ; $2072 0a      
-   mov a,c       ; $2073 79      
-   .byte 0x20    ; $2074 20      
-   mov l,e       ; $2075 6b      
-   stax b        ; $2076 02      
-   add h         ; $2077 84      
-   dad b         ; $2078 09      
-   hlt           ; $2079 76      
-   stax b        ; $207a 02      
-   sbb l         ; $207b 9d      
-   dad b         ; $207c 09      
-   dcr d         ; $207d 15      
-   inx b         ; $207e 03      
-   inr b         ; $207f 04      
-   mov c,m       ; $2080 4e      
-   mov c,a       ; $2081 4f      
-   mov c,a       ; $2082 4f      
-   mov d,b       ; $2083 50      
-   mov d,c       ; $2084 51      
-   .byte 0x20    ; $2085 20      
-   call $02e4    ; $2086 cd e4 02
-   dcr d         ; $2089 15      
-   inx b         ; $208a 03      
-   stax b        ; $208b 02      
-   mov d,e       ; $208c 53      
-   mvi l,$7f     ; $208d 2e 7f   
-   .byte 0x20    ; $208f 20      
-   call $02e4    ; $2090 cd e4 02
-   .byte 0xd9    ; $2093 d9      
-   inr e         ; $2094 1c      
-   rpo           ; $2095 e0      
-   inx b         ; $2096 03      
-   mov a,d       ; $2097 7a      
-   ldax b        ; $2098 0a      
-   cmp c         ; $2099 b9      
-   .byte 0x20    ; $209a 20      
-   mov m,a       ; $209b 77      
-   inr b         ; $209c 04      
-   pop d         ; $209d d1      
-   mvi c,$e5     ; $209e 0e e5   
-   ldax b        ; $20a0 0a      
-   ora l         ; $20a1 b5      
-   .byte 0x20    ; $20a2 20      
-   cmp m         ; $20a3 be      
-   lxi b,$0984   ; $20a4 01 84 09
-   sbb a         ; $20a7 9f      
-   ldax b        ; $20a8 0a      
-   ana l         ; $20a9 a5      
-   inr b         ; $20aa 04      
-   mov d,l       ; $20ab 55      
-   inr b         ; $20ac 04      
-   add h         ; $20ad 84      
-   dad b         ; $20ae 09      
-   cpi $12       ; $20af fe 12   
-   mvi l,$0b     ; $20b1 2e 0b   
-   ana e         ; $20b3 a3      
-   .byte 0x20    ; $20b4 20      
-   mov l,b       ; $20b5 68      
-   ldax b        ; $20b6 0a      
-   push b        ; $20b7 c5      
-   .byte 0x20    ; $20b8 20      
-   mvi a,$18     ; $20b9 3e 18   
-   dad b         ; $20bb 09      
-   mov b,e       ; $20bc 43      
-   mov d,h       ; $20bd 54      
-   mov b,l       ; $20be 45      
-   mov c,e       ; $20bf 4b      
-   .byte 0x20    ; $20c0 20      
-   rp            ; $20c1 f0      
-   push psw      ; $20c2 f5      
-   mov b,e       ; $20c3 43      
-   mov d,h       ; $20c4 54      
-   dcr d         ; $20c5 15      
-   inx b         ; $20c6 03      
-   add c         ; $20c7 81      
-   .byte 0x28    ; $20c8 28      
-   adc e         ; $20c9 8b      
-   .byte 0x20    ; $20ca 20      
-   call $02e4    ; $20cb cd e4 02
-   dcx h         ; $20ce 2b      
-   ldax b        ; $20cf 0a      
-   dad h         ; $20d0 29      
-   nop           ; $20d1 00      
-   .byte 0xed    ; $20d2 ed      
-   inx d         ; $20d3 13      
-   add d         ; $20d4 82      
-   inx b         ; $20d5 03      
-   dcr d         ; $20d6 15      
-   inx b         ; $20d7 03      
-   .byte 0x08    ; $20d8 08      
-   cmc           ; $20d9 3f      
-   mov b,e       ; $20da 43      
-   mov d,l       ; $20db 55      
-   mov d,d       ; $20dc 52      
-   mov d,d       ; $20dd 52      
-   mov b,l       ; $20de 45      
-   mov c,m       ; $20df 4e      
-   mov d,h       ; $20e0 54      
-   rst 0         ; $20e1 c7      
-   .byte 0x20    ; $20e2 20      
-   call $02e4    ; $20e3 cd e4 02
-   inx sp        ; $20e6 33      
-   stax b        ; $20e7 02      
-   add h         ; $20e8 84      
-   dad b         ; $20e9 09      
-   cmc           ; $20ea 3f      
-   .byte 0x08    ; $20eb 08      
-   mov a,m       ; $20ec 7e      
-   dcr b         ; $20ed 05      
-   mov c,d       ; $20ee 4a      
-   lxi d,$2004   ; $20ef 11 04 20
-   dcr l         ; $20f2 2d      
-   .byte 0x20    ; $20f3 20      
-   cmc           ; $20f4 3f      
-   dcr d         ; $20f5 15      
-   inx b         ; $20f6 03      
-   add a         ; $20f7 87      
-   mov d,e       ; $20f8 53      
-   mov b,e       ; $20f9 43      
-   mov d,d       ; $20fa 52      
-   mov b,c       ; $20fb 41      
-   mov d,h       ; $20fc 54      
-   mov b,e       ; $20fd 43      
-   mov c,b       ; $20fe 48      
-   rst 0         ; $20ff c7      
-   .byte 0x20    ; $2100 20      
-   call $02e4    ; $2101 cd e4 02
-   rm            ; $2104 f8      
-   dcx d         ; $2105 1b      
-   ana m         ; $2106 a6      
-   mvi d,$ed     ; $2107 16 ed   
-   inx d         ; $2109 13      
-   inx sp        ; $210a 33      
-   stax b        ; $210b 02      
-   add h         ; $210c 84      
-   dad b         ; $210d 09      
-   .byte 0x18    ; $210e 18      
-   .byte 0x18    ; $210f 18      
-   mov a,m       ; $2110 7e      
-   dcr b         ; $2111 05      
-   mov c,d       ; $2112 4a      
-   lxi d,$2004   ; $2113 11 04 20
-   dcr l         ; $2116 2d      
-   .byte 0x20    ; $2117 20      
-   cmc           ; $2118 3f      
-   dcr d         ; $2119 15      
-   inx b         ; $211a 03      
-   add h         ; $211b 84      
-   mov c,d       ; $211c 4a      
-   mov c,a       ; $211d 4f      
-   mov c,c       ; $211e 49      
-   mov c,m       ; $211f 4e      
-   rst 6         ; $2120 f7      
-   .byte 0x20    ; $2121 20      
-   call $02e4    ; $2122 cd e4 02
-   rm            ; $2125 f8      
-   dcx d         ; $2126 1b      
-   ana m         ; $2127 a6      
-   mvi d,$ed     ; $2128 16 ed   
-   inx d         ; $212a 13      
-   xthl          ; $212b e3      
-   .byte 0x20    ; $212c 20      
-   mov a,e       ; $212d 7b      
-   inx d         ; $212e 13      
-   add h         ; $212f 84      
-   dad b         ; $2130 09      
-   .byte 0x20    ; $2131 20      
-   ral           ; $2132 17      
-   mov a,e       ; $2133 7b      
-   inx d         ; $2134 13      
-   sbb l         ; $2135 9d      
-   dad b         ; $2136 09      
-   dcr d         ; $2137 15      
-   inx b         ; $2138 03      
-   add e         ; $2139 83      
-   mov c,m       ; $213a 4e      
-   mov b,l       ; $213b 45      
-   mov d,a       ; $213c 57      
-   dcx d         ; $213d 1b      
-   lxi h,$e4cd   ; $213e 21 cd e4
-   stax b        ; $2141 02      
-   rm            ; $2142 f8      
-   dcx d         ; $2143 1b      
-   ana m         ; $2144 a6      
-   mvi d,$ed     ; $2145 16 ed   
-   inx d         ; $2147 13      
-   out $03       ; $2148 d3 03   
-   xthl          ; $214a e3      
-   .byte 0x20    ; $214b 20      
-   inx sp        ; $214c 33      
-   stax b        ; $214d 02      
-   add h         ; $214e 84      
-   dad b         ; $214f 09      
-   dcr c         ; $2150 0d      
-   dad b         ; $2151 09      
-   out $03       ; $2152 d3 03   
-   mov a,e       ; $2154 7b      
-   inx d         ; $2155 13      
-   inx sp        ; $2156 33      
-   stax b        ; $2157 02      
-   sbb l         ; $2158 9d      
-   dad b         ; $2159 09      
-   sub d         ; $215a 92      
-   inx d         ; $215b 13      
-   adc l         ; $215c 8d      
-   inx b         ; $215d 03      
-   xthl          ; $215e e3      
-   .byte 0x20    ; $215f 20      
-   sub d         ; $2160 92      
-   inx d         ; $2161 13      
-   dcx h         ; $2162 2b      
-   ldax b        ; $2163 0a      
-   jmp $6200     ; $2164 c3 00 62
-   inx b         ; $2167 03      
-   xra d         ; $2168 aa      
-   dad b         ; $2169 09      
-   mov m,a       ; $216a 77      
-   inr b         ; $216b 04      
-   sbb l         ; $216c 9d      
-   dad b         ; $216d 09      
-   .byte 0x20    ; $216e 20      
-   dad b         ; $216f 09      
-   inx sp        ; $2170 33      
-   stax b        ; $2171 02      
-   sbb l         ; $2172 9d      
-   dad b         ; $2173 09      
-   dcr d         ; $2174 15      
-   inx b         ; $2175 03      
-   mvi b,$46     ; $2176 06 46   
-   mov c,a       ; $2178 4f      
-   mov d,d       ; $2179 52      
-   mov b,a       ; $217a 47      
-   mov b,l       ; $217b 45      
-   mov d,h       ; $217c 54      
-   dad sp        ; $217d 39      
-   lxi h,$e4cd   ; $217e 21 cd e4
-   stax b        ; $2181 02      
-   ana m         ; $2182 a6      
-   mvi d,$ed     ; $2183 16 ed   
-   inx d         ; $2185 13      
-   xthl          ; $2186 e3      
-   .byte 0x20    ; $2187 20      
-   out $03       ; $2188 d3 03   
-   xri $01       ; $218a ee 01   
-   add h         ; $218c 84      
-   dad b         ; $218d 09      
-   jm $4a04      ; $218e fa 04 4a
-   lxi d,$420e   ; $2191 11 0e 42
-   sphl          ; $2194 f9      
-   mov e,b       ; $2195 58      
-   mov c,a       ; $2196 4f      
-   cpo $fa20     ; $2197 e4 20 fa
-   mov b,c       ; $219a 41      
-   .byte 0x20    ; $219b 20      
-   mov b,m       ; $219c 46      
-   mov b,l       ; $219d 45      
-   mov c,m       ; $219e 4e      
-   mov b,e       ; $219f 43      
-   mov b,l       ; $21a0 45      
-   dcr c         ; $21a1 0d      
-   dad b         ; $21a2 09      
-   pop h         ; $21a3 e1      
-   lxi b,$0984   ; $21a4 01 84 09
-   inx sp        ; $21a7 33      
-   dad b         ; $21a8 09      
-   mov h,d       ; $21a9 62      
-   inx b         ; $21aa 03      
-   jm $7a04      ; $21ab fa 04 7a
-   ldax b        ; $21ae 0a      
-   pop b         ; $21af c1      
-   lxi h,$3450   ; $21b0 21 50 34
-   ldax b        ; $21b3 0a      
-   ral           ; $21b4 17      
-   add h         ; $21b5 84      
-   dad b         ; $21b6 09      
-   out $03       ; $21b7 d3 03   
-   pop h         ; $21b9 e1      
-   lxi b,$099d   ; $21ba 01 9d 09
-   mov l,b       ; $21bd 68      
-   ldax b        ; $21be 0a      
-   ana a         ; $21bf a7      
-   lxi h,$03d3   ; $21c0 21 d3 03
-   dcx h         ; $21c3 2b      
-   ldax b        ; $21c4 0a      
-   inr b         ; $21c5 04      
-   nop           ; $21c6 00      
-   mov d,l       ; $21c7 55      
-   inr b         ; $21c8 04      
-   mov a,e       ; $21c9 7b      
-   inx d         ; $21ca 13      
-   add h         ; $21cb 84      
-   dad b         ; $21cc 09      
-   out $03       ; $21cd d3 03   
-   inx sp        ; $21cf 33      
-   dad b         ; $21d0 09      
-   jm $7a04      ; $21d1 fa 04 7a
-   ldax b        ; $21d4 0a      
-   ret           ; $21d5 c9      
-   lxi h,$0362   ; $21d6 21 62 03
-   sbb c         ; $21d9 99      
-   inr b         ; $21da 04      
-   sbb l         ; $21db 9d      
-   dad b         ; $21dc 09      
-   add h         ; $21dd 84      
-   dad b         ; $21de 09      
-   rpo           ; $21df e0      
-   inx b         ; $21e0 03      
-   mov a,m       ; $21e1 7e      
-   dcr b         ; $21e2 05      
-   mov a,d       ; $21e3 7a      
-   ldax b        ; $21e4 0a      
-   pop b         ; $21e5 c1      
-   lxi h,$0920   ; $21e6 21 20 09
-   pop d         ; $21e9 d1      
-   lxi b,$099d   ; $21ea 01 9d 09
-   dcr d         ; $21ed 15      
-   inx b         ; $21ee 03      
-   dad b         ; $21ef 09      
-   mov b,c       ; $21f0 41      
-   mov d,e       ; $21f1 53      
-   mov d,e       ; $21f2 53      
-   mov b,l       ; $21f3 45      
-   mov c,l       ; $21f4 4d      
-   mov b,d       ; $21f5 42      
-   mov c,h       ; $21f6 4c      
-   mov b,l       ; $21f7 45      
-   mov d,d       ; $21f8 52      
-   hlt           ; $21f9 76      
-   lxi h,$95cd   ; $21fa 21 cd 95
-   dcx d         ; $21fd 1b      
-   lxi b,$6f80   ; $21fe 01 80 6f
-   dad h         ; $2201 29      
-   mov d,a       ; $2202 57      
-   inr m         ; $2203 34      
+   .word __40             ; $1fe5 0984 - @
+   .word _DUP             ; $1fe7 03D3 - DUP
+   .word __3FBRANCH       ; $1fe9 0A7A - ?BRANCH
+   .word $202B            ; $1feb 202B
+   .word _DUP             ; $1fed 03D3 - DUP
+   .word _COUNT           ; $1fef 0F6F - COUNT
+   .word _LIT             ; $1ff1 0A2B - LIT
+   .word $003F            ; $1ff3 003F
+   .word _AND             ; $1ff5 08C8 - AND
+   .word _TRAIL           ; $1ff7 1FCD - TRAIL
+   .word _OVER            ; $1ff9 0362 - OVER
+   .word _U_3C            ; $1ffb 04FA - U<
+   .word __3FBRANCH       ; $1ffd 0A7A - ?BRANCH
+   .word $2003            ; $1fff 2003
+   .word _CR              ; $2001 1566 - CR
+   .word _DUP             ; $2003 03D3 - DUP
+   .word _LIT             ; $2005 0A2B - LIT
+   .word $0008            ; $2007 0008
+   .word __2B             ; $2009 044A - +
+   .word _LIT             ; $200b 0A2B - LIT
+   .word $FFF8            ; $200d FFF8
+   .word _AND             ; $200f 08C8 - AND
+   .word _OVER            ; $2011 0362 - OVER
+   .word __2D             ; $2013 0455 - -
+   .word __2DROT          ; $2015 03C5 - -ROT
+   .word _TYPE            ; $2017 157E - TYPE
+   .word _TRAIL           ; $2019 1FCD - TRAIL
+   .word _MIN             ; $201b 04C1 - MIN
+   .word _0               ; $201d 0EC8 - 0
+   .word _MAX             ; $201f 04DE - MAX
+   .word _SPACES          ; $2021 16D6 - SPACES
+   .word _N_3ELINK        ; $2023 137B - N>LINK
+   .word _BREAK           ; $2025 1F35 - BREAK
+   .word _BRANCH          ; $2027 0A68 - BRANCH
+   .word $1FE5            ; $2029 1FE5
+   .word _DROP            ; $202b 0382 - DROP
+   .word _EXIT            ; $202d 0315 - EXIT
+
+NFA_WORDS:       ; 202F
+   .byte 5,"WORDS"
+   .word NFA_TRAIL        ; 1FC5
+_WORDS:          ; 2037 - 2042
+   call _FCALL            ; 2037
+   .word _CONTEXT         ; $203a 0224 - CONTEXT
+   .word __40             ; $203c 0984 - @
+   .word _NLIST           ; $203e 1FE2 - NLIST
+   .word _EXIT            ; $2040 0315 - EXIT
+
+NFA_VLIST:       ; 2042
+   .byte 5,"VLIST"
+   .word NFA_WORDS        ; 202F
+_VLIST:          ; 204A - 2051
+   call _FCALL            ; 204A
+   .word _WORDS           ; $204d 2037 - WORDS
+   .word _EXIT            ; $204f 0315 - EXIT
+
+NFA__2D_2D:      ; 2051
+   .byte 0x82,"--" ; IMMEDIATE
+   .word NFA_VLIST        ; 2042
+__2D_2D:         ; 2056 - 207F
+   call _FCALL            ; 2056
+   .word _BLK             ; $2059 02B1 - BLK
+   .word __40             ; $205b 0984 - @
+   .word __3FBRANCH       ; $205d 0A7A - ?BRANCH
+   .word $2075            ; $205f 2075
+   .word __3EIN           ; $2061 0276 - >IN
+   .word __40             ; $2063 0984 - @
+   .word _LIT             ; $2065 0A2B - LIT
+   .word $003F            ; $2067 003F
+   .word __2B             ; $2069 044A - +
+   .word _LIT             ; $206b 0A2B - LIT
+   .word $FFC0            ; $206d FFC0
+   .word _AND             ; $206f 08C8 - AND
+   .word _BRANCH          ; $2071 0A68 - BRANCH
+   .word $2079            ; $2073 2079
+   .word __23TIB          ; $2075 026B - #TIB
+   .word __40             ; $2077 0984 - @
+   .word __3EIN           ; $2079 0276 - >IN
+   .word __21             ; $207b 099D - !
+   .word _EXIT            ; $207d 0315 - EXIT
+
+NFA_NOOP:        ; 207F
+   .byte 4,"NOOP"
+   .word NFA__2D_2D           ; 2051
+_NOOP:           ; 2086 - 208B
+   call _FCALL            ; 2086
+   .word _EXIT            ; $2089 0315 - EXIT
+
+NFA_S_2E:        ; 208B
+   .byte 2,"S."
+   .word NFA_NOOP         ; 207F
+_S_2E:           ; 2090 - 20C7
+   call _FCALL            ; 2090
+   .word _DEPTH           ; $2093 1CD9 - DEPTH
+   .word __3FDUP          ; $2095 03E0 - ?DUP
+   .word __3FBRANCH       ; $2097 0A7A - ?BRANCH
+   .word $20B9            ; $2099 20B9
+   .word _1_2B            ; $209b 0477 - 1+
+   .word _1               ; $209d 0ED1 - 1
+   .word __28DO_29        ; $209f 0AE5 - (DO)
+   .word $20B5            ; $20a1 20B5
+   .word _S0              ; $20a3 01BE - S0
+   .word __40             ; $20a5 0984 - @
+   .word _I               ; $20a7 0A9F - I
+   .word _2_2A            ; $20a9 04A5 - 2*
+   .word __2D             ; $20ab 0455 - -
+   .word __40             ; $20ad 0984 - @
+   .word __2E             ; $20af 12FE - .
+   .word __28LOOP_29      ; $20b1 0B2E - (LOOP)
+   .word $20A3            ; $20b3 20A3
+   .word _BRANCH          ; $20b5 0A68 - BRANCH
+   .word $20C5            ; $20b7 20C5
+   .word __28_2E_22_29    ; $20b9 183E - (.")
+   .byte 9,"CTEK ",0xf0,0xf5,"CT"
+   .word _EXIT            ; $20c5 0315 - EXIT
+
+NFA__28:         ; 20C7
+   .byte 0x81,"(" ; IMMEDIATE
+   .word NFA_S_2E           ; 208B
+__28:            ; 20CB - 20F7
+   call _FCALL            ; 20CB
+   .word _LIT             ; $20ce 0A2B - LIT
+   .word $0029            ; $20d0 0029
+   .word _WORD            ; $20d2 13ED - WORD
+   .word _DROP            ; $20d4 0382 - DROP
+   .word _EXIT            ; $20d6 0315 - EXIT
+
+NFA__3FCURRENT:  ; 20D8
+   .byte 8,"?CURRENT"
+   .word NFA__28            ; 20C7
+__3FCURRENT:     ; 20E3 - None
+   call $02E4             ; $20e4 02E4
+   .word _CURRENT         ; $20e6 0233 - CURRENT
+   .word __40             ; $20e8 0984 - @
+   .word __3FWORD         ; $20ea 083F - ?WORD
+   .word _0_3D            ; $20ec 057E - 0=
+   .word __28ABORT_22_29  ; $20ee 114A - (ABORT")
+   .byte 4," - ?"
+   .word _EXIT            ; $20f5 0315 - EXIT
+
+NFA_SCRATCH:     ; 20F7
+   .byte 0x87,"SCRATCH" ; IMMEDIATE
+   .word NFA__28            ; 20C7
+_SCRATCH:        ; 2101 - 211B
+   call _FCALL            ; 2101
+   .word __3FEXEC         ; $2104 1BF8 - ?EXEC
+   .word _BL              ; $2106 16A6 - BL
+   .word _WORD            ; $2108 13ED - WORD
+   .word _CURRENT         ; $210a 0233 - CURRENT
+   .word __40             ; $210c 0984 - @
+   .word __2DWORD         ; $210e 1818 - -WORD
+   .word _0_3D            ; $2110 057E - 0=
+   .word __28ABORT_22_29  ; $2112 114A - (ABORT")
+   .byte 4," - ?"
+   .word _EXIT            ; $2119 0315 - EXIT
+
+NFA_JOIN:        ; 211B
+   .byte 0x84,"JOIN" ; IMMEDIATE
+   .word NFA_SCRATCH      ; 20F7
+_JOIN:           ; 2122 - 2139
+   call _FCALL            ; 2122
+   .word __3FEXEC         ; $2125 1BF8 - ?EXEC
+   .word _BL              ; $2127 16A6 - BL
+   .word _WORD            ; $2129 13ED - WORD
+   .word __3FCURRENT      ; $212b 20E3 - ?CURRENT
+   .word _N_3ELINK        ; $212d 137B - N>LINK
+   .word __40             ; $212f 0984 - @
+   .word _LATEST          ; $2131 1720 - LATEST
+   .word _N_3ELINK        ; $2133 137B - N>LINK
+   .word __21             ; $2135 099D - !
+   .word _EXIT            ; $2137 0315 - EXIT
+
+NFA_NEW:         ; 2139
+   .byte 0x83,"NEW" ; IMMEDIATE
+   .word NFA_JOIN         ; 211B
+_NEW:            ; 213F - 2176
+   call _FCALL            ; 213F
+   .word __3FEXEC         ; $2142 1BF8 - ?EXEC
+   .word _BL              ; $2144 16A6 - BL
+   .word _WORD            ; $2146 13ED - WORD
+   .word _DUP             ; $2148 03D3 - DUP
+   .word __3FCURRENT      ; $214a 20E3 - ?CURRENT
+   .word _CURRENT         ; $214c 0233 - CURRENT
+   .word __40             ; $214e 0984 - @
+   .word __3ER            ; $2150 090D - >R
+   .word _DUP             ; $2152 03D3 - DUP
+   .word _N_3ELINK        ; $2154 137B - N>LINK
+   .word _CURRENT         ; $2156 0233 - CURRENT
+   .word __21             ; $2158 099D - !
+   .word _NAME_3E         ; $215a 1392 - NAME>
+   .word _SWAP            ; $215c 038D - SWAP
+   .word __3FCURRENT      ; $215e 20E3 - ?CURRENT
+   .word _NAME_3E         ; $2160 1392 - NAME>
+   .word _LIT             ; $2162 0A2B - LIT
+   .word $00C3            ; $2164 00C3
+   .word _OVER            ; $2166 0362 - OVER
+   .word _C_21            ; $2168 09AA - C!
+   .word _1_2B            ; $216a 0477 - 1+
+   .word __21             ; $216c 099D - !
+   .word _R_3E            ; $216e 0920 - R>
+   .word _CURRENT         ; $2170 0233 - CURRENT
+   .word __21             ; $2172 099D - !
+   .word _EXIT            ; $2174 0315 - EXIT
+
+NFA_FORGET:      ; 2176
+   .byte 6,"FORGET"
+   .word NFA_NEW          ; 2139
+_FORGET:         ; 217F - 21EF
+   call _FCALL            ; 217F
+   .word _BL              ; $2182 16A6 - BL
+   .word _WORD            ; $2184 13ED - WORD
+   .word __3FCURRENT      ; $2186 20E3 - ?CURRENT
+   .word _DUP             ; $2188 03D3 - DUP
+   .word _FENCE           ; $218a 01EE - FENCE
+   .word __40             ; $218c 0984 - @
+   .word _U_3C            ; $218e 04FA - U<
+   .word __28ABORT_22_29  ; $2190 114A - (ABORT")
+   .byte 14,"B",0xf9,"XO",0xe4," ",0xfa,"A FENCE"
+   .word __3ER            ; $21a1 090D - >R
+   .word _VOC_2DLINK      ; $21a3 01E1 - VOC-LINK
+   .word __40             ; $21a5 0984 - @
+   .word _R_40            ; $21a7 0933 - R@
+   .word _OVER            ; $21a9 0362 - OVER
+   .word _U_3C            ; $21ab 04FA - U<
+   .word __3FBRANCH       ; $21ad 0A7A - ?BRANCH
+   .word $21C1            ; $21af 21C1
+   .word _FORTH           ; $21b1 3450 - FORTH
+   .word _DEFINITIONS     ; $21b3 170A - DEFINITIONS
+   .word __40             ; $21b5 0984 - @
+   .word _DUP             ; $21b7 03D3 - DUP
+   .word _VOC_2DLINK      ; $21b9 01E1 - VOC-LINK
+   .word __21             ; $21bb 099D - !
+   .word _BRANCH          ; $21bd 0A68 - BRANCH
+   .word $21A7            ; $21bf 21A7
+   .word _DUP             ; $21c1 03D3 - DUP
+   .word _LIT             ; $21c3 0A2B - LIT
+   .word $0004            ; $21c5 0004
+   .word __2D             ; $21c7 0455 - -
+   .word _N_3ELINK        ; $21c9 137B - N>LINK
+   .word __40             ; $21cb 0984 - @
+   .word _DUP             ; $21cd 03D3 - DUP
+   .word _R_40            ; $21cf 0933 - R@
+   .word _U_3C            ; $21d1 04FA - U<
+   .word __3FBRANCH       ; $21d3 0A7A - ?BRANCH
+   .word $21C9            ; $21d5 21C9
+   .word _OVER            ; $21d7 0362 - OVER
+   .word _2_2D            ; $21d9 0499 - 2-
+   .word __21             ; $21db 099D - !
+   .word __40             ; $21dd 0984 - @
+   .word __3FDUP          ; $21df 03E0 - ?DUP
+   .word _0_3D            ; $21e1 057E - 0=
+   .word __3FBRANCH       ; $21e3 0A7A - ?BRANCH
+   .word $21C1            ; $21e5 21C1
+   .word _R_3E            ; $21e7 0920 - R>
+   .word _H               ; $21e9 01D1 - H
+   .word __21             ; $21eb 099D - !
+   .word _EXIT            ; $21ed 0315 - EXIT
+
+NFA_ASSEMBLER:   ; 21EF
+   .byte 9,"ASSEMBLER"
+   .word NFA_FORGET       ; 2176
+_ASSEMBLER:      ; 21FB - 28E3
+   call l1b95    ; cd 95
+   .byte $01     ; $21fe 01
+   .byte $80
+   .word $296f
+   .word $3457   ; $2202 57      
+
    call $02e4    ; $2204 cd e4 02
-   ana l         ; $2207 a5      
-   inr b         ; $2208 04      
-   ana l         ; $2209 a5      
-   inr b         ; $220a 04      
-   ana l         ; $220b a5      
-   inr b         ; $220c 04      
-   dcr d         ; $220d 15      
-   inx b         ; $220e 03      
+   .word _2_2A            ; $2207 04A5 - 2*
+   .word _2_2A            ; $2209 04A5 - 2*
+   .word _2_2A            ; $220b 04A5 - 2*
+   .word _EXIT            ; $220d 0315 - EXIT
+
    lxi b,$5348   ; $220f 01 48 53
    inr m         ; $2212 34      
    call $0984    ; $2213 cd 84 09
@@ -6511,32 +4790,24 @@ _LEAVE:          ; 1C79 - 1C84
    dad b         ; $2269 09      
    mvi b,$00     ; $226a 06 00   
    call $02e4    ; $226c cd e4 02
-   sub c         ; $226f 91      
-   dad b         ; $2270 09      
-   cma           ; $2271 2f      
-   rrc           ; $2272 0f      
-   dcr d         ; $2273 15      
-   inx b         ; $2274 03      
+   .word _C_40            ; $226f 0991 - C@
+   .word _C_2C            ; $2271 0F2F - C,
+   .word _EXIT            ; $2273 0315 - EXIT
+
    call $02e4    ; $2275 cd e4 02
-   sub c         ; $2278 91      
-   dad b         ; $2279 09      
-   mov c,d       ; $227a 4a      
-   inr b         ; $227b 04      
-   cma           ; $227c 2f      
-   rrc           ; $227d 0f      
-   dcr d         ; $227e 15      
-   inx b         ; $227f 03      
+   .word _C_40            ; $2278 0991 - C@
+   .word __2B             ; $227a 044A - +
+   .word _C_2C            ; $227c 0F2F - C,
+   .word _EXIT            ; $227e 0315 - EXIT
+
    call $02e4    ; $2280 cd e4 02
-   sub c         ; $2283 91      
-   dad b         ; $2284 09      
-   adc l         ; $2285 8d      
-   inx b         ; $2286 03      
-   inr b         ; $2287 04      
-   shld $044a    ; $2288 22 4a 04
-   cma           ; $228b 2f      
-   rrc           ; $228c 0f      
-   dcr d         ; $228d 15      
-   inx b         ; $228e 03      
+   .word _C_40            ; $2283 0991 - C@
+   .word _SWAP            ; $2285 038D - SWAP
+   .word $2204            ; $2287 2204
+   .word __2B             ; $2289 044A - +
+   .word _C_2C            ; $228b 0F2F - C,
+   .word _EXIT            ; $228d 0315 - EXIT
+
    call $02e4    ; $228f cd e4 02
    sub c         ; $2292 91      
    dad b         ; $2293 09      
@@ -7706,126 +5977,77 @@ _LEAVE:          ; 1C79 - 1C84
    mvi m,$28     ; $28df 36 28   
    dcr d         ; $28e1 15      
    inx b         ; $28e2 03      
-   rlc           ; $28e3 07      
-   mov b,d       ; $28e4 42      
-   mov b,l       ; $28e5 45      
-   mov b,a       ; $28e6 47      
-   dcr l         ; $28e7 2d      
-   mov b,c       ; $28e8 41      
-   mov d,e       ; $28e9 53      
-   mov c,l       ; $28ea 4d      
-   rst 5         ; $28eb ef      
-   lxi h,$e4cd   ; $28ec 21 cd e4
-   stax b        ; $28ef 02      
-   sphl          ; $28f0 f9      
-   shld $21fb    ; $28f1 22 fb 21
-   cmp l         ; $28f4 bd      
-   dcx d         ; $28f5 1b      
-   dcr d         ; $28f6 15      
-   inx b         ; $28f7 03      
-   rlc           ; $28f8 07      
-   mov b,l       ; $28f9 45      
-   mov c,m       ; $28fa 4e      
-   mov b,h       ; $28fb 44      
-   dcr l         ; $28fc 2d      
-   mov b,c       ; $28fd 41      
-   mov d,e       ; $28fe 53      
-   mov c,l       ; $28ff 4d      
-   xthl          ; $2900 e3      
-   .byte 0x28    ; $2901 28      
-   call $02e4    ; $2902 cd e4 02
-   cmp c         ; $2905 b9      
-   shld $1bcf    ; $2906 22 cf 1b
-   inx sp        ; $2909 33      
-   stax b        ; $290a 02      
-   add h         ; $290b 84      
-   dad b         ; $290c 09      
-   inr h         ; $290d 24      
-   stax b        ; $290e 02      
-   sbb l         ; $290f 9d      
-   dad b         ; $2910 09      
-   dcr d         ; $2911 15      
-   inx b         ; $2912 03      
-   inr b         ; $2913 04      
-   mov b,e       ; $2914 43      
-   mov c,a       ; $2915 4f      
-   mov b,h       ; $2916 44      
-   mov b,l       ; $2917 45      
-   rm            ; $2918 f8      
-   .byte 0x28    ; $2919 28      
-   call $02e4    ; $291a cd e4 02
-   lxi h,$601a   ; $291d 21 1a 60
-   ral           ; $2920 17      
-   dcr l         ; $2921 2d      
-   inx d         ; $2922 13      
-   mov l,d       ; $2923 6a      
-   inr b         ; $2924 04      
-   .byte 0x10    ; $2925 10      
-   rrc           ; $2926 0f      
-   .byte 0xed    ; $2927 ed      
-   .byte 0x28    ; $2928 28      
-   dcr d         ; $2929 15      
-   inx b         ; $292a 03      
-   add l         ; $292b 85      
-   dcx sp        ; $292c 3b      
-   mov b,e       ; $292d 43      
-   mov c,a       ; $292e 4f      
-   mov b,h       ; $292f 44      
-   mov b,l       ; $2930 45      
-   inx d         ; $2931 13      
-   dad h         ; $2932 29      
-   call $02e4    ; $2933 cd e4 02
-   mvi h,$1c     ; $2936 26 1c   
-   add e         ; $2938 83      
-   rrc           ; $2939 0f      
-   mov a,l       ; $293a 7d      
-   ldax d        ; $293b 1a      
-   .byte 0xed    ; $293c ed      
-   .byte 0x28    ; $293d 28      
-   mov m,c       ; $293e 71      
-   ral           ; $293f 17      
-   dcr d         ; $2940 15      
-   inx b         ; $2941 03      
-   .byte 0x08    ; $2942 08      
-   mov b,l       ; $2943 45      
-   mov c,m       ; $2944 4e      
-   mov b,h       ; $2945 44      
-   dcr l         ; $2946 2d      
-   mov b,e       ; $2947 43      
-   mov c,a       ; $2948 4f      
-   mov b,h       ; $2949 44      
-   mov b,l       ; $294a 45      
-   dcx h         ; $294b 2b      
-   dad h         ; $294c 29      
-   call $02e4    ; $294d cd e4 02
-   mov h,b       ; $2950 60      
-   ral           ; $2951 17      
-   stax b        ; $2952 02      
-   dad h         ; $2953 29      
-   dcr d         ; $2954 15      
-   inx b         ; $2955 03      
-   dcr b         ; $2956 05      
-   mov c,h       ; $2957 4c      
-   mov b,c       ; $2958 41      
-   mov b,d       ; $2959 42      
-   mov b,l       ; $295a 45      
-   mov c,h       ; $295b 4c      
-   mov b,d       ; $295c 42      
-   dad h         ; $295d 29      
-   call $02e4    ; $295e cd e4 02
-   mov d,d       ; $2961 52      
-   dcx d         ; $2962 1b      
-   dcx h         ; $2963 2b      
-   ldax b        ; $2964 0a      
-   cpi $ff       ; $2965 fe ff   
-   .byte 0x10    ; $2967 10      
-   rrc           ; $2968 0f      
-   mov h,b       ; $2969 60      
-   ral           ; $296a 17      
-   .byte 0xed    ; $296b ed      
-   .byte 0x28    ; $296c 28      
-   dcr d         ; $296d 15      
-   inx b         ; $296e 03      
+
+NFA_BEG_2DASM:   ; 28E3
+   .byte 7,"BEG-ASM"
+   .word NFA_ASSEMBLER    ; 21EF
+_BEG_2DASM:      ; 28ED - 28F8
+   call _FCALL            ; 28ED
+   .word $22F9            ; $28f0 22F9
+   .word _ASSEMBLER       ; $28f2 21FB - ASSEMBLER
+   .word __21CSP          ; $28f4 1BBD - !CSP
+   .word _EXIT            ; $28f6 0315 - EXIT
+
+NFA_END_2DASM:   ; 28F8
+   .byte 7,"END-ASM"
+   .word NFA_BEG_2DASM      ; 28E3
+_END_2DASM:      ; 2902 - 2913
+   call _FCALL            ; 2902
+   .word $22B9            ; $2905 22B9
+   .word __3FCSP          ; $2907 1BCF - ?CSP
+   .word _CURRENT         ; $2909 0233 - CURRENT
+   .word __40             ; $290b 0984 - @
+   .word _CONTEXT         ; $290d 0224 - CONTEXT
+   .word __21             ; $290f 099D - !
+   .word _EXIT            ; $2911 0315 - EXIT
+
+NFA_CODE:        ; 2913
+   .byte 4,"CODE"
+   .word NFA_END_2DASM      ; 28F8
+_CODE:           ; 291A - 292B
+   call _FCALL            ; 291A
+   .word _CREATE          ; $291d 1A21 - CREATE
+   .word _SMUDGE          ; $291f 1760 - SMUDGE
+   .word _CFL             ; $2921 132D - CFL
+   .word _NEGATE          ; $2923 046A - NEGATE
+   .word _ALLOT           ; $2925 0F10 - ALLOT
+   .word _BEG_2DASM       ; $2927 28ED - BEG-ASM
+   .word _EXIT            ; $2929 0315 - EXIT
+
+NFA__3BCODE:     ; 292B
+   .byte 0x85,";CODE" ; IMMEDIATE
+   .word NFA_CODE         ; 2913
+__3BCODE:        ; 2933 - 2942
+   call _FCALL            ; 2933
+   .word __3FCOMP         ; $2936 1C26 - ?COMP
+   .word _COMPILE         ; $2938 0F83 - COMPILE
+   .word __28DOES_3E_29   ; $293a 1A7D - (DOES>)
+   .word _BEG_2DASM       ; $293c 28ED - BEG-ASM
+   .word __5B             ; $293e 1771 - [
+   .word _EXIT            ; $2940 0315 - EXIT
+
+NFA_END_2DCODE:  ; 2942
+   .byte 8,"END-CODE"
+   .word NFA__3BCODE        ; 292B
+_END_2DCODE:     ; 294D - 2956
+   call _FCALL            ; 294D
+   .word _SMUDGE          ; $2950 1760 - SMUDGE
+   .word _END_2DASM       ; $2952 2902 - END-ASM
+   .word _EXIT            ; $2954 0315 - EXIT
+
+NFA_LABEL:       ; 2956
+   .byte 5,"LABEL"
+   .word NFA_END_2DCODE     ; 2942
+_LABEL:          ; 295E - 2982
+   call _FCALL            ; 295E
+   .word _VARIABLE        ; $2961 1B52 - VARIABLE
+   .word _LIT             ; $2963 0A2B - LIT
+   .word $FFFE            ; $2965 FFFE
+   .word _ALLOT           ; $2967 0F10 - ALLOT
+   .word _SMUDGE          ; $2969 1760 - SMUDGE
+   .word _BEG_2DASM       ; $296b 28ED - BEG-ASM
+   .word _EXIT            ; $296d 0315 - EXIT
+
    dcr b         ; $296f 05      
    mov c,m       ; $2970 4e      
    mov b,l       ; $2971 45      
@@ -7841,14 +6063,11 @@ _LEAVE:          ; 1C79 - 1C84
    dad h         ; $297f 29      
    dcr d         ; $2980 15      
    inx b         ; $2981 03      
-   dcr b         ; $2982 05      
-   .byte 0x28    ; $2983 28      
-   mov c,a       ; $2984 4f      
-   mov d,l       ; $2985 55      
-   mov d,h       ; $2986 54      
-   dad h         ; $2987 29      
-   mov d,m       ; $2988 56      
-   dad h         ; $2989 29      
+
+NFA__28OUT_29:   ; 2982
+   .byte 5,"(OUT)"
+   .word NFA_LABEL        ; 2956
+__28OUT_29:      ; 298A - 29AB
    pop d         ; $298a d1      
    pop h         ; $298b e1      
    push b        ; $298c c5      
@@ -7927,13 +6146,12 @@ _LEAVE:          ; 1C79 - 1C84
    dcr b         ; $29f9 05      
    dcr d         ; $29fa 15      
    inx b         ; $29fb 03      
-   inx b         ; $29fc 03      
-   mov c,a       ; $29fd 4f      
-   mov d,l       ; $29fe 55      
-   mov d,h       ; $29ff 54      
-   xra e         ; $2a00 ab      
-   dad h         ; $2a01 29      
-   call $02e4    ; $2a02 cd e4 02
+
+NFA_OUT:         ; 29FC
+   .byte 3,"OUT"
+   .word $29AB   ; NFA_BOUNDS       ; 29AB
+_OUT:            ; 2A02 - 2A46
+   call _FCALL            ; 2A02
    cmp a         ; $2a05 bf      
    dad h         ; $2a06 29      
    mov h,d       ; $2a07 62      
@@ -7990,15 +6208,15 @@ _LEAVE:          ; 1C79 - 1C84
    stax b        ; $2a43 02      
    dcr d         ; $2a44 15      
    inx b         ; $2a45 03      
-   inx b         ; $2a46 03      
-   mov b,h       ; $2a47 44      
-   mov b,d       ; $2a48 42      
-   mov c,b       ; $2a49 48      
-   cm $cd29      ; $2a4a fc 29 cd
-   add h         ; $2a4d 84      
-   dad b         ; $2a4e 09      
+
+NFA_DBH:         ; 2A46
+   .byte 3,"DBH"
+   .word NFA_OUT          ; 29FC
+_DBH:            ; 2A4C - 2A5C
+   call $0984
    inr b         ; $2a4f 04      
    nop           ; $2a50 00      
+
    inx b         ; $2a51 03      
    mov b,h       ; $2a52 44      
    mov b,d       ; $2a53 42      
@@ -8008,26 +6226,22 @@ _LEAVE:          ; 1C79 - 1C84
    dad b         ; $2a59 09      
    stax b        ; $2a5a 02      
    nop           ; $2a5b 00      
-   dcr b         ; $2a5c 05      
-   mov b,d       ; $2a5d 42      
-   cma           ; $2a5e 2f      
-   mov b,d       ; $2a5f 42      
-   mov d,l       ; $2a60 55      
-   mov b,m       ; $2a61 46      
-   mov b,m       ; $2a62 46      
-   lhld $84cd    ; $2a63 2a cd 84
-   dad b         ; $2a66 09      
+
+NFA_B_2FBUF:     ; 2A5C
+   .byte 5,"B/BUF"
+   .word NFA_DBH          ; 2A46
+_B_2FBUF:        ; 2A64 - 2A69
+   call $0984
    nop           ; $2a67 00      
    inr b         ; $2a68 04      
-   inr b         ; $2a69 04      
-   mov c,b       ; $2a6a 48      
-   mov b,h       ; $2a6b 44      
-   mov b,d       ; $2a6c 42      
-   mov d,h       ; $2a6d 54      
-   mov e,h       ; $2a6e 5c      
-   lhld $84cd    ; $2a6f 2a cd 84
-   dad b         ; $2a72 09      
+
+NFA_HDBT:        ; 2A69
+   .byte 4,"HDBT"
+   .word NFA_B_2FBUF        ; 2A5C
+_HDBT:           ; 2A70 - 2A83
+   call $0984
    mvi b,$04     ; $2a73 06 04   
+
    mvi b,$23     ; $2a75 06 23   
    mov b,d       ; $2a77 42      
    mov d,l       ; $2a78 55      
@@ -8037,21 +6251,19 @@ _LEAVE:          ; 1C79 - 1C84
    call $0984    ; $2a7e cd 84 09
    sbb e         ; $2a81 9b      
    dcr m         ; $2a82 35      
-   mvi b,$46     ; $2a83 06 46   
-   mov c,c       ; $2a85 49      
-   mov d,d       ; $2a86 52      
-   mov d,e       ; $2a87 53      
-   mov d,h       ; $2a88 54      
-   lxi sp,$2a69  ; $2a89 31 69 2a
+
+NFA_FIRST1:      ; 2A83
+   .byte 6,"FIRST1"
+   .word NFA_HDBT         ; 2A69
+_FIRST1:         ; 2A8C - 2A91
    call $0984    ; $2a8c cd 84 09
    sbb l         ; $2a8f 9d      
    dcr m         ; $2a90 35      
-   mvi b,$4c     ; $2a91 06 4c   
-   mov c,c       ; $2a93 49      
-   mov c,l       ; $2a94 4d      
-   mov c,c       ; $2a95 49      
-   mov d,h       ; $2a96 54      
-   lxi sp,$2a83  ; $2a97 31 83 2a
+
+NFA_LIMIT1:      ; 2A91
+   .byte 6,"LIMIT1"
+   .word NFA_FIRST1       ; 2A83
+_LIMIT1:         ; 2A9A - 2AAB
    call $0984    ; $2a9a cd 84 09
    sbb a         ; $2a9d 9f      
    dcr m         ; $2a9e 35      
@@ -8065,16 +6277,15 @@ _LEAVE:          ; 1C79 - 1C84
    dad b         ; $2aa8 09      
    ana c         ; $2aa9 a1      
    dcr m         ; $2aaa 35      
-   inr b         ; $2aab 04      
-   mov d,b       ; $2aac 50      
-   mov d,d       ; $2aad 52      
-   mov b,l       ; $2aae 45      
-   mov d,m       ; $2aaf 56      
-   sub c         ; $2ab0 91      
-   lhld $84cd    ; $2ab1 2a cd 84
-   dad b         ; $2ab4 09      
+
+NFA_PREV:        ; 2AAB
+   .byte 4,"PREV"
+   .word NFA_LIMIT1       ; 2A91
+_PREV:           ; 2AB2 - 2AD0
+   call $0984    ; cd 84
    ana e         ; $2ab5 a3      
    dcr m         ; $2ab6 35      
+
    inx b         ; $2ab7 03      
    mov d,l       ; $2ab8 55      
    mov d,e       ; $2ab9 53      
@@ -8084,6 +6295,7 @@ _LEAVE:          ; 1C79 - 1C84
    dad b         ; $2abf 09      
    ana l         ; $2ac0 a5      
    dcr m         ; $2ac1 35      
+
    mvi b,$42     ; $2ac2 06 42   
    mov b,d       ; $2ac4 42      
    dcr l         ; $2ac5 2d      
@@ -8095,15 +6307,15 @@ _LEAVE:          ; 1C79 - 1C84
    dad b         ; $2acd 09      
    ana a         ; $2ace a7      
    dcr m         ; $2acf 35      
-   inx b         ; $2ad0 03      
-   mov d,e       ; $2ad1 53      
-   mov b,e       ; $2ad2 43      
-   mov d,d       ; $2ad3 52      
-   xra e         ; $2ad4 ab      
-   lhld $84cd    ; $2ad5 2a cd 84
-   dad b         ; $2ad8 09      
+
+NFA_SCR:         ; 2AD0
+   .byte 3,"SCR"
+   .word NFA_PREV         ; 2AAB
+_SCR:            ; 2AD6 - 2AF8
+   call $0984    ; cd 84
    xra c         ; $2ad9 a9      
    dcr m         ; $2ada 35      
+
    inr b         ; $2adb 04      
    mov c,h       ; $2adc 4c      
    mov b,e       ; $2add 43      
@@ -8114,6 +6326,7 @@ _LEAVE:          ; 1C79 - 1C84
    dad b         ; $2ae4 09      
    xra e         ; $2ae5 ab      
    dcr m         ; $2ae6 35      
+
    dcr b         ; $2ae7 05      
    inx h         ; $2ae8 23      
    mov b,d       ; $2ae9 42      
@@ -8126,111 +6339,75 @@ _LEAVE:          ; 1C79 - 1C84
    lhld $0984    ; $2af3 2a 84 09
    dcr d         ; $2af6 15      
    inx b         ; $2af7 03      
-   dcr b         ; $2af8 05      
-   mov b,m       ; $2af9 46      
-   mov c,c       ; $2afa 49      
-   mov d,d       ; $2afb 52      
-   mov d,e       ; $2afc 53      
-   mov d,h       ; $2afd 54      
-   rnc           ; $2afe d0      
-   lhld $e4cd    ; $2aff 2a cd e4
-   stax b        ; $2b02 02      
-   adc h         ; $2b03 8c      
-   lhld $0984    ; $2b04 2a 84 09
-   dcr d         ; $2b07 15      
-   inx b         ; $2b08 03      
-   dcr b         ; $2b09 05      
-   mov c,h       ; $2b0a 4c      
-   mov c,c       ; $2b0b 49      
-   mov c,l       ; $2b0c 4d      
-   mov c,c       ; $2b0d 49      
-   mov d,h       ; $2b0e 54      
-   rm            ; $2b0f f8      
-   lhld $e4cd    ; $2b10 2a cd e4
-   stax b        ; $2b13 02      
-   sbb d         ; $2b14 9a      
-   lhld $0984    ; $2b15 2a 84 09
-   dcr d         ; $2b18 15      
-   inx b         ; $2b19 03      
-   inx b         ; $2b1a 03      
-   mov b,h       ; $2b1b 44      
-   mov b,d       ; $2b1c 42      
-   mov b,e       ; $2b1d 43      
-   dad b         ; $2b1e 09      
-   dcx h         ; $2b1f 2b      
-   call $02e4    ; $2b20 cd e4 02
-   add d         ; $2b23 82      
-   inr b         ; $2b24 04      
-   dcr d         ; $2b25 15      
-   inx b         ; $2b26 03      
-   inx b         ; $2b27 03      
-   mov d,d       ; $2b28 52      
-   cma           ; $2b29 2f      
-   mov d,a       ; $2b2a 57      
-   ldax d        ; $2b2b 1a      
-   dcx h         ; $2b2c 2b      
-   call $02e4    ; $2b2d cd e4 02
-   ana m         ; $2b30 a6      
-   lhld $0984    ; $2b31 2a 84 09
-   inr l         ; $2b34 2c      
-   inx b         ; $2b35 03      
-   dcr d         ; $2b36 15      
-   inx b         ; $2b37 03      
-   dcr c         ; $2b38 0d      
-   mov b,l       ; $2b39 45      
-   mov c,l       ; $2b3a 4d      
-   mov d,b       ; $2b3b 50      
-   mov d,h       ; $2b3c 54      
-   mov e,c       ; $2b3d 59      
-   dcr l         ; $2b3e 2d      
-   mov b,d       ; $2b3f 42      
-   mov d,l       ; $2b40 55      
-   mov b,m       ; $2b41 46      
-   mov b,m       ; $2b42 46      
-   mov b,l       ; $2b43 45      
-   mov d,d       ; $2b44 52      
-   mov d,e       ; $2b45 53      
-   ldax d        ; $2b46 1a      
-   dcx h         ; $2b47 2b      
-   call $02e4    ; $2b48 cd e4 02
-   nop           ; $2b4b 00      
-   dcx h         ; $2b4c 2b      
-   lxi d,$622b   ; $2b4d 11 2b 62
-   inx b         ; $2b50 03      
-   mov d,l       ; $2b51 55      
-   inr b         ; $2b52 04      
-   mov e,e       ; $2b53 5b      
-   .byte 0x18    ; $2b54 18      
-   lxi d,$002b   ; $2b55 11 2b 00
-   dcx h         ; $2b58 2b      
-   push h        ; $2b59 e5      
-   ldax b        ; $2b5a 0a      
-   mov l,e       ; $2b5b 6b      
-   dcx h         ; $2b5c 2b      
-   dcx h         ; $2b5d 2b      
-   ldax b        ; $2b5e 0a      
-   rst 7         ; $2b5f ff      
-   mov a,a       ; $2b60 7f      
-   sbb a         ; $2b61 9f      
-   ldax b        ; $2b62 0a      
-   sbb l         ; $2b63 9d      
-   dad b         ; $2b64 09      
-   mov m,b       ; $2b65 70      
-   lhld $0b63    ; $2b66 2a 63 0b
-   mov e,l       ; $2b69 5d      
-   dcx h         ; $2b6a 2b      
-   pop d         ; $2b6b d1      
-   mvi c,$cb     ; $2b6c 0e cb   
-   lhld $099d    ; $2b6e 2a 9d 09
-   nop           ; $2b71 00      
-   dcx h         ; $2b72 2b      
-   out $03       ; $2b73 d3 03   
-   ora d         ; $2b75 b2      
-   lhld $099d    ; $2b76 2a 9d 09
-   cmp l         ; $2b79 bd      
-   lhld $099d    ; $2b7a 2a 9d 09
-   dcr d         ; $2b7d 15      
-   inx b         ; $2b7e 03      
+
+NFA_FIRST:       ; 2AF8
+   .byte 5,"FIRST"
+   .word NFA_SCR          ; 2AD0
+_FIRST:          ; 2B00 - 2B09
+   call _FCALL            ; 2B00
+   .word _FIRST1          ; $2b03 2A8C - FIRST1
+   .word __40             ; $2b05 0984 - @
+   .word _EXIT            ; $2b07 0315 - EXIT
+
+NFA_LIMIT:       ; 2B09
+   .byte 5,"LIMIT"
+   .word NFA_FIRST        ; 2AF8
+_LIMIT:          ; 2B11 - 2B1A
+   call _FCALL            ; 2B11
+   .word _LIMIT1          ; $2b14 2A9A - LIMIT1
+   .word __40             ; $2b16 0984 - @
+   .word _EXIT            ; $2b18 0315 - EXIT
+
+NFA_DBC:         ; 2B1A
+   .byte 3,"DBC"
+   .word NFA_LIMIT        ; 2B09
+_DBC:            ; 2B20 - 2B38
+   call _FCALL            ; 2B20
+   .word _2_2B            ; $2b23 0482 - 2+
+   .word _EXIT            ; $2b25 0315 - EXIT
+
+   .word $5203            ; $2b27 5203
+   .word $572F            ; $2b29 572F
+   .word $2B1A            ; $2b2b 2B1A
+   .word $E4CD            ; $2b2d E4CD
+   .word $A602            ; $2b2f A602
+   .word $842A            ; $2b31 842A
+   .word $2C09            ; $2b33 2C09
+   .word $1503            ; $2b35 1503
+   .byte $03              ; $2b37 03
+
+NFA_EMPTY_2DBUFFERS:; 2B38
+   .byte 13,"EMPTY-BUFFERS"
+   .word NFA_DBC          ; 2B1A
+_EMPTY_2DBUFFERS:; 2B48 - 2B7F
+   call _FCALL            ; 2B48
+   .word _FIRST           ; $2b4b 2B00 - FIRST
+   .word _LIMIT           ; $2b4d 2B11 - LIMIT
+   .word _OVER            ; $2b4f 0362 - OVER
+   .word __2D             ; $2b51 0455 - -
+   .word _ERASE           ; $2b53 185B - ERASE
+   .word _LIMIT           ; $2b55 2B11 - LIMIT
+   .word _FIRST           ; $2b57 2B00 - FIRST
+   .word __28DO_29        ; $2b59 0AE5 - (DO)
+   .word $2B6B            ; $2b5b 2B6B
+   .word _LIT             ; $2b5d 0A2B - LIT
+   .word $7FFF            ; $2b5f 7FFF
+   .word _I               ; $2b61 0A9F - I
+   .word __21             ; $2b63 099D - !
+   .word _HDBT            ; $2b65 2A70 - HDBT
+   .word __28_2BLOOP_29   ; $2b67 0B63 - (+LOOP)
+   .word $2B5D            ; $2b69 2B5D
+   .word _1               ; $2b6b 0ED1 - 1
+   .word $2ACB            ; $2b6d 2ACB
+   .word __21             ; $2b6f 099D - !
+   .word _FIRST           ; $2b71 2B00 - FIRST
+   .word _DUP             ; $2b73 03D3 - DUP
+   .word _PREV            ; $2b75 2AB2 - PREV
+   .word __21             ; $2b77 099D - !
+   .word $2ABD            ; $2b79 2ABD
+   .word __21             ; $2b7b 099D - !
+   .word _EXIT            ; $2b7d 0315 - EXIT
+
    inr c         ; $2b7f 0c      
    mov d,e       ; $2b80 53      
    mov b,c       ; $2b81 41      
@@ -8518,259 +6695,155 @@ _LEAVE:          ; 1C79 - 1C84
    lhld $044a    ; $2cf0 2a 4a 04
    dcr d         ; $2cf3 15      
    inx b         ; $2cf4 03      
-   dcr b         ; $2cf5 05      
-   mov b,d       ; $2cf6 42      
-   mov c,h       ; $2cf7 4c      
-   mov c,a       ; $2cf8 4f      
-   mov b,e       ; $2cf9 43      
-   mov c,e       ; $2cfa 4b      
-   cmp a         ; $2cfb bf      
-   inr l         ; $2cfc 2c      
-   call $02e4    ; $2cfd cd e4 02
-   out $03       ; $2d00 d3 03   
-   dcr e         ; $2d02 1d      
-   inr l         ; $2d03 2c      
-   mov a,d       ; $2d04 7a      
-   ldax b        ; $2d05 0a      
-   mvi c,$2d     ; $2d06 0e 2d   
-   .byte 0x10    ; $2d08 10      
-   inr b         ; $2d09 04      
-   mov l,b       ; $2d0a 68      
-   ldax b        ; $2d0b 0a      
-   lhld $bd2d    ; $2d0c 2a 2d bd
-   lhld $0984    ; $2d0f 2a 84 09
-   out $03       ; $2d12 d3 03   
-   mov a,l       ; $2d14 7d      
-   inr l         ; $2d15 2c      
-   adc l         ; $2d16 8d      
-   inx b         ; $2d17 03      
-   mov h,d       ; $2d18 62      
-   inx b         ; $2d19 03      
-   sbb l         ; $2d1a 9d      
-   dad b         ; $2d1b 09      
-   out $03       ; $2d1c d3 03   
-   add m         ; $2d1e 86      
-   .byte 0x20    ; $2d1f 20      
-   add m         ; $2d20 86      
-   .byte 0x20    ; $2d21 20      
-   mov h,d       ; $2d22 62      
-   inx b         ; $2d23 03      
-   add h         ; $2d24 84      
-   dad b         ; $2d25 09      
-   add m         ; $2d26 86      
-   .byte 0x20    ; $2d27 20      
-   mov e,c       ; $2d28 59      
-   mvi l,$d3     ; $2d29 2e d3   
-   inx b         ; $2d2b 03      
-   ora d         ; $2d2c b2      
-   lhld $099d    ; $2d2d 2a 9d 09
-   mov l,b       ; $2d30 68      
-   inr l         ; $2d31 2c      
-   mov c,h       ; $2d32 4c      
-   lhld $044a    ; $2d33 2a 4a 04
-   dcr d         ; $2d36 15      
-   inx b         ; $2d37 03      
-   inr b         ; $2d38 04      
-   mov c,h       ; $2d39 4c      
-   mov c,c       ; $2d3a 49      
-   mov d,e       ; $2d3b 53      
-   mov d,h       ; $2d3c 54      
-   push psw      ; $2d3d f5      
-   inr l         ; $2d3e 2c      
-   call $02e4    ; $2d3f cd e4 02
-   out $03       ; $2d42 d3 03   
-   sui $2a       ; $2d44 d6 2a   
-   sbb l         ; $2d46 9d      
-   dad b         ; $2d47 09      
-   out $03       ; $2d48 d3 03   
-   mov h,m       ; $2d4a 66      
-   dcr d         ; $2d4b 15      
-   mvi a,$18     ; $2d4c 3e 18   
-   dad b         ; $2d4e 09      
-   .byte 0x20    ; $2d4f 20      
-   cm $504b      ; $2d50 fc 4b 50
-   mov b,c       ; $2d53 41      
-   mov c,b       ; $2d54 48      
-   .byte 0x20    ; $2d55 20      
-   inx h         ; $2d56 23      
-   .byte 0x20    ; $2d57 20      
-   cpi $12       ; $2d58 fe 12   
-   .byte 0xfd    ; $2d5a fd      
-   inr l         ; $2d5b 2c      
-   dcx h         ; $2d5c 2b      
-   ldax b        ; $2d5d 0a      
-   .byte 0x10    ; $2d5e 10      
-   nop           ; $2d5f 00      
-   rz            ; $2d60 c8      
-   mvi c,$e5     ; $2d61 0e e5   
-   ldax b        ; $2d63 0a      
-   add m         ; $2d64 86      
-   dcr l         ; $2d65 2d      
-   mov h,m       ; $2d66 66      
-   dcr d         ; $2d67 15      
-   sbb a         ; $2d68 9f      
-   ldax b        ; $2d69 0a      
-   jc $ab0e      ; $2d6a da 0e ab
-   stax d        ; $2d6d 12      
-   cnz $c416     ; $2d6e c4 16 c4
-   mvi d,$d3     ; $2d71 16 d3   
-   inx b         ; $2d73 03      
-   dcx h         ; $2d74 2b      
-   ldax b        ; $2d75 0a      
-   mov b,b       ; $2d76 40      
-   nop           ; $2d77 00      
-   mov a,m       ; $2d78 7e      
-   dcr d         ; $2d79 15      
-   dcx h         ; $2d7a 2b      
-   ldax b        ; $2d7b 0a      
-   mov b,b       ; $2d7c 40      
-   nop           ; $2d7d 00      
-   mov c,d       ; $2d7e 4a      
-   inr b         ; $2d7f 04      
-   dcr m         ; $2d80 35      
-   rar           ; $2d81 1f      
-   mvi l,$0b     ; $2d82 2e 0b   
-   mov h,m       ; $2d84 66      
-   dcr l         ; $2d85 2d      
-   add d         ; $2d86 82      
-   inx b         ; $2d87 03      
-   dcr d         ; $2d88 15      
-   inx b         ; $2d89 03      
-   inr b         ; $2d8a 04      
-   mov c,h       ; $2d8b 4c      
-   mov c,a       ; $2d8c 4f      
-   mov b,c       ; $2d8d 41      
-   mov b,h       ; $2d8e 44      
-   .byte 0x38    ; $2d8f 38      
-   dcr l         ; $2d90 2d      
-   call $02e4    ; $2d91 cd e4 02
-   rpo           ; $2d94 e0      
-   inx b         ; $2d95 03      
-   sub b         ; $2d96 90      
-   ldax b        ; $2d97 0a      
-   ora c         ; $2d98 b1      
-   dcr l         ; $2d99 2d      
-   mov h,m       ; $2d9a 66      
-   dcr d         ; $2d9b 15      
-   mvi a,$18     ; $2d9c 3e 18   
-   .byte 0x10    ; $2d9e 10      
-   jm $e741      ; $2d9f fa 41 e7
-   mov d,b       ; $2da2 50      
-   push psw      ; $2da3 f5      
-   jm $414b      ; $2da4 fa 4b 41
-   .byte 0x20    ; $2da7 20      
-   jpo $4fec     ; $2da8 e2 ec 4f
-   mov c,e       ; $2dab 4b      
-   mov b,c       ; $2dac 41      
-   .byte 0x20    ; $2dad 20      
-   .byte 0x30    ; $2dae 30      
-   push d        ; $2daf d5      
-   .byte 0x10    ; $2db0 10      
-   mov l,e       ; $2db1 6b      
-   stax b        ; $2db2 02      
-   add h         ; $2db3 84      
-   dad b         ; $2db4 09      
-   dcr c         ; $2db5 0d      
-   dad b         ; $2db6 09      
-   hlt           ; $2db7 76      
-   stax b        ; $2db8 02      
-   add h         ; $2db9 84      
-   dad b         ; $2dba 09      
-   dcr c         ; $2dbb 0d      
-   dad b         ; $2dbc 09      
-   mov e,a       ; $2dbd 5f      
-   stax b        ; $2dbe 02      
-   add h         ; $2dbf 84      
-   dad b         ; $2dc0 09      
-   dcr c         ; $2dc1 0d      
-   dad b         ; $2dc2 09      
-   ora c         ; $2dc3 b1      
-   stax b        ; $2dc4 02      
-   add h         ; $2dc5 84      
-   dad b         ; $2dc6 09      
-   dcr c         ; $2dc7 0d      
-   dad b         ; $2dc8 09      
-   ora c         ; $2dc9 b1      
-   stax b        ; $2dca 02      
-   sbb l         ; $2dcb 9d      
-   dad b         ; $2dcc 09      
-   hlt           ; $2dcd 76      
-   stax b        ; $2dce 02      
-   cm $6409      ; $2dcf fc 09 64
-   lhld $026b    ; $2dd2 2a 6b 02
-   sbb l         ; $2dd5 9d      
-   dad b         ; $2dd6 09      
-   pop b         ; $2dd7 c1      
-   dad d         ; $2dd8 19      
-   .byte 0x20    ; $2dd9 20      
-   dad b         ; $2dda 09      
-   ora c         ; $2ddb b1      
-   stax b        ; $2ddc 02      
-   sbb l         ; $2ddd 9d      
-   dad b         ; $2dde 09      
-   .byte 0x20    ; $2ddf 20      
-   dad b         ; $2de0 09      
-   mov e,a       ; $2de1 5f      
-   stax b        ; $2de2 02      
-   sbb l         ; $2de3 9d      
-   dad b         ; $2de4 09      
-   .byte 0x20    ; $2de5 20      
-   dad b         ; $2de6 09      
-   hlt           ; $2de7 76      
-   stax b        ; $2de8 02      
-   sbb l         ; $2de9 9d      
-   dad b         ; $2dea 09      
-   .byte 0x20    ; $2deb 20      
-   dad b         ; $2dec 09      
-   mov l,e       ; $2ded 6b      
-   stax b        ; $2dee 02      
-   sbb l         ; $2def 9d      
-   dad b         ; $2df0 09      
-   dcr d         ; $2df1 15      
-   inx b         ; $2df2 03      
-   add e         ; $2df3 83      
-   dcr l         ; $2df4 2d      
-   dcr l         ; $2df5 2d      
-   mvi a,$8a     ; $2df6 3e 8a   
-   dcr l         ; $2df8 2d      
-   call $02e4    ; $2df9 cd e4 02
-   ora c         ; $2dfc b1      
-   stax b        ; $2dfd 02      
-   ldax b        ; $2dfe 0a      
-   ldax b        ; $2dff 0a      
-   hlt           ; $2e00 76      
-   stax b        ; $2e01 02      
-   cm $1509      ; $2e02 fc 09 15
-   inx b         ; $2e05 03      
-   inr b         ; $2e06 04      
-   mov d,h       ; $2e07 54      
-   mov c,b       ; $2e08 48      
-   mov d,d       ; $2e09 52      
-   mov d,l       ; $2e0a 55      
-   di            ; $2e0b f3      
-   dcr l         ; $2e0c 2d      
-   call $02e4    ; $2e0d cd e4 02
-   mov m,a       ; $2e10 77      
-   inr b         ; $2e11 04      
-   adc l         ; $2e12 8d      
-   inx b         ; $2e13 03      
-   push h        ; $2e14 e5      
-   ldax b        ; $2e15 0a      
-   .byte 0x20    ; $2e16 20      
-   mvi l,$9f     ; $2e17 2e 9f   
-   ldax b        ; $2e19 0a      
-   sub c         ; $2e1a 91      
-   dcr l         ; $2e1b 2d      
-   mvi l,$0b     ; $2e1c 2e 0b   
-   .byte 0x18    ; $2e1e 18      
-   mvi l,$15     ; $2e1f 2e 15   
-   inx b         ; $2e21 03      
-   inr b         ; $2e22 04      
-   .byte 0x28    ; $2e23 28      
-   mov c,c       ; $2e24 49      
-   mov c,m       ; $2e25 4e      
-   dad h         ; $2e26 29      
-   mvi b,$2e     ; $2e27 06 2e   
+
+NFA_BLOCK:       ; 2CF5
+   .byte 5,"BLOCK"
+   .word $2CBF   ; NFA_BUFFER       ; 2CBF
+_BLOCK:          ; 2CFD - 2D38
+   call _FCALL            ; 2CFD
+   .word _DUP             ; $2d00 03D3 - DUP
+   .word $2C1D            ; $2d02 2C1D
+   .word __3FBRANCH       ; $2d04 0A7A - ?BRANCH
+   .word $2D0E            ; $2d06 2D0E
+   .word _PRESS           ; $2d08 0410 - PRESS
+   .word _BRANCH          ; $2d0a 0A68 - BRANCH
+   .word $2D2A            ; $2d0c 2D2A
+   .word $2ABD            ; $2d0e 2ABD
+   .word __40             ; $2d10 0984 - @
+   .word _DUP             ; $2d12 03D3 - DUP
+   .word $2C7D            ; $2d14 2C7D
+   .word _SWAP            ; $2d16 038D - SWAP
+   .word _OVER            ; $2d18 0362 - OVER
+   .word __21             ; $2d1a 099D - !
+   .word _DUP             ; $2d1c 03D3 - DUP
+   .word _NOOP            ; $2d1e 2086 - NOOP
+   .word _NOOP            ; $2d20 2086 - NOOP
+   .word _OVER            ; $2d22 0362 - OVER
+   .word __40             ; $2d24 0984 - @
+   .word _NOOP            ; $2d26 2086 - NOOP
+   .word _IN              ; $2d28 2E59 - IN
+   .word _DUP             ; $2d2a 03D3 - DUP
+   .word _PREV            ; $2d2c 2AB2 - PREV
+   .word __21             ; $2d2e 099D - !
+   .word $2C68            ; $2d30 2C68
+   .word _DBH             ; $2d32 2A4C - DBH
+   .word __2B             ; $2d34 044A - +
+   .word _EXIT            ; $2d36 0315 - EXIT
+
+NFA_LIST:        ; 2D38
+   .byte 4,"LIST"
+   .word NFA_BLOCK        ; 2CF5
+_LIST:           ; 2D3F - 2D8A
+   call _FCALL            ; 2D3F
+   .word _DUP             ; $2d42 03D3 - DUP
+   .word _SCR             ; $2d44 2AD6 - SCR
+   .word __21             ; $2d46 099D - !
+   .word _DUP             ; $2d48 03D3 - DUP
+   .word _CR              ; $2d4a 1566 - CR
+   .word __28_2E_22_29    ; $2d4c 183E - (.")
+   .byte 9," ",0xfc,"KPAH # "
+   .word __2E             ; $2d58 12FE - .
+   .word _BLOCK           ; $2d5a 2CFD - BLOCK
+   .word _LIT             ; $2d5c 0A2B - LIT
+   .word $0010            ; $2d5e 0010
+   .word _0               ; $2d60 0EC8 - 0
+   .word __28DO_29        ; $2d62 0AE5 - (DO)
+   .word $2D86            ; $2d64 2D86
+   .word _CR              ; $2d66 1566 - CR
+   .word _I               ; $2d68 0A9F - I
+   .word _2               ; $2d6a 0EDA - 2
+   .word __2ER            ; $2d6c 12AB - .R
+   .word _SPACE           ; $2d6e 16C4 - SPACE
+   .word _SPACE           ; $2d70 16C4 - SPACE
+   .word _DUP             ; $2d72 03D3 - DUP
+   .word _LIT             ; $2d74 0A2B - LIT
+   .word $0040            ; $2d76 0040
+   .word _TYPE            ; $2d78 157E - TYPE
+   .word _LIT             ; $2d7a 0A2B - LIT
+   .word $0040            ; $2d7c 0040
+   .word __2B             ; $2d7e 044A - +
+   .word _BREAK           ; $2d80 1F35 - BREAK
+   .word __28LOOP_29      ; $2d82 0B2E - (LOOP)
+   .word $2D66            ; $2d84 2D66
+   .word _DROP            ; $2d86 0382 - DROP
+   .word _EXIT            ; $2d88 0315 - EXIT
+
+NFA_LOAD:        ; 2D8A
+   .byte 4,"LOAD"
+   .word NFA_LIST         ; 2D38
+_LOAD:           ; 2D91 - 2DF3
+   call _FCALL            ; 2D91
+   .word __3FDUP          ; $2d94 03E0 - ?DUP
+   .word _N_3FBRANCH      ; $2d96 0A90 - N?BRANCH
+   .word $2DB1            ; $2d98 2DB1
+   .word _CR              ; $2d9a 1566 - CR
+   .word __28_2E_22_29    ; $2d9c 183E - (.")
+   .byte 16,0xfa,"A",0xe7,"P",0xf5,0xfa,"KA ",0xe2,0xec,"OKA 0"
+   .word _ABORT           ; $2daf 10D5 - ABORT
+   .word __23TIB          ; $2db1 026B - #TIB
+   .word __40             ; $2db3 0984 - @
+   .word __3ER            ; $2db5 090D - >R
+   .word __3EIN           ; $2db7 0276 - >IN
+   .word __40             ; $2db9 0984 - @
+   .word __3ER            ; $2dbb 090D - >R
+   .word $025F            ; $2dbd 025F
+   .word __40             ; $2dbf 0984 - @
+   .word __3ER            ; $2dc1 090D - >R
+   .word _BLK             ; $2dc3 02B1 - BLK
+   .word __40             ; $2dc5 0984 - @
+   .word __3ER            ; $2dc7 090D - >R
+   .word _BLK             ; $2dc9 02B1 - BLK
+   .word __21             ; $2dcb 099D - !
+   .word __3EIN           ; $2dcd 0276 - >IN
+   .word _0_21            ; $2dcf 09FC - 0!
+   .word _B_2FBUF         ; $2dd1 2A64 - B/BUF
+   .word __23TIB          ; $2dd3 026B - #TIB
+   .word __21             ; $2dd5 099D - !
+   .word _INTERPRET       ; $2dd7 19C1 - INTERPRET
+   .word _R_3E            ; $2dd9 0920 - R>
+   .word _BLK             ; $2ddb 02B1 - BLK
+   .word __21             ; $2ddd 099D - !
+   .word _R_3E            ; $2ddf 0920 - R>
+   .word $025F            ; $2de1 025F
+   .word __21             ; $2de3 099D - !
+   .word _R_3E            ; $2de5 0920 - R>
+   .word __3EIN           ; $2de7 0276 - >IN
+   .word __21             ; $2de9 099D - !
+   .word _R_3E            ; $2deb 0920 - R>
+   .word __23TIB          ; $2ded 026B - #TIB
+   .word __21             ; $2def 099D - !
+   .word _EXIT            ; $2df1 0315 - EXIT
+
+NFA__2D_2D_3E:   ; 2DF3
+   .byte 0x83,"-->" ; IMMEDIATE
+   .word NFA_LOAD         ; 2D8A
+__2D_2D_3E:      ; 2DF9 - 2E06
+   call _FCALL            ; 2DF9
+   .word _BLK             ; $2dfc 02B1 - BLK
+   .word _1_2B_21         ; $2dfe 0A0A - 1+!
+   .word __3EIN           ; $2e00 0276 - >IN
+   .word _0_21            ; $2e02 09FC - 0!
+   .word _EXIT            ; $2e04 0315 - EXIT
+
+NFA_THRU:        ; 2E06
+   .byte 4,"THRU"
+   .word NFA__2D_2D_3E          ; 2DF3
+_THRU:           ; 2E0D - 2E22
+   call _FCALL            ; 2E0D
+   .word _1_2B            ; $2e10 0477 - 1+
+   .word _SWAP            ; $2e12 038D - SWAP
+   .word __28DO_29        ; $2e14 0AE5 - (DO)
+   .word $2E20            ; $2e16 2E20
+   .word _I               ; $2e18 0A9F - I
+   .word _LOAD            ; $2e1a 2D91 - LOAD
+   .word __28LOOP_29      ; $2e1c 0B2E - (LOOP)
+   .word $2E18            ; $2e1e 2E18
+   .word _EXIT            ; $2e20 0315 - EXIT
+
+NFA__28IN_29:    ; 2E22
+   .byte 4,"(IN)"
+   .word NFA_THRU         ; 2E06
+__28IN_29:       ; 2E29 - 2E54
    pop d         ; $2e29 d1      
    mov h,b       ; $2e2a 60      
    mov l,c       ; $2e2b 69      
@@ -8800,197 +6873,132 @@ _LEAVE:          ; 1C79 - 1C84
    pop b         ; $2e4f c1      
    push d        ; $2e50 d5      
    jmp $02ef     ; $2e51 c3 ef 02
-   stax b        ; $2e54 02      
-   mov c,c       ; $2e55 49      
-   mov c,m       ; $2e56 4e      
-   shld $cd2e    ; $2e57 22 2e cd
-   cpo $6602     ; $2e5a e4 02 66
-   dcr d         ; $2e5d 15      
-   mvi a,$18     ; $2e5e 3e 18   
-   ldax b        ; $2e60 0a      
-   mov l,l       ; $2e61 6d      
-   mov l,h       ; $2e62 6c      
-   dcr l         ; $2e63 2d      
-   dcr l         ; $2e64 2d      
-   mvi a,$62     ; $2e65 3e 62   
-   mov l,h       ; $2e67 6c      
-   mov l,a       ; $2e68 6f      
-   mov l,e       ; $2e69 6b      
-   .byte 0x20    ; $2e6a 20      
-   out $03       ; $2e6b d3 03   
-   cpi $12       ; $2e6d fe 12   
-   rpo           ; $2e6f e0      
-   dad h         ; $2e70 29      
-   cnz $9016     ; $2e71 c4 16 90
-   ldax b        ; $2e74 0a      
-   add e         ; $2e75 83      
-   mvi l,$82     ; $2e76 2e 82   
-   inx b         ; $2e78 03      
-   mov c,h       ; $2e79 4c      
-   lhld $044a    ; $2e7a 2a 4a 04
-   mov h,h       ; $2e7d 64      
-   lhld $16b3    ; $2e7e 2a b3 16
-   dcr d         ; $2e81 15      
-   inx b         ; $2e82 03      
-   mov h,d       ; $2e83 62      
-   inx b         ; $2e84 03      
-   .byte 0x20    ; $2e85 20      
-   dcx h         ; $2e86 2b      
-   jpo $642e     ; $2e87 e2 2e 64
-   lhld $2a4c    ; $2e8a 2a 4c 2a
-   mov c,d       ; $2e8d 4a      
-   inr b         ; $2e8e 04      
-   sbb c         ; $2e8f 99      
-   inr b         ; $2e90 04      
-   adc l         ; $2e91 8d      
-   inx b         ; $2e92 03      
-   dad h         ; $2e93 29      
-   mvi l,$f2     ; $2e94 2e f2   
-   inx b         ; $2e96 03      
-   mov c,d       ; $2e97 4a      
-   inr b         ; $2e98 04      
-   mvi a,$18     ; $2e99 3e 18   
-   dcr b         ; $2e9b 05      
-   mov h,d       ; $2e9c 62      
-   mov l,h       ; $2e9d 6c      
-   mov l,a       ; $2e9e 6f      
-   mov l,e       ; $2e9f 6b      
-   .byte 0x20    ; $2ea0 20      
-   cpi $12       ; $2ea1 fe 12   
-   mov a,m       ; $2ea3 7e      
-   dcr b         ; $2ea4 05      
-   out $03       ; $2ea5 d3 03   
-   mov a,d       ; $2ea7 7a      
-   ldax b        ; $2ea8 0a      
-   pop d         ; $2ea9 d1      
-   mvi l,$82     ; $2eaa 2e 82   
-   inx b         ; $2eac 03      
-   mov h,d       ; $2ead 62      
-   inx b         ; $2eae 03      
-   cmp a         ; $2eaf bf      
-   dad h         ; $2eb0 29      
-   mov h,d       ; $2eb1 62      
-   inx b         ; $2eb2 03      
-   .byte 0x20    ; $2eb3 20      
-   dcx h         ; $2eb4 2b      
-   add h         ; $2eb5 84      
-   dad b         ; $2eb6 09      
-   mov h,m       ; $2eb7 66      
-   dcr b         ; $2eb8 05      
-   .byte 0x10    ; $2eb9 10      
-   inr b         ; $2eba 04      
-   out $03       ; $2ebb d3 03   
-   sub b         ; $2ebd 90      
-   ldax b        ; $2ebe 0a      
-   pop d         ; $2ebf d1      
-   mvi l,$3e     ; $2ec0 2e 3e   
-   .byte 0x18    ; $2ec2 18      
-   dcr c         ; $2ec3 0d      
-   mov l,a       ; $2ec4 6f      
-   mov a,e       ; $2ec5 7b      
-   mov l,c       ; $2ec6 69      
-   mov h,d       ; $2ec7 62      
-   mov l,e       ; $2ec8 6b      
-   mov h,c       ; $2ec9 61      
-   .byte 0x20    ; $2eca 20      
-   mov m,a       ; $2ecb 77      
-   mov m,a       ; $2ecc 77      
-   mov l,a       ; $2ecd 6f      
-   mov h,h       ; $2ece 64      
-   mov h,c       ; $2ecf 61      
-   .byte 0x20    ; $2ed0 20      
-   mov a,d       ; $2ed1 7a      
-   ldax b        ; $2ed2 0a      
-   mov e,h       ; $2ed3 5c      
-   mvi l,$03     ; $2ed4 2e 03   
-   inr b         ; $2ed6 04      
-   dcr d         ; $2ed7 15      
-   inx b         ; $2ed8 03      
-   call $f806    ; $2ed9 cd 06 f8
-   mov l,a       ; $2edc 6f      
-   mvi a,$08     ; $2edd 3e 08   
-   jmp $f806     ; $2edf c3 06 f8
-   call $02e4    ; $2ee2 cd e4 02
-   mov h,d       ; $2ee5 62      
-   inx b         ; $2ee6 03      
-   mov l,d       ; $2ee7 6a      
-   inr b         ; $2ee8 04      
-   dcr d         ; $2ee9 15      
-   inx b         ; $2eea 03      
-   mvi l,$02     ; $2eeb 2e 02   
-   mvi a,$3d     ; $2eed 3e 3d   
-   mov d,h       ; $2eef 54      
-   mvi l,$cd     ; $2ef0 2e cd   
-   cpo $0f02     ; $2ef2 e4 02 0f
-   dcr b         ; $2ef5 05      
-   mov a,m       ; $2ef6 7e      
-   dcr b         ; $2ef7 05      
-   dcr d         ; $2ef8 15      
-   inx b         ; $2ef9 03      
-   stax b        ; $2efa 02      
-   inr a         ; $2efb 3c      
-   dcr a         ; $2efc 3d      
-   cpe $cd2e     ; $2efd ec 2e cd
-   cpo $3302     ; $2f00 e4 02 33
-   dcr b         ; $2f03 05      
-   mov a,m       ; $2f04 7e      
-   dcr b         ; $2f05 05      
-   dcr d         ; $2f06 15      
-   inx b         ; $2f07 03      
-   stax b        ; $2f08 02      
-   mov d,l       ; $2f09 55      
-   mvi a,$fa     ; $2f0a 3e fa   
-   mvi l,$cd     ; $2f0c 2e cd   
-   cpo $8d02     ; $2f0e e4 02 8d
-   inx b         ; $2f11 03      
-   jm $1504      ; $2f12 fa 04 15
-   inx b         ; $2f15 03      
-   dcr b         ; $2f16 05      
-   mov b,e       ; $2f17 43      
-   mov b,c       ; $2f18 41      
-   mov d,e       ; $2f19 53      
-   mov b,l       ; $2f1a 45      
-   lda $2f08     ; $2f1b 3a 08 2f
-   call $02e4    ; $2f1e cd e4 02
-   rm            ; $2f21 f8      
-   dcx d         ; $2f22 1b      
-   lxi h,$601a   ; $2f23 21 1a 60
-   ral           ; $2f26 17      
-   mov a,m       ; $2f27 7e      
-   ral           ; $2f28 17      
-   mov a,l       ; $2f29 7d      
-   ldax d        ; $2f2a 1a      
-   call $02e4    ; $2f2b cd e4 02
-   adc l         ; $2f2e 8d      
-   inx b         ; $2f2f 03      
-   ana l         ; $2f30 a5      
-   inr b         ; $2f31 04      
-   mov c,d       ; $2f32 4a      
-   inr b         ; $2f33 04      
-   in $1a        ; $2f34 db 1a   
-   dcr d         ; $2f36 15      
-   inx b         ; $2f37 03      
-   add l         ; $2f38 85      
-   dcx sp        ; $2f39 3b      
-   mov b,e       ; $2f3a 43      
-   mov b,c       ; $2f3b 41      
-   mov d,e       ; $2f3c 53      
-   mov b,l       ; $2f3d 45      
-   mvi d,$2f     ; $2f3e 16 2f   
-   call $02e4    ; $2f40 cd e4 02
-   cmp a         ; $2f43 bf      
-   mvi c,$1d     ; $2f44 0e 1d   
-   rrc           ; $2f46 0f      
-   ana a         ; $2f47 a7      
-   inr e         ; $2f48 1c      
-   dcr d         ; $2f49 15      
-   inx b         ; $2f4a 03      
-   inx b         ; $2f4b 03      
-   mov b,e       ; $2f4c 43      
-   mov d,l       ; $2f4d 55      
-   mov d,d       ; $2f4e 52      
-   .byte 0x38    ; $2f4f 38      
-   cma           ; $2f50 2f      
+
+NFA_IN:          ; 2E54
+   .byte 2,"IN"
+   .word NFA__28IN_29         ; 2E22
+_IN:             ; 2E59 - 2EEC
+   call _FCALL            ; 2E59
+   .word _CR              ; $2e5c 1566 - CR
+   .word __28_2E_22_29    ; $2e5e 183E - (.")
+   .byte 10,"ml-->blok "
+   .word _DUP             ; $2e6b 03D3 - DUP
+   .word __2E             ; $2e6d 12FE - .
+   .word $29E0            ; $2e6f 29E0
+   .word _SPACE           ; $2e71 16C4 - SPACE
+   .word _N_3FBRANCH      ; $2e73 0A90 - N?BRANCH
+   .word $2E83            ; $2e75 2E83
+   .word _DROP            ; $2e77 0382 - DROP
+   .word _DBH             ; $2e79 2A4C - DBH
+   .word __2B             ; $2e7b 044A - +
+   .word _B_2FBUF         ; $2e7d 2A64 - B/BUF
+   .word _BLANK           ; $2e7f 16B3 - BLANK
+   .word _EXIT            ; $2e81 0315 - EXIT
+   .word _OVER            ; $2e83 0362 - OVER
+   .word _DBC             ; $2e85 2B20 - DBC
+   .word $2EE2            ; $2e87 2EE2
+   .word _B_2FBUF         ; $2e89 2A64 - B/BUF
+   .word _DBH             ; $2e8b 2A4C - DBH
+   .word __2B             ; $2e8d 044A - +
+   .word _2_2D            ; $2e8f 0499 - 2-
+   .word _SWAP            ; $2e91 038D - SWAP
+   .word __28IN_29        ; $2e93 2E29 - (IN)
+   .word _2DUP            ; $2e95 03F2 - 2DUP
+   .word __2B             ; $2e97 044A - +
+   .word __28_2E_22_29    ; $2e99 183E - (.")
+   .byte 5,"blok "
+   .word __2E             ; $2ea1 12FE - .
+   .word _0_3D            ; $2ea3 057E - 0=
+   .word _DUP             ; $2ea5 03D3 - DUP
+   .word __3FBRANCH       ; $2ea7 0A7A - ?BRANCH
+   .word $2ED1            ; $2ea9 2ED1
+   .word _DROP            ; $2eab 0382 - DROP
+   .word _OVER            ; $2ead 0362 - OVER
+   .word $29BF            ; $2eaf 29BF
+   .word _OVER            ; $2eb1 0362 - OVER
+   .word _DBC             ; $2eb3 2B20 - DBC
+   .word __40             ; $2eb5 0984 - @
+   .word __3D             ; $2eb7 0566 - =
+   .word _PRESS           ; $2eb9 0410 - PRESS
+   .word _DUP             ; $2ebb 03D3 - DUP
+   .word _N_3FBRANCH      ; $2ebd 0A90 - N?BRANCH
+   .word $2ED1            ; $2ebf 2ED1
+   .word __28_2E_22_29    ; $2ec1 183E - (.")
+   .byte 13,"o{ibka wwoda "
+   .word __3FBRANCH       ; $2ed1 0A7A - ?BRANCH
+   .word $2E5C            ; $2ed3 2E5C
+   .word _2DROP           ; $2ed5 0403 - 2DROP
+   .word _EXIT            ; $2ed7 0315 - EXIT
+   .word $06CD            ; $2ed9 06CD
+   .word $6FF8            ; $2edb 6FF8
+   .word $083E            ; $2edd 083E
+   .word $06C3            ; $2edf 06C3
+   .word $CDF8            ; $2ee1 CDF8
+   .word $02E4            ; $2ee3 02E4
+   .word _OVER            ; $2ee5 0362 - OVER
+   .word _NEGATE          ; $2ee7 046A - NEGATE
+   .word _EXIT            ; $2ee9 0315 - EXIT
+
+   .byte $2e     ; $2eeb 2e
+
+NFA__3E_3D:      ; 2EEC
+   .byte 2,">="
+   .word NFA_IN           ; 2E54
+__3E_3D:         ; 2EF1 - 2EFA
+   call _FCALL            ; 2EF1
+   .word __3C             ; $2ef4 050F - <
+   .word _0_3D            ; $2ef6 057E - 0=
+   .word _EXIT            ; $2ef8 0315 - EXIT
+
+NFA__3C_3D:      ; 2EFA
+   .byte 2,"<="
+   .word NFA__3E_3D           ; 2EEC
+__3C_3D:         ; 2EFF - 2F08
+   call _FCALL            ; 2EFF
+   .word __3E             ; $2f02 0533 - >
+   .word _0_3D            ; $2f04 057E - 0=
+   .word _EXIT            ; $2f06 0315 - EXIT
+
+NFA_U_3E:        ; 2F08
+   .byte 2,"U>"
+   .word NFA__3C_3D           ; 2EFA
+_U_3E:           ; 2F0D - 2F16
+   call _FCALL            ; 2F0D
+   .word _SWAP            ; $2f10 038D - SWAP
+   .word _U_3C            ; $2f12 04FA - U<
+   .word _EXIT            ; $2f14 0315 - EXIT
+
+NFA_CASE_3A:     ; 2F16
+   .byte 5,"CASE:"
+   .word NFA_U_3E           ; 2F08
+_CASE_3A:        ; 2F1E - 2F38
+   call _FCALL            ; 2F1E
+   .word __3FEXEC         ; $2f21 1BF8 - ?EXEC
+   .word _CREATE          ; $2f23 1A21 - CREATE
+   .word _SMUDGE          ; $2f25 1760 - SMUDGE
+   .word __5D             ; $2f27 177E - ]
+   .word __28DOES_3E_29   ; $2f29 1A7D - (DOES>)
+   call $02e4
+   .word _SWAP            ; $2f2e 038D - SWAP
+   .word _2_2A            ; $2f30 04A5 - 2*
+   .word __2B             ; $2f32 044A - +
+   .word __40EXECUTE      ; $2f34 1ADB - @EXECUTE
+   .word _EXIT            ; $2f36 0315 - EXIT
+
+NFA__3BCASE:     ; 2F38
+   .byte 0x85,";CASE" ; IMMEDIATE
+   .word NFA_CASE_3A        ; 2F16
+__3BCASE:        ; 2F40 - 2F4B
+   call _FCALL            ; 2F40
+   .word __2D1            ; $2f43 0EBF - -1
+   .word __2C             ; $2f45 0F1D - ,
+   .word __3B             ; $2f47 1CA7 - ;
+   .word _EXIT            ; $2f49 0315 - EXIT
+
+NFA_CUR:         ; 2F4B
+   .byte 3,"CUR"
+   .word NFA__3BCASE        ; 2F38
+_CUR:            ; 2F51 - 2F70
    pop d         ; $2f51 d1      
    pop h         ; $2f52 e1      
    push b        ; $2f53 c5      
@@ -9008,17 +7016,17 @@ _LEAVE:          ; 1C79 - 1C84
    call $f809    ; $2f69 cd 09 f8
    pop b         ; $2f6c c1      
    jmp $02ef     ; $2f6d c3 ef 02
-   inx b         ; $2f70 03      
-   mov b,e       ; $2f71 43      
-   mov c,h       ; $2f72 4c      
-   mov d,e       ; $2f73 53      
-   mov c,e       ; $2f74 4b      
-   cma           ; $2f75 2f      
+
+NFA_CLS:         ; 2F70
+   .byte 3,"CLS"
+   .word NFA_CUR          ; 2F4B
+_CLS:            ; 2F76 - 2F80
    push b        ; $2f76 c5      
    mvi c,$1f     ; $2f77 0e 1f   
    call $f809    ; $2f79 cd 09 f8
    pop b         ; $2f7c c1      
    jmp $02ef     ; $2f7d c3 ef 02
+
    inr b         ; $2f80 04      
    mov b,d       ; $2f81 42      
    mov b,l       ; $2f82 45      
@@ -9070,106 +7078,71 @@ _LEAVE:          ; 1C79 - 1C84
    inx h         ; $2fb6 23      
    mov m,d       ; $2fb7 72      
    jmp $02ef     ; $2fb8 c3 ef 02
-   inr b         ; $2fbb 04      
-   .byte 0x28    ; $2fbc 28      
-   mov b,c       ; $2fbd 41      
-   mov d,h       ; $2fbe 54      
-   dad h         ; $2fbf 29      
-   ana b         ; $2fc0 a0      
-   cma           ; $2fc1 2f      
+
+NFA__28AT_29:    ; 2FBB
+   .byte 4,"(AT)"
+   .word $2FA0   ; NFA_F_5E           ; 2FA0
+__28AT_29:       ; 2FC2 - 2FCB
    pop h         ; $2fc2 e1      
    lxi d,$fff8   ; $2fc3 11 f8 ff
    dad d         ; $2fc6 19      
    push h        ; $2fc7 e5      
    jmp $02ef     ; $2fc8 c3 ef 02
-   add d         ; $2fcb 82      
-   mov b,c       ; $2fcc 41      
-   mov d,h       ; $2fcd 54      
-   cmp e         ; $2fce bb      
-   cma           ; $2fcf 2f      
-   call $02e4    ; $2fd0 cd e4 02
-   ana m         ; $2fd3 a6      
-   mvi d,$ed     ; $2fd4 16 ed   
-   inx d         ; $2fd6 13      
-   sub b         ; $2fd7 90      
-   ral           ; $2fd8 17      
-   rpo           ; $2fd9 e0      
-   inx b         ; $2fda 03      
-   mov a,m       ; $2fdb 7e      
-   dcr b         ; $2fdc 05      
-   mov c,d       ; $2fdd 4a      
-   lxi d,$2d02   ; $2fde 11 02 2d
-   cmc           ; $2fe1 3f      
-   dcr a         ; $2fe2 3d      
-   dcr b         ; $2fe3 05      
-   dcr d         ; $2fe4 15      
-   stax b        ; $2fe5 02      
-   add h         ; $2fe6 84      
-   dad b         ; $2fe7 09      
-   rz            ; $2fe8 c8      
-   .byte 0x08    ; $2fe9 08      
-   mov a,d       ; $2fea 7a      
-   ldax b        ; $2feb 0a      
-   rm            ; $2fec f8      
-   cma           ; $2fed 2f      
-   dcx h         ; $2fee 2b      
-   ldax b        ; $2fef 0a      
-   .byte 0x08    ; $2ff0 08      
-   nop           ; $2ff1 00      
-   mov c,d       ; $2ff2 4a      
-   inr b         ; $2ff3 04      
-   dcr e         ; $2ff4 1d      
-   rrc           ; $2ff5 0f      
-   dcr d         ; $2ff6 15      
-   inx b         ; $2ff7 03      
-   dcx h         ; $2ff8 2b      
-   ldax b        ; $2ff9 0a      
-   .byte 0x08    ; $2ffa 08      
-   nop           ; $2ffb 00      
-   mov c,d       ; $2ffc 4a      
-   inr b         ; $2ffd 04      
-   inr l         ; $2ffe 2c      
-   inx b         ; $2fff 03      
-   dcr d         ; $3000 15      
-   inx b         ; $3001 03      
-   .byte 0x08    ; $3002 08      
-   mov d,c       ; $3003 51      
-   mov d,l       ; $3004 55      
-   mov b,c       ; $3005 41      
-   mov c,m       ; $3006 4e      
-   dcx h         ; $3007 2b      
-   mov d,m       ; $3008 56      
-   mov b,c       ; $3009 41      
-   mov d,d       ; $300a 52      
-   .byte 0xcb    ; $300b cb      
-   cma           ; $300c 2f      
-   call $02e4    ; $300d cd e4 02
-   rpe           ; $3010 e8      
-   ldax d        ; $3011 1a      
-   dcx h         ; $3012 2b      
-   ldax b        ; $3013 0a      
-   call $2f00    ; $3014 cd 00 2f
-   rrc           ; $3017 0f      
-   dcx h         ; $3018 2b      
-   ldax b        ; $3019 0a      
-   jnz $1d2f     ; $301a c2 2f 1d
-   rrc           ; $301d 0f      
-   dcr d         ; $301e 15      
-   inx b         ; $301f 03      
-   stax b        ; $3020 02      
-   sta $025e     ; $3021 32 5e 02
-   .byte 0x30    ; $3024 30      
-   call $02e4    ; $3025 cd e4 02
-   dcx h         ; $3028 2b      
-   ldax b        ; $3029 0a      
-   rlc           ; $302a 07      
-   nop           ; $302b 00      
-   mov d,l       ; $302c 55      
-   inr b         ; $302d 04      
-   ora l         ; $302e b5      
-   dad b         ; $302f 09      
-   dcr d         ; $3030 15      
-   inx b         ; $3031 03      
+
+NFA_AT:          ; 2FCB
+   .byte 0x82,"AT" ; IMMEDIATE
+   .word NFA__28AT_29         ; 2FBB
+_AT:             ; 2FD0 - 3002
+   call _FCALL            ; 2FD0
+   .word _BL              ; $2fd3 16A6 - BL
+   .word _WORD            ; $2fd5 13ED - WORD
+   .word _FIND            ; $2fd7 1790 - FIND
+   .word __3FDUP          ; $2fd9 03E0 - ?DUP
+   .word _0_3D            ; $2fdb 057E - 0=
+   .word __28ABORT_22_29  ; $2fdd 114A - (ABORT")
+   .byte 2,"-?"
+   .word _0_3C            ; $2fe2 053D - 0<
+   .word _STATE           ; $2fe4 0215 - STATE
+   .word __40             ; $2fe6 0984 - @
+   .word _AND             ; $2fe8 08C8 - AND
+   .word __3FBRANCH       ; $2fea 0A7A - ?BRANCH
+   .word $2FF8            ; $2fec 2FF8
+   .word _LIT             ; $2fee 0A2B - LIT
+   .word $0008            ; $2ff0 0008
+   .word __2B             ; $2ff2 044A - +
+   .word __2C             ; $2ff4 0F1D - ,
+   .word _EXIT            ; $2ff6 0315 - EXIT
+   .word _LIT             ; $2ff8 0A2B - LIT
+   .word $0008            ; $2ffa 0008
+   .word __2B             ; $2ffc 044A - +
+   .word _EXECUTE         ; $2ffe 032C - EXECUTE
+   .word _EXIT            ; $3000 0315 - EXIT
+
+NFA_QUAN_2BVAR:  ; 3002
+   .byte 8,"QUAN+VAR"
+   .word NFA_AT           ; 2FCB
+_QUAN_2BVAR:     ; 300D - 3020
+   call _FCALL            ; 300D
+   .word _QUAN            ; $3010 1AE8 - QUAN
+   .word _LIT             ; $3012 0A2B - LIT
+   .word $00CD            ; $3014 00CD
+   .word _C_2C            ; $3016 0F2F - C,
+   .word _LIT             ; $3018 0A2B - LIT
+   .word __28AT_29        ; $301a 2FC2 - (AT)
+   .word __2C             ; $301c 0F1D - ,
+   .word _EXIT            ; $301e 0315 - EXIT
+
+NFA_2_5E:        ; 3020
+   .byte 2,"2^"
+   .word NFA_QUAN_2BVAR     ; 3002
+_2_5E:           ; 3025 - 3044
+   call _FCALL            ; 3025
+   .word _LIT             ; $3028 0A2B - LIT
+   .word $0007            ; $302a 0007
+   .word __2D             ; $302c 0455 - -
+   .word _2_21            ; $302e 09B5 - 2!
+   .word _EXIT            ; $3030 0315 - EXIT
+
    lxi b,$207c   ; $3032 01 7c 20
    .byte 0x30    ; $3035 30      
    call $0984    ; $3036 cd 84 09
@@ -9180,563 +7153,438 @@ _LEAVE:          ; 1C79 - 1C84
    call $0984    ; $303f cd 84 09
    mov c,m       ; $3042 4e      
    nop           ; $3043 00      
-   lxi b,$2058   ; $3044 01 58 20
-   .byte 0x30    ; $3047 30      
+
+NFA_X:           ; 3044
+   .byte 1,"X"
+   .word NFA_2_5E           ; 3020
+_X:              ; 3048 - 3050
    call $0984    ; $3048 cd 84 09
    nop           ; $304b 00      
    nop           ; $304c 00      
    call $1ac4    ; $304d cd c4 1a
-   lxi b,$4459   ; $3050 01 59 44
-   .byte 0x30    ; $3053 30      
+
+NFA_Y:           ; 3050
+   .byte 1,"Y"
+   .word NFA_X            ; 3044
+_Y:              ; 3054 - 3074
    call $0984    ; $3054 cd 84 09
    nop           ; $3057 00      
    nop           ; $3058 00      
    call $1ac4    ; $3059 cd c4 1a
+
    lxi b,$5041   ; $305c 01 41 50
    .byte 0x30    ; $305f 30      
    call $0984    ; $3060 cd 84 09
    nop           ; $3063 00      
    nop           ; $3064 00      
    call $1ac4    ; $3065 cd c4 1a
+
    lxi b,$5054   ; $3068 01 54 50
    .byte 0x30    ; $306b 30      
    call $0984    ; $306c cd 84 09
    rst 7         ; $306f ff      
    rst 7         ; $3070 ff      
    call $1ac4    ; $3071 cd c4 1a
-   inx b         ; $3074 03      
-   mov d,b       ; $3075 50      
-   mov b,l       ; $3076 45      
-   mov c,m       ; $3077 4e      
-   mov d,b       ; $3078 50      
-   .byte 0x30    ; $3079 30      
-   call $02e4    ; $307a cd e4 02
-   ani $0e       ; $307d e6 0e   
-   mov m,c       ; $307f 71      
-   .byte 0x30    ; $3080 30      
-   dcr d         ; $3081 15      
-   inx b         ; $3082 03      
-   inx b         ; $3083 03      
-   mov b,a       ; $3084 47      
-   mov d,l       ; $3085 55      
-   mov c,l       ; $3086 4d      
-   mov m,h       ; $3087 74      
-   .byte 0x30    ; $3088 30      
-   call $02e4    ; $3089 cd e4 02
-   di            ; $308c f3      
-   mvi c,$71     ; $308d 0e 71   
-   .byte 0x30    ; $308f 30      
-   dcr d         ; $3090 15      
-   inx b         ; $3091 03      
-   lxi b,$8347   ; $3092 01 47 83
-   .byte 0x30    ; $3095 30      
-   call $02e4    ; $3096 cd e4 02
-   cmp l         ; $3099 bd      
-   dcr b         ; $309a 05      
-   cmc           ; $309b 3f      
-   .byte 0x30    ; $309c 30      
-   sbb e         ; $309d 9b      
-   mvi b,$36     ; $309e 06 36   
-   .byte 0x30    ; $30a0 30      
-   mov c,d       ; $30a1 4a      
-   inr b         ; $30a2 04      
-   adc l         ; $30a3 8d      
-   inx b         ; $30a4 03      
-   cmp l         ; $30a5 bd      
-   dcr b         ; $30a6 05      
-   mov c,d       ; $30a7 4a      
-   inr b         ; $30a8 04      
-   dcr d         ; $30a9 15      
-   inx b         ; $30aa 03      
-   stax b        ; $30ab 02      
-   cmc           ; $30ac 3f      
-   mov d,e       ; $30ad 53      
-   add e         ; $30ae 83      
-   .byte 0x30    ; $30af 30      
-   pop h         ; $30b0 e1      
-   pop d         ; $30b1 d1      
-   mov a,e       ; $30b2 7b      
-   ora a         ; $30b3 b7      
-   jnz $30c2     ; $30b4 c2 c2 30
-   mov a,h       ; $30b7 7c      
-   ora a         ; $30b8 b7      
-   push d        ; $30b9 d5      
-   jm $02ef      ; $30ba fa ef 02
-   pop d         ; $30bd d1      
-   push h        ; $30be e5      
-   jmp $02ef     ; $30bf c3 ef 02
-   mov a,h       ; $30c2 7c      
-   ora a         ; $30c3 b7      
-   push h        ; $30c4 e5      
-   jm $02ef      ; $30c5 fa ef 02
-   pop h         ; $30c8 e1      
-   lxi d,$0000   ; $30c9 11 00 00
-   push d        ; $30cc d5      
-   jmp $02ef     ; $30cd c3 ef 02
-   lxi b,$8379   ; $30d0 01 79 83
-   .byte 0x30    ; $30d3 30      
-   pop d         ; $30d4 d1      
-   mov a,e       ; $30d5 7b      
-   ani $01       ; $30d6 e6 01   
-   jnz $30e2     ; $30d8 c2 e2 30
-   lxi d,$0000   ; $30db 11 00 00
-   push d        ; $30de d5      
-   jmp $02ef     ; $30df c3 ef 02
-   lxi d,$ffff   ; $30e2 11 ff ff
-   push d        ; $30e5 d5      
-   jmp $02ef     ; $30e6 c3 ef 02
-   stax b        ; $30e9 02      
-   dcx h         ; $30ea 2b      
-   mov m,b       ; $30eb 70      
-   add e         ; $30ec 83      
-   .byte 0x30    ; $30ed 30      
-   lda $304b     ; $30ee 3a 4b 30
-   ana a         ; $30f1 a7      
-   jnz $3106     ; $30f2 c2 06 31
-   lda $3057     ; $30f5 3a 57 30
-   ana a         ; $30f8 a7      
-   jnz $3101     ; $30f9 c2 01 31
-   mvi h,$01     ; $30fc 26 01   
-   jmp $3103     ; $30fe c3 03 31
-   mvi h,$10     ; $3101 26 10   
-   jmp $3114     ; $3103 c3 14 31
-   lda $3057     ; $3106 3a 57 30
-   ana a         ; $3109 a7      
-   jnz $3112     ; $310a c2 12 31
-   mvi h,$02     ; $310d 26 02   
-   jmp $3114     ; $310f c3 14 31
-   mvi h,$04     ; $3112 26 04   
-   pop d         ; $3114 d1      
-   ldax d        ; $3115 1a      
-   ora h         ; $3116 b4      
-   stax d        ; $3117 12      
-   jmp $02ef     ; $3118 c3 ef 02
-   stax b        ; $311b 02      
-   dcr l         ; $311c 2d      
-   mov m,b       ; $311d 70      
-   add e         ; $311e 83      
-   .byte 0x30    ; $311f 30      
-   lda $304b     ; $3120 3a 4b 30
-   ana a         ; $3123 a7      
-   jnz $3138     ; $3124 c2 38 31
-   lda $3057     ; $3127 3a 57 30
-   ana a         ; $312a a7      
-   jnz $3133     ; $312b c2 33 31
-   mvi h,$fe     ; $312e 26 fe   
-   jmp $3135     ; $3130 c3 35 31
-   mvi h,$ef     ; $3133 26 ef   
-   jmp $3146     ; $3135 c3 46 31
-   lda $3057     ; $3138 3a 57 30
-   ana a         ; $313b a7      
-   jnz $3144     ; $313c c2 44 31
-   mvi h,$fd     ; $313f 26 fd   
-   jmp $3146     ; $3141 c3 46 31
-   mvi h,$fb     ; $3144 26 fb   
-   pop d         ; $3146 d1      
-   ldax d        ; $3147 1a      
-   ana h         ; $3148 a4      
-   stax d        ; $3149 12      
-   jmp $02ef     ; $314a c3 ef 02
-   lxi b,$8370   ; $314d 01 70 83
-   .byte 0x30    ; $3150 30      
-   lda $306f     ; $3151 3a 6f 30
-   ora a         ; $3154 b7      
-   jnz $30ee     ; $3155 c2 ee 30
-   jmp $3120     ; $3158 c3 20 31
-   lxi b,$8357   ; $315b 01 57 83
-   .byte 0x30    ; $315e 30      
-   call $0984    ; $315f cd 84 09
-   nop           ; $3162 00      
-   nop           ; $3163 00      
-   call $1ac4    ; $3164 cd c4 1a
-   lxi b,$8362   ; $3167 01 62 83
-   .byte 0x30    ; $316a 30      
-   call $0984    ; $316b cd 84 09
-   nop           ; $316e 00      
-   nop           ; $316f 00      
-   call $1ac4    ; $3170 cd c4 1a
-   lxi b,$8367   ; $3173 01 67 83
-   .byte 0x30    ; $3176 30      
-   call $0984    ; $3177 cd 84 09
-   nop           ; $317a 00      
-   nop           ; $317b 00      
-   call $1ac4    ; $317c cd c4 1a
-   lxi b,$8364   ; $317f 01 64 83
-   .byte 0x30    ; $3182 30      
-   call $0984    ; $3183 cd 84 09
-   nop           ; $3186 00      
-   nop           ; $3187 00      
-   call $1ac4    ; $3188 cd c4 1a
-   lxi b,$8376   ; $318b 01 76 83
-   .byte 0x30    ; $318e 30      
-   call $0984    ; $318f cd 84 09
-   nop           ; $3192 00      
-   nop           ; $3193 00      
-   call $1ac4    ; $3194 cd c4 1a
-   stax b        ; $3197 02      
-   inr h         ; $3198 24      
-   lxi sp,$3083  ; $3199 31 83 30
-   call $0984    ; $319c cd 84 09
-   ldax d        ; $319f 1a      
-   sta $c4cd     ; $31a0 32 cd c4
-   ldax d        ; $31a3 1a      
-   stax b        ; $31a4 02      
-   inr h         ; $31a5 24      
-   sta $3083     ; $31a6 32 83 30
-   call $0984    ; $31a9 cd 84 09
-   .byte 0x20    ; $31ac 20      
-   sta $c4cd     ; $31ad 32 cd c4
-   ldax d        ; $31b0 1a      
-   stax b        ; $31b1 02      
-   inr h         ; $31b2 24      
-   inr m         ; $31b3 34      
-   add e         ; $31b4 83      
-   .byte 0x30    ; $31b5 30      
-   call $0984    ; $31b6 cd 84 09
-   lda $cd32     ; $31b9 3a 32 cd
-   cnz $021a     ; $31bc c4 1a 02
-   inr h         ; $31bf 24      
-   dcr m         ; $31c0 35      
-   add e         ; $31c1 83      
-   .byte 0x30    ; $31c2 30      
-   call $0984    ; $31c3 cd 84 09
-   mov b,b       ; $31c6 40      
-   sta $c4cd     ; $31c7 32 cd c4
-   ldax d        ; $31ca 1a      
-   stax b        ; $31cb 02      
-   mov b,h       ; $31cc 44      
-   mov e,b       ; $31cd 58      
-   add e         ; $31ce 83      
-   .byte 0x30    ; $31cf 30      
-   call $0984    ; $31d0 cd 84 09
-   nop           ; $31d3 00      
-   nop           ; $31d4 00      
-   call $1ac4    ; $31d5 cd c4 1a
-   stax b        ; $31d8 02      
-   mov b,h       ; $31d9 44      
-   mov e,c       ; $31da 59      
-   add e         ; $31db 83      
-   .byte 0x30    ; $31dc 30      
-   call $0984    ; $31dd cd 84 09
-   nop           ; $31e0 00      
-   nop           ; $31e1 00      
-   call $1ac4    ; $31e2 cd c4 1a
-   lxi b,$8369   ; $31e5 01 69 83
-   .byte 0x30    ; $31e8 30      
-   call $0984    ; $31e9 cd 84 09
-   nop           ; $31ec 00      
-   nop           ; $31ed 00      
-   call $1ac4    ; $31ee cd c4 1a
-   lxi b,$836a   ; $31f1 01 6a 83
-   .byte 0x30    ; $31f4 30      
-   call $0984    ; $31f5 cd 84 09
-   nop           ; $31f8 00      
-   nop           ; $31f9 00      
-   call $1ac4    ; $31fa cd c4 1a
-   lxi b,$836c   ; $31fd 01 6c 83
-   .byte 0x30    ; $3200 30      
-   call $02e4    ; $3201 cd e4 02
-   rz            ; $3204 c8      
-   mvi c,$64     ; $3205 0e 64   
-   lxi sp,$316b  ; $3207 31 6b 31
-   cmp a         ; $320a bf      
-   mvi c,$e5     ; $320b 0e e5   
-   ldax b        ; $320d 0a      
-   mov e,d       ; $320e 5a      
-   sta $315f     ; $320f 32 5f 31
-   mov l,e       ; $3212 6b      
-   lxi sp,$050f  ; $3213 31 0f 05
-   sub b         ; $3216 90      
-   ldax b        ; $3217 0a      
-   mvi m,$32     ; $3218 36 32   
-   nop           ; $321a 00      
-   nop           ; $321b 00      
-   .byte 0xfd    ; $321c fd      
-   .byte 0x08    ; $321d 08      
-   out $03       ; $321e d3 03   
-   nop           ; $3220 00      
-   nop           ; $3221 00      
-   mov h,b       ; $3222 60      
-   .byte 0x30    ; $3223 30      
-   adc l         ; $3224 8d      
-   inx b         ; $3225 03      
-   add e         ; $3226 83      
-   lxi sp,$30b0  ; $3227 31 b0 30
-   mov c,d       ; $322a 4a      
-   inr b         ; $322b 04      
-   mov h,l       ; $322c 65      
-   .byte 0x30    ; $322d 30      
-   mov e,a       ; $322e 5f      
-   lxi sp,$316b  ; $322f 31 6b 31
-   mov d,l       ; $3232 55      
-   inr b         ; $3233 04      
-   mov h,h       ; $3234 64      
-   lxi sp,$3060  ; $3235 31 60 30
-   mov d,c       ; $3238 51      
-   lxi sp,$0000  ; $3239 31 00 00
-   .byte 0xfd    ; $323c fd      
-   .byte 0x08    ; $323d 08      
-   out $03       ; $323e d3 03   
-   nop           ; $3240 00      
-   nop           ; $3241 00      
-   mov h,b       ; $3242 60      
-   .byte 0x30    ; $3243 30      
-   adc l         ; $3244 8d      
-   inx b         ; $3245 03      
-   adc a         ; $3246 8f      
-   lxi sp,$30b0  ; $3247 31 b0 30
-   mov c,d       ; $324a 4a      
-   inr b         ; $324b 04      
-   mov h,l       ; $324c 65      
-   .byte 0x30    ; $324d 30      
-   mov e,a       ; $324e 5f      
-   lxi sp,$3177  ; $324f 31 77 31
-   mov c,d       ; $3252 4a      
-   inr b         ; $3253 04      
-   mov h,h       ; $3254 64      
-   lxi sp,$0b2e  ; $3255 31 2e 0b
-   .byte 0x10    ; $3258 10      
-   sta $0315     ; $3259 32 15 03
-   inr b         ; $325c 04      
-   mov c,h       ; $325d 4c      
-   mov c,c       ; $325e 49      
-   mov c,m       ; $325f 4e      
-   mov b,l       ; $3260 45      
-   add e         ; $3261 83      
-   .byte 0x30    ; $3262 30      
-   call $02e4    ; $3263 cd e4 02
-   jp $2b03      ; $3266 f2 03 2b
-   ldax b        ; $3269 0a      
-   sta $fa00     ; $326a 32 00 fa
-   inr b         ; $326d 04      
-   adc l         ; $326e 8d      
-   inx b         ; $326f 03      
-   dcx h         ; $3270 2b      
-   ldax b        ; $3271 0a      
-   add b         ; $3272 80      
-   nop           ; $3273 00      
-   jm $c804      ; $3274 fa 04 c8
-   .byte 0x08    ; $3277 08      
-   .byte 0xfd    ; $3278 fd      
-   .byte 0x08    ; $3279 08      
-   mov c,d       ; $327a 4a      
-   lxi d,$2d17   ; $327b 11 17 2d
-   mov l,m       ; $327e 6e      
-   mov h,l       ; $327f 65      
-   mov m,a       ; $3280 77      
-   mov h,l       ; $3281 65      
-   mov m,d       ; $3282 72      
-   mov l,m       ; $3283 6e      
-   mov a,c       ; $3284 79      
-   mov l,d       ; $3285 6a      
-   .byte 0x20    ; $3286 20      
-   mov h,c       ; $3287 61      
-   mov m,d       ; $3288 72      
-   mov h,a       ; $3289 67      
-   mov m,l       ; $328a 75      
-   mov l,l       ; $328b 6d      
-   mov h,l       ; $328c 65      
-   mov l,m       ; $328d 6e      
-   mov m,h       ; $328e 74      
-   .byte 0x20    ; $328f 20      
-   mov c,h       ; $3290 4c      
-   mov c,c       ; $3291 49      
-   mov c,m       ; $3292 4e      
-   mov b,l       ; $3293 45      
-   jp $4803      ; $3294 f2 03 48
-   .byte 0x30    ; $3297 30      
-   mov d,h       ; $3298 54      
-   .byte 0x30    ; $3299 30      
-   sub m         ; $329a 96      
-   .byte 0x30    ; $329b 30      
-   mov h,l       ; $329c 65      
-   .byte 0x30    ; $329d 30      
-   mov d,h       ; $329e 54      
-   .byte 0x30    ; $329f 30      
-   mov d,l       ; $32a0 55      
-   inr b         ; $32a1 04      
-   jpo $4831     ; $32a2 e2 31 48
-   .byte 0x30    ; $32a5 30      
-   mov d,l       ; $32a6 55      
-   inr b         ; $32a7 04      
-   push d        ; $32a8 d5      
-   lxi sp,$0ed1  ; $32a9 31 d1 0e
-   rnc           ; $32ac d0      
-   lxi sp,$0550  ; $32ad 31 50 05
-   sub b         ; $32b0 90      
-   ldax b        ; $32b1 0a      
-   ora m         ; $32b2 b6      
-   sta $046a     ; $32b3 32 6a 04
-   xri $31       ; $32b6 ee 31   
-   cmc           ; $32b8 3f      
-   .byte 0x30    ; $32b9 30      
-   .byte 0xdd    ; $32ba dd      
-   lxi sp,$0550  ; $32bb 31 50 05
-   sub b         ; $32be 90      
-   ldax b        ; $32bf 0a      
-   cnz $6a32     ; $32c0 c4 32 6a
-   inr b         ; $32c3 04      
-   jm $d031      ; $32c4 fa 31 d0
-   lxi sp,$04b1  ; $32c7 31 b1 04
-   .byte 0xdd    ; $32ca dd      
-   lxi sp,$04b1  ; $32cb 31 b1 04
-   jp $f203      ; $32ce f2 03 f2
-   inx b         ; $32d1 03      
-   sbi $04       ; $32d2 de 04   
-   mov m,b       ; $32d4 70      
-   lxi sp,$04c1  ; $32d5 31 c1 04
-   mov a,h       ; $32d8 7c      
-   lxi sp,$0533  ; $32d9 31 33 05
-   mov a,d       ; $32dc 7a      
-   ldax b        ; $32dd 0a      
-   .byte 0x10    ; $32de 10      
-   inx sp        ; $32df 33      
-   dcx h         ; $32e0 2b      
-   ldax b        ; $32e1 0a      
-   mov d,h       ; $32e2 54      
-   .byte 0x30    ; $32e3 30      
-   out $03       ; $32e4 d3 03   
-   sbb h         ; $32e6 9c      
-   lxi sp,$099d  ; $32e7 31 9d 09
-   lda $8213     ; $32ea 3a 13 82
-   inr b         ; $32ed 04      
-   xra c         ; $32ee a9      
-   lxi sp,$099d  ; $32ef 31 9d 09
-   push psw      ; $32f2 f5      
-   lxi sp,$3188  ; $32f3 31 88 31
-   dcx h         ; $32f6 2b      
-   ldax b        ; $32f7 0a      
-   mov c,b       ; $32f8 48      
-   .byte 0x30    ; $32f9 30      
-   out $03       ; $32fa d3 03   
-   ora m         ; $32fc b6      
-   lxi sp,$099d  ; $32fd 31 9d 09
-   lda $8213     ; $3300 3a 13 82
-   inr b         ; $3303 04      
-   jmp $9d31     ; $3304 c3 31 9d
-   dad b         ; $3307 09      
-   pchl          ; $3308 e9      
-   lxi sp,$3194  ; $3309 31 94 31
-   mov l,b       ; $330c 68      
-   ldax b        ; $330d 0a      
-   inr a         ; $330e 3c      
-   inx sp        ; $330f 33      
-   dcx h         ; $3310 2b      
-   ldax b        ; $3311 0a      
-   mov c,b       ; $3312 48      
-   .byte 0x30    ; $3313 30      
-   out $03       ; $3314 d3 03   
-   sbb h         ; $3316 9c      
-   lxi sp,$099d  ; $3317 31 9d 09
-   lda $8213     ; $331a 3a 13 82
-   inr b         ; $331d 04      
-   xra c         ; $331e a9      
-   lxi sp,$099d  ; $331f 31 9d 09
-   pchl          ; $3322 e9      
-   lxi sp,$3188  ; $3323 31 88 31
-   dcx h         ; $3326 2b      
-   ldax b        ; $3327 0a      
-   mov d,h       ; $3328 54      
-   .byte 0x30    ; $3329 30      
-   out $03       ; $332a d3 03   
-   ora m         ; $332c b6      
-   lxi sp,$099d  ; $332d 31 9d 09
-   lda $8213     ; $3330 3a 13 82
-   inr b         ; $3333 04      
-   jmp $9d31     ; $3334 c3 31 9d
-   dad b         ; $3337 09      
-   push psw      ; $3338 f5      
-   lxi sp,$3194  ; $3339 31 94 31
-   mov c,b       ; $333c 48      
-   .byte 0x30    ; $333d 30      
-   pop d         ; $333e d1      
-   mvi c,$c8     ; $333f 0e c8   
-   .byte 0x08    ; $3341 08      
-   mov l,d       ; $3342 6a      
-   inr b         ; $3343 04      
-   mov c,l       ; $3344 4d      
-   .byte 0x30    ; $3345 30      
-   mov d,h       ; $3346 54      
-   .byte 0x30    ; $3347 30      
-   pop d         ; $3348 d1      
-   mvi c,$c8     ; $3349 0e c8   
-   .byte 0x08    ; $334b 08      
-   mov l,d       ; $334c 6a      
-   inr b         ; $334d 04      
-   mov e,c       ; $334e 59      
-   .byte 0x30    ; $334f 30      
-   lxi b,$5932   ; $3350 01 32 59
-   .byte 0x30    ; $3353 30      
-   mov c,l       ; $3354 4d      
-   .byte 0x30    ; $3355 30      
-   dcr d         ; $3356 15      
-   inx b         ; $3357 03      
-   inr b         ; $3358 04      
-   mov d,b       ; $3359 50      
-   mov c,h       ; $335a 4c      
-   mov c,a       ; $335b 4f      
-   mov d,h       ; $335c 54      
-   mov e,h       ; $335d 5c      
-   sta $e4cd     ; $335e 32 cd e4
-   stax b        ; $3361 02      
-   jp $2b03      ; $3362 f2 03 2b
-   ldax b        ; $3365 0a      
-   sta $fa00     ; $3366 32 00 fa
-   inr b         ; $3369 04      
-   adc l         ; $336a 8d      
-   inx b         ; $336b 03      
-   dcx h         ; $336c 2b      
-   ldax b        ; $336d 0a      
-   add b         ; $336e 80      
-   nop           ; $336f 00      
-   jm $c804      ; $3370 fa 04 c8
-   .byte 0x08    ; $3373 08      
-   .byte 0xfd    ; $3374 fd      
-   .byte 0x08    ; $3375 08      
-   mov c,d       ; $3376 4a      
-   lxi d,$2d17   ; $3377 11 17 2d
-   mov l,m       ; $337a 6e      
-   mov h,l       ; $337b 65      
-   mov m,a       ; $337c 77      
-   mov h,l       ; $337d 65      
-   mov m,d       ; $337e 72      
-   mov l,m       ; $337f 6e      
-   mov a,c       ; $3380 79      
-   mov l,d       ; $3381 6a      
-   .byte 0x20    ; $3382 20      
-   mov h,c       ; $3383 61      
-   mov m,d       ; $3384 72      
-   mov h,a       ; $3385 67      
-   mov m,l       ; $3386 75      
-   mov l,l       ; $3387 6d      
-   mov h,l       ; $3388 65      
-   mov l,m       ; $3389 6e      
-   mov m,h       ; $338a 74      
-   .byte 0x20    ; $338b 20      
-   mov d,b       ; $338c 50      
-   mov c,h       ; $338d 4c      
-   mov c,a       ; $338e 4f      
-   mov d,h       ; $338f 54      
-   jp $d403      ; $3390 f2 03 d4
-   .byte 0x30    ; $3393 30      
-   mov e,c       ; $3394 59      
-   .byte 0x30    ; $3395 30      
-   cnc $4d30     ; $3396 d4 30 4d
-   .byte 0x30    ; $3399 30      
-   jp $9603      ; $339a f2 03 96
-   .byte 0x30    ; $339d 30      
-   mov d,c       ; $339e 51      
-   lxi sp,$3059  ; $339f 31 59 30
-   mov c,l       ; $33a2 4d      
-   .byte 0x30    ; $33a3 30      
-   dcr d         ; $33a4 15      
-   inx b         ; $33a5 03      
-   inx b         ; $33a6 03      
-   mov b,d       ; $33a7 42      
-   mov e,c       ; $33a8 59      
-   mov b,l       ; $33a9 45      
-   mov e,b       ; $33aa 58      
-   inx sp        ; $33ab 33      
+
+NFA_PEN:         ; 3074
+   .byte 3,"PEN"
+   .word NFA_Y            ; 3050
+_PEN:            ; 307A - 3083
+   call _FCALL            ; 307A
+   .word _TRUE            ; $307d 0EE6 - TRUE
+   .word $3071            ; $307f 3071
+   .word _EXIT            ; $3081 0315 - EXIT
+
+NFA_GUM:         ; 3083
+   .byte 3,"GUM"
+   .word NFA_PEN          ; 3074
+_GUM:            ; 3089 - 325C
+   call _FCALL            ; 3089
+   .word _FALSE           ; $308c 0EF3 - FALSE
+   .word $3071            ; $308e 3071
+   .word _EXIT            ; $3090 0315 - EXIT
+
+NFA_G:           ; 3092
+   .byte 1,"G"
+   .word NFA_GUM          ; 3083
+_G:              ; 3096 - None
+   .word $E4CD            ; $3096 E4CD
+   .word $BD02            ; $3098 BD02
+   .word $3F05            ; $309a 3F05
+   .word $9B30            ; $309c 9B30
+   .word $3606            ; $309e 3606
+   .word $4A30            ; $30a0 4A30
+   .word $8D04            ; $30a2 8D04
+   .word $BD03            ; $30a4 BD03
+   .word $4A05            ; $30a6 4A05
+   .word $1504            ; $30a8 1504
+   .word $0203            ; $30aa 0203
+   .word $533F            ; $30ac 533F
+   .word $3083            ; $30ae 3083
+   .word $D1E1            ; $30b0 D1E1
+   .word $B77B            ; $30b2 B77B
+   .word $C2C2            ; $30b4 C2C2
+   .word $7C30            ; $30b6 7C30
+   .word $D5B7            ; $30b8 D5B7
+   .word $EFFA            ; $30ba EFFA
+   .word $D102            ; $30bc D102
+   .word $C3E5            ; $30be C3E5
+   .word $02EF            ; $30c0 02EF
+   .word $B77C            ; $30c2 B77C
+   .word $FAE5            ; $30c4 FAE5
+   .word $02EF            ; $30c6 02EF
+   .word $11E1            ; $30c8 11E1
+   .word $0000            ; $30ca 0000
+   .word $C3D5            ; $30cc C3D5
+   .word $02EF            ; $30ce 02EF
+   .word $7901            ; $30d0 7901
+   .word $3083            ; $30d2 3083
+   .word $7BD1            ; $30d4 7BD1
+   .word $01E6            ; $30d6 01E6
+   .word $E2C2            ; $30d8 E2C2
+   .word $1130            ; $30da 1130
+   .word $0000            ; $30dc 0000
+   .word $C3D5            ; $30de C3D5
+   .word $02EF            ; $30e0 02EF
+   .word $FF11            ; $30e2 FF11
+   .word $D5FF            ; $30e4 D5FF
+   .word $EFC3            ; $30e6 EFC3
+   .word $0202            ; $30e8 0202
+   .word $702B            ; $30ea 702B
+   .word $3083            ; $30ec 3083
+   .word $4B3A            ; $30ee 4B3A
+   .word $A730            ; $30f0 A730
+   .word $06C2            ; $30f2 06C2
+   .word $3A31            ; $30f4 3A31
+   .word $3057            ; $30f6 3057
+   .word $C2A7            ; $30f8 C2A7
+   .word $3101            ; $30fa 3101
+   .word $0126            ; $30fc 0126
+   .word $03C3            ; $30fe 03C3
+   .word $2631            ; $3100 2631
+   .word $C310            ; $3102 C310
+   .word $3114            ; $3104 3114
+   .word $573A            ; $3106 573A
+   .word $A730            ; $3108 A730
+   .word $12C2            ; $310a 12C2
+   .word $2631            ; $310c 2631
+   .word $C302            ; $310e C302
+   .word $3114            ; $3110 3114
+   .word $0426            ; $3112 0426
+   .word $1AD1            ; $3114 1AD1
+   .word $12B4            ; $3116 12B4
+   .word $EFC3            ; $3118 EFC3
+   .word $0202            ; $311a 0202
+   .word $702D            ; $311c 702D
+   .word $3083            ; $311e 3083
+   .word $4B3A            ; $3120 4B3A
+   .word $A730            ; $3122 A730
+   .word $38C2            ; $3124 38C2
+   .word $3A31            ; $3126 3A31
+   .word $3057            ; $3128 3057
+   .word $C2A7            ; $312a C2A7
+   .word $3133            ; $312c 3133
+   .word $FE26            ; $312e FE26
+   .word $35C3            ; $3130 35C3
+   .word $2631            ; $3132 2631
+   .word $C3EF            ; $3134 C3EF
+   .word $3146            ; $3136 3146
+   .word $573A            ; $3138 573A
+   .word $A730            ; $313a A730
+   .word $44C2            ; $313c 44C2
+   .word $2631            ; $313e 2631
+   .word $C3FD            ; $3140 C3FD
+   .word $3146            ; $3142 3146
+   .word $FB26            ; $3144 FB26
+   .word $1AD1            ; $3146 1AD1
+   .word $12A4            ; $3148 12A4
+   .word $EFC3            ; $314a EFC3
+   .word $0102            ; $314c 0102
+   .word $8370            ; $314e 8370
+   .word $3A30            ; $3150 3A30
+   .word $306F            ; $3152 306F
+   .word $C2B7            ; $3154 C2B7
+   .word $30EE            ; $3156 30EE
+   .word $20C3            ; $3158 20C3
+   .word $0131            ; $315a 0131
+   .word $8357            ; $315c 8357
+   .word $CD30            ; $315e CD30
+   .word __40             ; $3160 0984 - @
+   .word $0000            ; $3162 0000
+   .word $C4CD            ; $3164 C4CD
+   .word $011A            ; $3166 011A
+   .word $8362            ; $3168 8362
+   .word $CD30            ; $316a CD30
+   .word __40             ; $316c 0984 - @
+   .word $0000            ; $316e 0000
+   .word $C4CD            ; $3170 C4CD
+   .word $011A            ; $3172 011A
+   .word $8367            ; $3174 8367
+   .word $CD30            ; $3176 CD30
+   .word __40             ; $3178 0984 - @
+   .word $0000            ; $317a 0000
+   .word $C4CD            ; $317c C4CD
+   .word $011A            ; $317e 011A
+   .word $8364            ; $3180 8364
+   .word $CD30            ; $3182 CD30
+   .word __40             ; $3184 0984 - @
+   .word $0000            ; $3186 0000
+   .word $C4CD            ; $3188 C4CD
+   .word $011A            ; $318a 011A
+   .word $8376            ; $318c 8376
+   .word $CD30            ; $318e CD30
+   .word __40             ; $3190 0984 - @
+   .word $0000            ; $3192 0000
+   .word $C4CD            ; $3194 C4CD
+   .word $021A            ; $3196 021A
+   .word $3124            ; $3198 3124
+   .word $3083            ; $319a 3083
+   .word $84CD            ; $319c 84CD
+   .word $1A09            ; $319e 1A09
+   .word $CD32            ; $31a0 CD32
+   .word $1AC4            ; $31a2 1AC4
+   .word $2402            ; $31a4 2402
+   .word $8332            ; $31a6 8332
+   .word $CD30            ; $31a8 CD30
+   .word __40             ; $31aa 0984 - @
+   .word $3220            ; $31ac 3220
+   .word $C4CD            ; $31ae C4CD
+   .word $021A            ; $31b0 021A
+   .word $3424            ; $31b2 3424
+   .word $3083            ; $31b4 3083
+   .word $84CD            ; $31b6 84CD
+   .word $3A09            ; $31b8 3A09
+   .word $CD32            ; $31ba CD32
+   .word $1AC4            ; $31bc 1AC4
+   .word $2402            ; $31be 2402
+   .word $8335            ; $31c0 8335
+   .word $CD30            ; $31c2 CD30
+   .word __40             ; $31c4 0984 - @
+   .word $3240            ; $31c6 3240
+   .word $C4CD            ; $31c8 C4CD
+   .word $021A            ; $31ca 021A
+   .word $5844            ; $31cc 5844
+   .word $3083            ; $31ce 3083
+   .word $84CD            ; $31d0 84CD
+   .word $0009            ; $31d2 0009
+   .word $CD00            ; $31d4 CD00
+   .word $1AC4            ; $31d6 1AC4
+   .word $4402            ; $31d8 4402
+   .word $8359            ; $31da 8359
+   .word $CD30            ; $31dc CD30
+   .word __40             ; $31de 0984 - @
+   .word $0000            ; $31e0 0000
+   .word $C4CD            ; $31e2 C4CD
+   .word $011A            ; $31e4 011A
+   .word $8369            ; $31e6 8369
+   .word $CD30            ; $31e8 CD30
+   .word __40             ; $31ea 0984 - @
+   .word $0000            ; $31ec 0000
+   .word $C4CD            ; $31ee C4CD
+   .word $011A            ; $31f0 011A
+   .word $836A            ; $31f2 836A
+   .word $CD30            ; $31f4 CD30
+   .word __40             ; $31f6 0984 - @
+   .word $0000            ; $31f8 0000
+   .word $C4CD            ; $31fa C4CD
+   .word $011A            ; $31fc 011A
+   .word $836C            ; $31fe 836C
+   .word $CD30            ; $3200 CD30
+   .word $02E4            ; $3202 02E4
+   .word _0               ; $3204 0EC8 - 0
+   .word $3164            ; $3206 3164
+   .word $316B            ; $3208 316B
+   .word __2D1            ; $320a 0EBF - -1
+   .word __28DO_29        ; $320c 0AE5 - (DO)
+   .word $325A            ; $320e 325A
+   .word $315F            ; $3210 315F
+   .word $316B            ; $3212 316B
+   .word __3C             ; $3214 050F - <
+   .word _N_3FBRANCH      ; $3216 0A90 - N?BRANCH
+   .word $3236            ; $3218 3236
+   .word $0000            ; $321a 0000
+   .word _NOT             ; $321c 08FD - NOT
+   .word _DUP             ; $321e 03D3 - DUP
+   .word $0000            ; $3220 0000
+   .word $3060            ; $3222 3060
+   .word _SWAP            ; $3224 038D - SWAP
+   .word $3183            ; $3226 3183
+   .word $30B0            ; $3228 30B0
+   .word __2B             ; $322a 044A - +
+   .word $3065            ; $322c 3065
+   .word $315F            ; $322e 315F
+   .word $316B            ; $3230 316B
+   .word __2D             ; $3232 0455 - -
+   .word $3164            ; $3234 3164
+   .word $3060            ; $3236 3060
+   .word $3151            ; $3238 3151
+   .word $0000            ; $323a 0000
+   .word _NOT             ; $323c 08FD - NOT
+   .word _DUP             ; $323e 03D3 - DUP
+   .word $0000            ; $3240 0000
+   .word $3060            ; $3242 3060
+   .word _SWAP            ; $3244 038D - SWAP
+   .word $318F            ; $3246 318F
+   .word $30B0            ; $3248 30B0
+   .word __2B             ; $324a 044A - +
+   .word $3065            ; $324c 3065
+   .word $315F            ; $324e 315F
+   .word $3177            ; $3250 3177
+   .word __2B             ; $3252 044A - +
+   .word $3164            ; $3254 3164
+   .word __28LOOP_29      ; $3256 0B2E - (LOOP)
+   .word $3210            ; $3258 3210
+   .word _EXIT            ; $325a 0315 - EXIT
+
+NFA_LINE:        ; 325C
+   .byte 4,"LINE"
+   .word NFA_GUM          ; 3083
+_LINE:           ; 3263 - 3358
+   call _FCALL            ; 3263
+   .word _2DUP            ; $3266 03F2 - 2DUP
+   .word _LIT             ; $3268 0A2B - LIT
+   .word $0032            ; $326a 0032
+   .word _U_3C            ; $326c 04FA - U<
+   .word _SWAP            ; $326e 038D - SWAP
+   .word _LIT             ; $3270 0A2B - LIT
+   .word $0080            ; $3272 0080
+   .word _U_3C            ; $3274 04FA - U<
+   .word _AND             ; $3276 08C8 - AND
+   .word _NOT             ; $3278 08FD - NOT
+   .word __28ABORT_22_29  ; $327a 114A - (ABORT")
+   .byte 23,"-newernyj argument LINE"
+   .word _2DUP            ; $3294 03F2 - 2DUP
+   .word _X               ; $3296 3048 - X
+   .word _Y               ; $3298 3054 - Y
+   .word $3096            ; $329a 3096
+   .word $3065            ; $329c 3065
+   .word _Y               ; $329e 3054 - Y
+   .word __2D             ; $32a0 0455 - -
+   .word $31E2            ; $32a2 31E2
+   .word _X               ; $32a4 3048 - X
+   .word __2D             ; $32a6 0455 - -
+   .word $31D5            ; $32a8 31D5
+   .word _1               ; $32aa 0ED1 - 1
+   .word $31D0            ; $32ac 31D0
+   .word _0_3E            ; $32ae 0550 - 0>
+   .word _N_3FBRANCH      ; $32b0 0A90 - N?BRANCH
+   .word $32B6            ; $32b2 32B6
+   .word _NEGATE          ; $32b4 046A - NEGATE
+   .word $31EE            ; $32b6 31EE
+   .word $303F            ; $32b8 303F
+   .word $31DD            ; $32ba 31DD
+   .word _0_3E            ; $32bc 0550 - 0>
+   .word _N_3FBRANCH      ; $32be 0A90 - N?BRANCH
+   .word $32C4            ; $32c0 32C4
+   .word _NEGATE          ; $32c2 046A - NEGATE
+   .word $31FA            ; $32c4 31FA
+   .word $31D0            ; $32c6 31D0
+   .word _ABS             ; $32c8 04B1 - ABS
+   .word $31DD            ; $32ca 31DD
+   .word _ABS             ; $32cc 04B1 - ABS
+   .word _2DUP            ; $32ce 03F2 - 2DUP
+   .word _2DUP            ; $32d0 03F2 - 2DUP
+   .word _MAX             ; $32d2 04DE - MAX
+   .word $3170            ; $32d4 3170
+   .word _MIN             ; $32d6 04C1 - MIN
+   .word $317C            ; $32d8 317C
+   .word __3E             ; $32da 0533 - >
+   .word __3FBRANCH       ; $32dc 0A7A - ?BRANCH
+   .word $3310            ; $32de 3310
+   .word _LIT             ; $32e0 0A2B - LIT
+   .word _Y               ; $32e2 3054 - Y
+   .word _DUP             ; $32e4 03D3 - DUP
+   .word $319C            ; $32e6 319C
+   .word __21             ; $32e8 099D - !
+   .word __3EBODY         ; $32ea 133A - >BODY
+   .word _2_2B            ; $32ec 0482 - 2+
+   .word $31A9            ; $32ee 31A9
+   .word __21             ; $32f0 099D - !
+   .word $31F5            ; $32f2 31F5
+   .word $3188            ; $32f4 3188
+   .word _LIT             ; $32f6 0A2B - LIT
+   .word _X               ; $32f8 3048 - X
+   .word _DUP             ; $32fa 03D3 - DUP
+   .word $31B6            ; $32fc 31B6
+   .word __21             ; $32fe 099D - !
+   .word __3EBODY         ; $3300 133A - >BODY
+   .word _2_2B            ; $3302 0482 - 2+
+   .word $31C3            ; $3304 31C3
+   .word __21             ; $3306 099D - !
+   .word $31E9            ; $3308 31E9
+   .word $3194            ; $330a 3194
+   .word _BRANCH          ; $330c 0A68 - BRANCH
+   .word $333C            ; $330e 333C
+   .word _LIT             ; $3310 0A2B - LIT
+   .word _X               ; $3312 3048 - X
+   .word _DUP             ; $3314 03D3 - DUP
+   .word $319C            ; $3316 319C
+   .word __21             ; $3318 099D - !
+   .word __3EBODY         ; $331a 133A - >BODY
+   .word _2_2B            ; $331c 0482 - 2+
+   .word $31A9            ; $331e 31A9
+   .word __21             ; $3320 099D - !
+   .word $31E9            ; $3322 31E9
+   .word $3188            ; $3324 3188
+   .word _LIT             ; $3326 0A2B - LIT
+   .word _Y               ; $3328 3054 - Y
+   .word _DUP             ; $332a 03D3 - DUP
+   .word $31B6            ; $332c 31B6
+   .word __21             ; $332e 099D - !
+   .word __3EBODY         ; $3330 133A - >BODY
+   .word _2_2B            ; $3332 0482 - 2+
+   .word $31C3            ; $3334 31C3
+   .word __21             ; $3336 099D - !
+   .word $31F5            ; $3338 31F5
+   .word $3194            ; $333a 3194
+   .word _X               ; $333c 3048 - X
+   .word _1               ; $333e 0ED1 - 1
+   .word _AND             ; $3340 08C8 - AND
+   .word _NEGATE          ; $3342 046A - NEGATE
+   .word $304D            ; $3344 304D
+   .word _Y               ; $3346 3054 - Y
+   .word _1               ; $3348 0ED1 - 1
+   .word _AND             ; $334a 08C8 - AND
+   .word _NEGATE          ; $334c 046A - NEGATE
+   .word $3059            ; $334e 3059
+   .word $3201            ; $3350 3201
+   .word $3059            ; $3352 3059
+   .word $304D            ; $3354 304D
+   .word _EXIT            ; $3356 0315 - EXIT
+
+NFA_PLOT:        ; 3358
+   .byte 4,"PLOT"
+   .word NFA_LINE         ; 325C
+_PLOT:           ; 335F - 3639
+   call _FCALL            ; 335F
+   .word _2DUP            ; $3362 03F2 - 2DUP
+   .word _LIT             ; $3364 0A2B - LIT
+   .word $0032            ; $3366 0032
+   .word _U_3C            ; $3368 04FA - U<
+   .word _SWAP            ; $336a 038D - SWAP
+   .word _LIT             ; $336c 0A2B - LIT
+   .word $0080            ; $336e 0080
+   .word _U_3C            ; $3370 04FA - U<
+   .word _AND             ; $3372 08C8 - AND
+   .word _NOT             ; $3374 08FD - NOT
+   .word __28ABORT_22_29  ; $3376 114A - (ABORT")
+   .byte 23,"-newernyj argument PLOT"
+   .word _2DUP            ; $3390 03F2 - 2DUP
+   .word $30D4            ; $3392 30D4
+   .word $3059            ; $3394 3059
+   .word $30D4            ; $3396 30D4
+   .word $304D            ; $3398 304D
+   .word _2DUP            ; $339a 03F2 - 2DUP
+   .word $3096            ; $339c 3096
+   .word $3151            ; $339e 3151
+   .word $3059            ; $33a0 3059
+   .word $304D            ; $33a2 304D
+   .word _EXIT            ; $33a4 0315 - EXIT
+
+;NFA_BYE:         ; 33A6
+   .byte 3,"BYE"
+   .word NFA_PLOT         ; 3358
+;_BYE:            ; 33AC - None
    nop           ; $33ac 00      
    nop           ; $33ad 00      
    nop           ; $33ae 00      
@@ -9860,19 +7708,17 @@ _LEAVE:          ; 1C79 - 1C84
    rst 7         ; $3446 ff      
    rst 7         ; $3447 ff      
 l3448:
-   dcr b         ; $3448 05      
-   mov b,m       ; $3449 46      
-   mov c,a       ; $344a 4f      
-   mov d,d       ; $344b 52      
-   mov d,h       ; $344c 54      
-   mov c,b       ; $344d 48      
-   nop           ; $344e 00      
-   nop           ; $344f 00      
+
+NFA_FORTH:       ; 3448
+   .byte 5,"FORTH"
+   .word $0000
+_FORTH:          ; 3450 - 01AF
    call $1b95    ; $3450 cd 95 1b
-   lxi b,$8680   ; $3453 01 80 86
-   mov b,e       ; $3456 43      
-   nop           ; $3457 00      
-   nop           ; $3458 00      
+   .byte $01
+   .byte $80
+   .word $4386
+   .word $0000
+
    dad sp        ; $3459 39      
    nop           ; $345a 00      
    lxi sp,$3900  ; $345b 31 00 39
@@ -10298,14 +8144,11 @@ l3448:
    sbb d         ; $3634 9a      
    .byte 0x38    ; $3635 38      
    call $1ac4    ; $3636 cd c4 1a
-   dcr b         ; $3639 05      
-   mov d,m       ; $363a 56      
-   dcr l         ; $363b 2d      
-   mov b,c       ; $363c 41      
-   mov b,e       ; $363d 43      
-   mov d,h       ; $363e 54      
-   mov e,b       ; $363f 58      
-   inx sp        ; $3640 33      
+
+NFA_V_2DACT:     ; 3639
+   .byte 5,"V-ACT"
+   .word $3358   ; NFA_PLOT         ; 3358
+_V_2DACT:        ; 3641 - 3664
    call $1adb    ; $3641 cd db 1a
    ana b         ; $3644 a0      
    dad sp        ; $3645 39      
@@ -10327,27 +8170,22 @@ l3448:
    inx b         ; $365f 03      
    jc $1509      ; $3660 da 09 15
    inx b         ; $3663 03      
-   mvi b,$56     ; $3664 06 56   
-   dcr l         ; $3666 2d      
-   mov c,h       ; $3667 4c      
-   mov c,c       ; $3668 49      
-   mov d,e       ; $3669 53      
-   mov d,h       ; $366a 54      
-   dad sp        ; $366b 39      
-   mvi m,$cd     ; $366c 36 cd   
-   cpo $e102     ; $366e e4 02 e1
-   lxi b,$0984   ; $3671 01 84 09
-   rpo           ; $3674 e0      
-   inx b         ; $3675 03      
-   mov a,d       ; $3676 7a      
-   ldax b        ; $3677 0a      
-   add b         ; $3678 80      
-   mvi m,$41     ; $3679 36 41   
-   mvi m,$68     ; $367b 36 68   
-   ldax b        ; $367d 0a      
-   mov m,d       ; $367e 72      
-   mvi m,$15     ; $367f 36 15   
-   inx b         ; $3681 03      
+
+NFA_V_2DLIST:    ; 3664
+   .byte 6,"V-LIST"
+   .word NFA_V_2DACT        ; 3639
+_V_2DLIST:       ; 366D - 38FD
+   call _FCALL            ; 366D
+   .word _VOC_2DLINK      ; $3670 01E1 - VOC-LINK
+   .word __40             ; $3672 0984 - @
+   .word __3FDUP          ; $3674 03E0 - ?DUP
+   .word __3FBRANCH       ; $3676 0A7A - ?BRANCH
+   .word $3680            ; $3678 3680
+   .word _V_2DACT         ; $367a 3641 - V-ACT
+   .word _BRANCH          ; $367c 0A68 - BRANCH
+   .word $3672            ; $367e 3672
+   .word _EXIT            ; $3680 0315 - EXIT
+
    lxi b,$6462   ; $3682 01 62 64
    mvi m,$cd     ; $3685 36 cd   
    cpo $d302     ; $3687 e4 02 d3
@@ -10833,180 +8671,106 @@ l3448:
    dcr d         ; $38fa 15      
    dcr d         ; $38fb 15      
    inx b         ; $38fc 03      
-   inr b         ; $38fd 04      
-   mov d,m       ; $38fe 56      
-   mov c,a       ; $38ff 4f      
-   mov b,e       ; $3900 43      
-   mvi l,$64     ; $3901 2e 64   
-   mvi m,$cd     ; $3903 36 cd   
-   cpo $6602     ; $3905 e4 02 66
-   dcr d         ; $3908 15      
-   out $03       ; $3909 d3 03   
-   sbb c         ; $390b 99      
-   inr b         ; $390c 04      
-   sbb c         ; $390d 99      
-   inr b         ; $390e 04      
-   mov c,e       ; $390f 4b      
-   inx d         ; $3910 13      
-   .byte 0xdd    ; $3911 dd      
-   inx d         ; $3912 13      
-   mvi a,$18     ; $3913 3e 18   
-   rlc           ; $3915 07      
-   mov m,e       ; $3916 73      
-   mov m,b       ; $3917 70      
-   mov l,c       ; $3918 69      
-   mov m,e       ; $3919 73      
-   mov l,a       ; $391a 6f      
-   mov l,e       ; $391b 6b      
-   .byte 0x20    ; $391c 20      
-   .byte 0xed    ; $391d ed      
-   mvi d,$15     ; $391e 16 15   
-   inx b         ; $3920 03      
-   lxi b,$fd79   ; $3921 01 79 fd
-   .byte 0x38    ; $3924 38      
-   call $02e4    ; $3925 cd e4 02
-   mvi a,$18     ; $3928 3e 18   
-   dcr c         ; $392a 0d      
-   .byte 0x20    ; $392b 20      
-   mov m,a       ; $392c 77      
-   mov a,c       ; $392d 79      
-   mov h,a       ; $392e 67      
-   mov m,d       ; $392f 72      
-   mov m,l       ; $3930 75      
-   hlt           ; $3931 76      
-   mov h,c       ; $3932 61      
-   mov h,l       ; $3933 65      
-   mov m,h       ; $3934 74      
-   mov m,e       ; $3935 73      
-   mov m,c       ; $3936 71      
-   .byte 0x20    ; $3937 20      
-   dcr d         ; $3938 15      
-   inx b         ; $3939 03      
-   lxi b,$214e   ; $393a 01 4e 21
-   dad sp        ; $393d 39      
-   call $0984    ; $393e cd 84 09
-   nop           ; $3941 00      
-   nop           ; $3942 00      
-   call $1ac4    ; $3943 cd c4 1a
-   lxi b,$3a66   ; $3946 01 66 3a
-   dad sp        ; $3949 39      
-   call $02e4    ; $394a cd e4 02
-   out $03       ; $394d d3 03   
-   sbb c         ; $394f 99      
-   inr b         ; $3950 04      
-   add h         ; $3951 84      
-   dad b         ; $3952 09      
-   dad d         ; $3953 19      
-   mvi m,$fa     ; $3954 36 fa   
-   inr b         ; $3956 04      
-   mov h,d       ; $3957 62      
-   inx b         ; $3958 03      
-   dad d         ; $3959 19      
-   mvi m,$fa     ; $395a 36 fa   
-   inr b         ; $395c 04      
-   mov a,d       ; $395d 7a      
-   ldax b        ; $395e 0a      
-   adc b         ; $395f 88      
-   dad sp        ; $3960 39      
-   mov a,d       ; $3961 7a      
-   ldax b        ; $3962 0a      
-   mov m,c       ; $3963 71      
-   dad sp        ; $3964 39      
-   mvi a,$18     ; $3965 3e 18   
-   inx b         ; $3967 03      
-   .byte 0x20    ; $3968 20      
-   mov l,m       ; $3969 6e      
-   mov h,l       ; $396a 65      
-   dcr h         ; $396b 25      
-   dad sp        ; $396c 39      
-   mov l,b       ; $396d 68      
-   ldax b        ; $396e 0a      
-   add h         ; $396f 84      
-   dad sp        ; $3970 39      
-   mvi a,$39     ; $3971 3e 39   
-   mov m,a       ; $3973 77      
-   inr b         ; $3974 04      
-   mov b,e       ; $3975 43      
-   dad sp        ; $3976 39      
-   dcr h         ; $3977 25      
-   dad sp        ; $3978 39      
-   mvi a,$18     ; $3979 3e 18   
-   .byte 0x08    ; $397b 08      
-   mov a,m       ; $397c 7e      
-   mov h,c       ; $397d 61      
-   mov m,e       ; $397e 73      
-   mov m,h       ; $397f 74      
-   mov l,c       ; $3980 69      
-   mov a,m       ; $3981 7e      
-   mov l,m       ; $3982 6e      
-   mov l,a       ; $3983 6f      
-   mov l,b       ; $3984 68      
-   ldax b        ; $3985 0a      
-   sbb d         ; $3986 9a      
-   dad sp        ; $3987 39      
-   sub b         ; $3988 90      
-   ldax b        ; $3989 0a      
-   sbb d         ; $398a 9a      
-   dad sp        ; $398b 39      
-   dcr h         ; $398c 25      
-   dad sp        ; $398d 39      
-   mvi a,$18     ; $398e 3e 18   
-   dad b         ; $3990 09      
-   mov m,b       ; $3991 70      
-   mov l,a       ; $3992 6f      
-   mov l,h       ; $3993 6c      
-   mov l,m       ; $3994 6e      
-   mov l,a       ; $3995 6f      
-   mov m,e       ; $3996 73      
-   mov m,h       ; $3997 74      
-   mov a,b       ; $3998 78      
-   mov h,b       ; $3999 60      
-   dcr d         ; $399a 15      
-   inx b         ; $399b 03      
-   lxi b,$4668   ; $399c 01 68 46
-   dad sp        ; $399f 39      
-   call $02e4    ; $39a0 cd e4 02
-   inr b         ; $39a3 04      
-   dad sp        ; $39a4 39      
-   mov c,d       ; $39a5 4a      
-   dad sp        ; $39a6 39      
-   mov h,m       ; $39a7 66      
-   dcr d         ; $39a8 15      
-   add m         ; $39a9 86      
-   mvi m,$15     ; $39aa 36 15   
-   inx b         ; $39ac 03      
-   inr b         ; $39ad 04      
-   mov b,e       ; $39ae 43      
-   mov d,e       ; $39af 53      
-   mov d,l       ; $39b0 55      
-   mov c,l       ; $39b1 4d      
-   .byte 0xfd    ; $39b2 fd      
-   .byte 0x38    ; $39b3 38      
-   call $02e4    ; $39b4 cd e4 02
-   mov h,d       ; $39b7 62      
-   inx b         ; $39b8 03      
-   mov c,d       ; $39b9 4a      
-   inr b         ; $39ba 04      
-   adc l         ; $39bb 8d      
-   inx b         ; $39bc 03      
-   rz            ; $39bd c8      
-   mvi c,$c5     ; $39be 0e c5   
-   inx b         ; $39c0 03      
-   push h        ; $39c1 e5      
-   ldax b        ; $39c2 0a      
-   rst 1         ; $39c3 cf      
-   dad sp        ; $39c4 39      
-   sbb a         ; $39c5 9f      
-   ldax b        ; $39c6 0a      
-   sub c         ; $39c7 91      
-   dad b         ; $39c8 09      
-   mov c,d       ; $39c9 4a      
-   inr b         ; $39ca 04      
-   mvi l,$0b     ; $39cb 2e 0b   
-   push b        ; $39cd c5      
-   dad sp        ; $39ce 39      
-   dcr d         ; $39cf 15      
-   inx b         ; $39d0 03      
+
+NFA_VOC_2E:      ; 38FD
+   .byte 4,"VOC."
+   .word $3664   ; NFA_V_2DLIST       ; 3664
+_VOC_2E:         ; 3904 - 39AD
+   call _FCALL            ; 3904
+   .word _CR              ; $3907 1566 - CR
+   .word _DUP             ; $3909 03D3 - DUP
+   .word _2_2D            ; $390b 0499 - 2-
+   .word _2_2D            ; $390d 0499 - 2-
+   .word _BODY_3E         ; $390f 134B - BODY>
+   .word __3ENAME         ; $3911 13DD - >NAME
+   .word __28_2E_22_29    ; $3913 183E - (.")
+   .byte 7,"spisok "
+   .word _ID_2E           ; $391d 16ED - ID.
+   .word _EXIT            ; $391f 0315 - EXIT
+
+   .word $7901            ; $3921 7901
+   .word $38FD            ; $3923 38FD
+   .word $E4CD            ; $3925 E4CD
+   .word $3E02            ; $3927 3E02
+   .word $0D18            ; $3929 0D18
+   .word $7720            ; $392b 7720
+   .word $6779            ; $392d 6779
+   .word $7572            ; $392f 7572
+   .word $6176            ; $3931 6176
+   .word $7465            ; $3933 7465
+   .word $7173            ; $3935 7173
+   .word $1520            ; $3937 1520
+   .word $0103            ; $3939 0103
+   .word $214E            ; $393b 214E
+   .word $CD39            ; $393d CD39
+   .word __40             ; $393f 0984 - @
+   .word $0000            ; $3941 0000
+   .word $C4CD            ; $3943 C4CD
+   .word $011A            ; $3945 011A
+   .word $3A66            ; $3947 3A66
+   .word $CD39            ; $3949 CD39
+   .word $02E4            ; $394b 02E4
+   .word _DUP             ; $394d 03D3 - DUP
+   .word _2_2D            ; $394f 0499 - 2-
+   .word __40             ; $3951 0984 - @
+   .word $3619            ; $3953 3619
+   .word _U_3C            ; $3955 04FA - U<
+   .word _OVER            ; $3957 0362 - OVER
+   .word $3619            ; $3959 3619
+   .word _U_3C            ; $395b 04FA - U<
+   .word __3FBRANCH       ; $395d 0A7A - ?BRANCH
+   .word $3988            ; $395f 3988
+   .word __3FBRANCH       ; $3961 0A7A - ?BRANCH
+   .word $3971            ; $3963 3971
+   .word __28_2E_22_29    ; $3965 183E - (.")
+   .byte 3," ne"
+   .word $3925            ; $396b 3925
+   .word _BRANCH          ; $396d 0A68 - BRANCH
+   .word $3984            ; $396f 3984
+   .word $393E            ; $3971 393E
+   .word _1_2B            ; $3973 0477 - 1+
+   .word $3943            ; $3975 3943
+   .word $3925            ; $3977 3925
+   .word __28_2E_22_29    ; $3979 183E - (.")
+   .byte 8,"~asti~no"
+   .word _BRANCH          ; $3984 0A68 - BRANCH
+   .word $399A            ; $3986 399A
+   .word _N_3FBRANCH      ; $3988 0A90 - N?BRANCH
+   .word $399A            ; $398a 399A
+   .word $3925            ; $398c 3925
+   .word __28_2E_22_29    ; $398e 183E - (.")
+   .byte 9,"polnostx`"
+   .word _EXIT            ; $399a 0315 - EXIT
+
+   .word $6801            ; $399c 6801
+   .word $3946            ; $399e 3946
+   .word $E4CD            ; $39a0 E4CD
+   .word $0402            ; $39a2 0402
+   .word $4A39            ; $39a4 4A39
+   .word $6639            ; $39a6 6639
+   .word $8615            ; $39a8 8615
+   .word $1536            ; $39aa 1536
+   .byte $03              ; $39ac 03
+
+NFA_CSUM:        ; 39AD
+   .byte 4,"CSUM"
+   .word NFA_VOC_2E         ; 38FD
+_CSUM:           ; 39B4 - 3AD0
+   call _FCALL            ; 39B4
+   .word _OVER            ; $39b7 0362 - OVER
+   .word __2B             ; $39b9 044A - +
+   .word _SWAP            ; $39bb 038D - SWAP
+   .word _0               ; $39bd 0EC8 - 0
+   .word __2DROT          ; $39bf 03C5 - -ROT
+   .word __28DO_29        ; $39c1 0AE5 - (DO)
+   .word $39CF            ; $39c3 39CF
+   .word _I               ; $39c5 0A9F - I
+   .word _C_40            ; $39c7 0991 - C@
+   .word __2B             ; $39c9 044A - +
+   .word __28LOOP_29      ; $39cb 0B2E - (LOOP)
+   .word $39C5            ; $39cd 39C5
+   .word _EXIT            ; $39cf 0315 - EXIT
+
    lxi b,$ad7b   ; $39d1 01 7b ad
    dad sp        ; $39d4 39      
    call $0984    ; $39d5 cd 84 09
@@ -11186,514 +8950,325 @@ l3448:
    mov a,d       ; $3acb 7a      
    mov b,h       ; $3acc 44      
    call $1ac4    ; $3acd cd c4 1a
-   dcr b         ; $3ad0 05      
-   mov c,l       ; $3ad1 4d      
-   mov d,e       ; $3ad2 53      
-   mov b,c       ; $3ad3 41      
-   mov d,m       ; $3ad4 56      
-   mov b,l       ; $3ad5 45      
-   xra l         ; $3ad6 ad      
-   dad sp        ; $3ad7 39      
-   call $02e4    ; $3ad8 cd e4 02
-   mov l,b       ; $3adb 68      
-   .byte 0x18    ; $3adc 18      
-   .byte 0xdd    ; $3add dd      
-   inx d         ; $3ade 13      
-   out $03       ; $3adf d3 03   
-   xri $01       ; $3ae1 ee 01   
-   add h         ; $3ae3 84      
-   dad b         ; $3ae4 09      
-   jm $4a04      ; $3ae5 fa 04 4a
-   lxi d,$770e   ; $3ae8 11 0e 77
-   mov a,c       ; $3aeb 79      
-   mov l,b       ; $3aec 68      
-   mov l,a       ; $3aed 6f      
-   mov h,h       ; $3aee 64      
-   .byte 0x20    ; $3aef 20      
-   mov a,d       ; $3af0 7a      
-   mov h,c       ; $3af1 61      
-   .byte 0x20    ; $3af2 20      
-   mov b,m       ; $3af3 46      
-   mov b,l       ; $3af4 45      
-   mov c,m       ; $3af5 4e      
-   mov b,e       ; $3af6 43      
-   mov b,l       ; $3af7 45      
-   mov e,d       ; $3af8 5a      
-   lda $03d3     ; $3af9 3a d3 03
-   stax d        ; $3afc 12      
-   mvi m,$d3     ; $3afd 36 d3   
-   inx b         ; $3aff 03      
-   mvi e,$36     ; $3b00 1e 36   
-   rz            ; $3b02 c8      
-   mvi c,$2a     ; $3b03 0e 2a   
-   mvi m,$e6     ; $3b05 36 e6   
-   mvi c,$e8     ; $3b07 0e e8   
-   mvi m,$bf     ; $3b09 36 bf   
-   mvi c,$43     ; $3b0b 0e 43   
-   dad sp        ; $3b0d 39      
-   dcx h         ; $3b0e 2b      
-   ldax b        ; $3b0f 0a      
-   ei            ; $3b10 fb      
-   mvi m,$27     ; $3b11 36 27   
-   stc           ; $3b13 37      
-   dcx h         ; $3b14 2b      
-   ldax b        ; $3b15 0a      
-   ana b         ; $3b16 a0      
-   dad sp        ; $3b17 39      
-   mov b,m       ; $3b18 46      
-   mvi m,$2b     ; $3b19 36 2b   
-   ldax b        ; $3b1b 0a      
-   add m         ; $3b1c 86      
-   .byte 0x20    ; $3b1d 20      
-   sub e         ; $3b1e 93      
-   .byte 0x38    ; $3b1f 38      
-   dcx h         ; $3b20 2b      
-   ldax b        ; $3b21 0a      
-   sbb d         ; $3b22 9a      
-   .byte 0x38    ; $3b23 38      
-   mvi m,$36     ; $3b24 36 36   
-   mov l,l       ; $3b26 6d      
-   mvi m,$3e     ; $3b27 36 3e   
-   dad sp        ; $3b29 39      
-   mov d,b       ; $3b2a 50      
-   dcr b         ; $3b2b 05      
-   mov a,d       ; $3b2c 7a      
-   ldax b        ; $3b2d 0a      
-   inr m         ; $3b2e 34      
-   dcx sp        ; $3b2f 3b      
-   di            ; $3b30 f3      
-   mvi c,$e8     ; $3b31 0e e8   
-   mvi m,$66     ; $3b33 36 66   
-   dcr d         ; $3b35 15      
-   mov h,m       ; $3b36 66      
-   dcr d         ; $3b37 15      
-   xthl          ; $3b38 e3      
-   mvi m,$90     ; $3b39 36 90   
-   ldax b        ; $3b3b 0a      
-   mov b,b       ; $3b3c 40      
-   dcx sp        ; $3b3d 3b      
-   .byte 0xed    ; $3b3e ed      
-   dad sp        ; $3b3f 39      
-   rst 7         ; $3b40 ff      
-   mvi c,$0d     ; $3b41 0e 0d   
-   mvi m,$55     ; $3b43 36 55   
-   inr b         ; $3b45 04      
-   out $03       ; $3b46 d3 03   
-   sub d         ; $3b48 92      
-   lda $03f2     ; $3b49 3a f2 03
-   ora h         ; $3b4c b4      
-   dad sp        ; $3b4d 39      
-   ani $39       ; $3b4e e6 39   
-   mov h,d       ; $3b50 62      
-   inx b         ; $3b51 03      
-   mov h,m       ; $3b52 66      
-   dcr d         ; $3b53 15      
-   .byte 0xed    ; $3b54 ed      
-   mvi d,$3e     ; $3b55 16 3e   
-   .byte 0x18    ; $3b57 18      
-   .byte 0x10    ; $3b58 10      
-   .byte 0x20    ; $3b59 20      
-   inr e         ; $3b5a 1c      
-   inr e         ; $3b5b 1c      
-   mvi c,$20     ; $3b5c 0e 20   
-   mov l,l       ; $3b5e 6d      
-   mov l,h       ; $3b5f 6c      
-   .byte 0x20    ; $3b60 20      
-   .byte 0x28    ; $3b61 28      
-   mov e,c       ; $3b62 59      
-   cma           ; $3b63 2f      
-   mvi l,$2e     ; $3b64 2e 2e   
-   mvi l,$29     ; $3b66 2e 29   
-   .byte 0x20    ; $3b68 20      
-   mov d,h       ; $3b69 54      
-   dcr d         ; $3b6a 15      
-   out $03       ; $3b6b d3 03   
-   dcr a         ; $3b6d 3d      
-   dcr d         ; $3b6e 15      
-   dcx h         ; $3b6f 2b      
-   ldax b        ; $3b70 0a      
-   mov e,c       ; $3b71 59      
-   nop           ; $3b72 00      
-   sub h         ; $3b73 94      
-   .byte 0x10    ; $3b74 10      
-   mov a,d       ; $3b75 7a      
-   ldax b        ; $3b76 0a      
-   mov a,l       ; $3b77 7d      
-   dcx sp        ; $3b78 3b      
-   inx b         ; $3b79 03      
-   inr b         ; $3b7a 04      
-   dcr d         ; $3b7b 15      
-   inx b         ; $3b7c 03      
-   mov h,d       ; $3b7d 62      
-   inx b         ; $3b7e 03      
-   dcx h         ; $3b7f 2b      
-   ldax b        ; $3b80 0a      
-   .byte 0x20    ; $3b81 20      
-   nop           ; $3b82 00      
-   ana l         ; $3b83 a5      
-   lda $01e1     ; $3b84 3a e1 01
-   add h         ; $3b87 84      
-   dad b         ; $3b88 09      
-   out $03       ; $3b89 d3 03   
-   dcr c         ; $3b8b 0d      
-   mvi m,$fa     ; $3b8c 36 fa   
-   inr b         ; $3b8e 04      
-   mov a,d       ; $3b8f 7a      
-   ldax b        ; $3b90 0a      
-   sub l         ; $3b91 95      
-   dcx sp        ; $3b92 3b      
-   mov a,m       ; $3b93 7e      
-   dcr b         ; $3b94 05      
-   sbb m         ; $3b95 9e      
-   lda $0ec8     ; $3b96 3a c8 0e
-   pop h         ; $3b99 e1      
-   lxi b,$0410   ; $3b9a 01 10 04
-   out $03       ; $3b9d d3 03   
-   add h         ; $3b9f 84      
-   dad b         ; $3ba0 09      
-   out $03       ; $3ba1 d3 03   
-   dcr c         ; $3ba3 0d      
-   mvi m,$fa     ; $3ba4 36 fa   
-   inr b         ; $3ba6 04      
-   mov a,d       ; $3ba7 7a      
-   ldax b        ; $3ba8 0a      
-   sbb e         ; $3ba9 9b      
-   dcx sp        ; $3baa 3b      
-   add d         ; $3bab 82      
-   inx b         ; $3bac 03      
-   out $03       ; $3bad d3 03   
-   pop h         ; $3baf e1      
-   lxi b,$0566   ; $3bb0 01 66 05
-   mov a,d       ; $3bb3 7a      
-   ldax b        ; $3bb4 0a      
-   cmp c         ; $3bb5 b9      
-   dcx sp        ; $3bb6 3b      
-   mov a,m       ; $3bb7 7e      
-   dcr b         ; $3bb8 05      
-   jc $e139      ; $3bb9 da 39 e1
-   dad sp        ; $3bbc 39      
-   dcr c         ; $3bbd 0d      
-   mvi m,$8d     ; $3bbe 36 8d   
-   lda $36e3     ; $3bc0 3a e3 36
-   sbb c         ; $3bc3 99      
-   lda $39d5     ; $3bc4 3a d5 39
-   .byte 0x20    ; $3bc7 20      
-   ral           ; $3bc8 17      
-   rz            ; $3bc9 c8      
-   mvi c,$33     ; $3bca 0e 33   
-   inr b         ; $3bcc 04      
-   dcx h         ; $3bcd 2b      
-   ldax b        ; $3bce 0a      
-   .byte 0x10    ; $3bcf 10      
-   nop           ; $3bd0 00      
-   adc d         ; $3bd1 8a      
-   dad h         ; $3bd2 29      
-   inx b         ; $3bd3 03      
-   inr b         ; $3bd4 04      
-   inx b         ; $3bd5 03      
-   inr b         ; $3bd6 04      
-   inx b         ; $3bd7 03      
-   inr b         ; $3bd8 04      
-   inx b         ; $3bd9 03      
-   inr b         ; $3bda 04      
-   ana l         ; $3bdb a5      
-   lda $0315     ; $3bdc 3a 15 03
-   lxi b,$d07c   ; $3bdf 01 7c d0
-   lda $e4cd     ; $3be2 3a cd e4
-   stax b        ; $3be5 02      
-   inr b         ; $3be6 04      
-   dad sp        ; $3be7 39      
-   mov h,m       ; $3be8 66      
-   dcr d         ; $3be9 15      
-   add m         ; $3bea 86      
-   mvi m,$15     ; $3beb 36 15   
-   inx b         ; $3bed 03      
-   lxi b,$df63   ; $3bee 01 63 df
-   dcx sp        ; $3bf1 3b      
-   call $02e4    ; $3bf2 cd e4 02
-   dcx h         ; $3bf5 2b      
-   ldax b        ; $3bf6 0a      
-   in $1a        ; $3bf7 db 1a   
-   mov h,d       ; $3bf9 62      
-   inx b         ; $3bfa 03      
-   cz $7a36      ; $3bfb cc 36 7a
-   ldax b        ; $3bfe 0a      
-   dcx b         ; $3bff 0b      
-   inr a         ; $3c00 3c      
-   out $03       ; $3c01 d3 03   
-   lda $4d13     ; $3c03 3a 13 4d
-   mvi m,$82     ; $3c06 36 82   
-   inx b         ; $3c08 03      
-   dcr d         ; $3c09 15      
-   inx b         ; $3c0a 03      
-   dcx h         ; $3c0b 2b      
-   ldax b        ; $3c0c 0a      
-   dcx h         ; $3c0d 2b      
-   cma           ; $3c0e 2f      
-   mov h,d       ; $3c0f 62      
-   inx b         ; $3c10 03      
-   cz $7a36      ; $3c11 cc 36 7a
-   ldax b        ; $3c14 0a      
-   lxi sp,$d33c  ; $3c15 31 3c d3
-   inx b         ; $3c18 03      
-   lda $d313     ; $3c19 3a 13 d3
-   inx b         ; $3c1c 03      
-   add h         ; $3c1d 84      
-   dad b         ; $3c1e 09      
-   cmp a         ; $3c1f bf      
-   mvi c,$94     ; $3c20 0e 94   
-   .byte 0x10    ; $3c22 10      
-   mov a,d       ; $3c23 7a      
-   ldax b        ; $3c24 0a      
-   cma           ; $3c25 2f      
-   inr a         ; $3c26 3c      
-   mov c,l       ; $3c27 4d      
-   mvi m,$82     ; $3c28 36 82   
-   inr b         ; $3c2a 04      
-   mov l,b       ; $3c2b 68      
-   ldax b        ; $3c2c 0a      
-   dcx d         ; $3c2d 1b      
-   inr a         ; $3c2e 3c      
-   add d         ; $3c2f 82      
-   inx b         ; $3c30 03      
-   dcr d         ; $3c31 15      
-   inx b         ; $3c32 03      
-   lxi b,$d071   ; $3c33 01 71 d0
-   lda $e4cd     ; $3c36 3a cd e4
-   stax b        ; $3c39 02      
-   rst 7         ; $3c3a ff      
-   mvi c,$8d     ; $3c3b 0e 8d   
-   lda $0ec8     ; $3c3d 3a c8 0e
-   dad h         ; $3c40 29      
-   mvi l,$82     ; $3c41 2e 82   
-   inx b         ; $3c43 03      
-   dad d         ; $3c44 19      
-   mvi m,$8d     ; $3c45 36 8d   
-   lda $39b4     ; $3c47 3a b4 39
-   pop h         ; $3c4a e1      
-   dad sp        ; $3c4b 39      
-   sub h         ; $3c4c 94      
-   .byte 0x10    ; $3c4d 10      
-   mov c,d       ; $3c4e 4a      
-   lxi d,$6f06   ; $3c4f 11 06 6f
-   mov a,e       ; $3c52 7b      
-   mov l,c       ; $3c53 69      
-   mov h,d       ; $3c54 62      
-   mov l,e       ; $3c55 6b      
-   mov h,c       ; $3c56 61      
-   adc l         ; $3c57 8d      
-   lda $0f10     ; $3c58 3a 10 0f
-   sbb c         ; $3c5b 99      
-   lda $0a7a     ; $3c5c 3a 7a 0a
-   sub a         ; $3c5f 97      
-   inr a         ; $3c60 3c      
-   pop h         ; $3c61 e1      
-   lxi b,$0984   ; $3c62 01 84 09
-   sbb c         ; $3c65 99      
-   lda $3625     ; $3c66 3a 25 36
-   mov c,d       ; $3c69 4a      
-   inr b         ; $3c6a 04      
-   pop h         ; $3c6b e1      
-   lxi b,$099d   ; $3c6c 01 9d 09
-   push d        ; $3c6f d5      
-   dad sp        ; $3c70 39      
-   dcr h         ; $3c71 25      
-   mvi m,$4a     ; $3c72 36 4a   
-   inr b         ; $3c74 04      
-   out $03       ; $3c75 d3 03   
-   push b        ; $3c77 c5      
-   inx b         ; $3c78 03      
-   sbb l         ; $3c79 9d      
-   dad b         ; $3c7a 09      
-   pop h         ; $3c7b e1      
-   lxi b,$0984   ; $3c7c 01 84 09
-   sbb c         ; $3c7f 99      
-   inr b         ; $3c80 04      
-   mov c,l       ; $3c81 4d      
-   mvi m,$82     ; $3c82 36 82   
-   inr b         ; $3c84 04      
-   jp $fa03      ; $3c85 f2 03 fa
-   inr b         ; $3c88 04      
-   mov a,d       ; $3c89 7a      
-   ldax b        ; $3c8a 0a      
-   sub l         ; $3c8b 95      
-   inr a         ; $3c8c 3c      
-   mov c,l       ; $3c8d 4d      
-   mvi m,$84     ; $3c8e 36 84   
-   dad b         ; $3c90 09      
-   mov l,b       ; $3c91 68      
-   ldax b        ; $3c92 0a      
-   mov a,a       ; $3c93 7f      
-   inr a         ; $3c94 3c      
-   inx b         ; $3c95 03      
-   inr b         ; $3c96 04      
-   .byte 0x20    ; $3c97 20      
-   ral           ; $3c98 17      
-   rz            ; $3c99 c8      
-   lda $3625     ; $3c9a 3a 25 36
-   mov c,d       ; $3c9d 4a      
-   inr b         ; $3c9e 04      
-   inx sp        ; $3c9f 33      
-   stax b        ; $3ca0 02      
-   add h         ; $3ca1 84      
-   dad b         ; $3ca2 09      
-   sbb l         ; $3ca3 9d      
-   dad b         ; $3ca4 09      
-   dad d         ; $3ca5 19      
-   mvi m,$7b     ; $3ca6 36 7b   
-   inx d         ; $3ca8 13      
-   sbb l         ; $3ca9 9d      
-   dad b         ; $3caa 09      
-   pop h         ; $3cab e1      
-   lxi b,$0984   ; $3cac 01 84 09
-   rpo           ; $3caf e0      
-   inx b         ; $3cb0 03      
-   mov a,d       ; $3cb1 7a      
-   ldax b        ; $3cb2 0a      
-   cmp e         ; $3cb3 bb      
-   inr a         ; $3cb4 3c      
-   xthl          ; $3cb5 e3      
-   dcx sp        ; $3cb6 3b      
-   mov l,b       ; $3cb7 68      
-   ldax b        ; $3cb8 0a      
-   xra l         ; $3cb9 ad      
-   inr a         ; $3cba 3c      
-   dcr d         ; $3cbb 15      
-   inx b         ; $3cbc 03      
-   dcr b         ; $3cbd 05      
-   mov c,l       ; $3cbe 4d      
-   mov c,h       ; $3cbf 4c      
-   mov c,a       ; $3cc0 4f      
-   mov b,c       ; $3cc1 41      
-   mov b,h       ; $3cc2 44      
-   rnc           ; $3cc3 d0      
-   lda $e4cd     ; $3cc4 3a cd e4
-   stax b        ; $3cc7 02      
-   mvi a,$18     ; $3cc8 3e 18   
-   rrc           ; $3cca 0f      
-   mov l,l       ; $3ccb 6d      
-   mov l,h       ; $3ccc 6c      
-   .byte 0x20    ; $3ccd 20      
-   inr e         ; $3cce 1c      
-   inr e         ; $3ccf 1c      
-   mvi c,$20     ; $3cd0 0e 20   
-   .byte 0x28    ; $3cd2 28      
-   mov e,c       ; $3cd3 59      
-   cma           ; $3cd4 2f      
-   mvi l,$2e     ; $3cd5 2e 2e   
-   mvi l,$29     ; $3cd7 2e 29   
-   .byte 0x20    ; $3cd9 20      
-   mov d,h       ; $3cda 54      
-   dcr d         ; $3cdb 15      
-   out $03       ; $3cdc d3 03   
-   dcr a         ; $3cde 3d      
-   dcr d         ; $3cdf 15      
-   dcx h         ; $3ce0 2b      
-   ldax b        ; $3ce1 0a      
-   mov e,c       ; $3ce2 59      
-   nop           ; $3ce3 00      
-   sub h         ; $3ce4 94      
-   .byte 0x10    ; $3ce5 10      
-   mov a,d       ; $3ce6 7a      
-   ldax b        ; $3ce7 0a      
-   cpe $153c     ; $3ce8 ec 3c 15
-   inx b         ; $3ceb 03      
-   cnz $5a16     ; $3cec c4 16 5a
-   rrc           ; $3cef 0f      
-   out $03       ; $3cf0 d3 03   
-   dcx h         ; $3cf2 2b      
-   ldax b        ; $3cf3 0a      
-   .byte 0x20    ; $3cf4 20      
-   nop           ; $3cf5 00      
-   rz            ; $3cf6 c8      
-   mvi c,$29     ; $3cf7 0e 29   
-   mvi l,$82     ; $3cf9 2e 82   
-   inx b         ; $3cfb 03      
-   .byte 0xed    ; $3cfc ed      
-   mvi d,$66     ; $3cfd 16 66   
-   dcr d         ; $3cff 15      
-   dad b         ; $3d00 09      
-   inx b         ; $3d01 03      
-   rz            ; $3d02 c8      
-   mvi c,$e5     ; $3d03 0e e5   
-   ldax b        ; $3d05 0a      
-   mvi c,$3d     ; $3d06 0e 3d   
-   dcr m         ; $3d08 35      
-   rar           ; $3d09 1f      
-   mvi l,$0b     ; $3d0a 2e 0b   
-   .byte 0x08    ; $3d0c 08      
-   dcr a         ; $3d0d 3d      
-   rz            ; $3d0e c8      
-   mvi c,$d3     ; $3d0f 0e d3   
-   inx b         ; $3d11 03      
-   jp $f203      ; $3d12 f2 03 f2
-   inx b         ; $3d15 03      
-   out $03       ; $3d16 d3 03   
-   inx sp        ; $3d18 33      
-   inr b         ; $3d19 04      
-   dcx h         ; $3d1a 2b      
-   ldax b        ; $3d1b 0a      
-   mvi c,$00     ; $3d1c 0e 00   
-   rz            ; $3d1e c8      
-   mvi c,$29     ; $3d1f 0e 29   
-   mvi l,$82     ; $3d21 2e 82   
-   inx b         ; $3d23 03      
-   call $da3a    ; $3d24 cd 3a da
-   dad sp        ; $3d27 39      
-   sbb m         ; $3d28 9e      
-   lda $36e8     ; $3d29 3a e8 36
-   sub d         ; $3d2c 92      
-   lda $3612     ; $3d2d 3a 12 36
-   ani $39       ; $3d30 e6 39   
-   rst 7         ; $3d32 ff      
-   mvi c,$1e     ; $3d33 0e 1e   
-   mvi m,$19     ; $3d35 36 19   
-   mvi m,$0d     ; $3d37 36 0d   
-   mvi m,$55     ; $3d39 36 55   
-   inr b         ; $3d3b 04      
-   lhld $e636    ; $3d3c 2a 36 e6
-   mvi c,$f4     ; $3d3f 0e f4   
-   mvi m,$2b     ; $3d41 36 2b   
-   ldax b        ; $3d43 0a      
-   jp $933b      ; $3d44 f2 3b 93
-   .byte 0x38    ; $3d47 38      
-   dcx h         ; $3d48 2b      
-   ldax b        ; $3d49 0a      
-   sbb d         ; $3d4a 9a      
-   .byte 0x38    ; $3d4b 38      
-   mvi m,$36     ; $3d4c 36 36   
-   dcx h         ; $3d4e 2b      
-   ldax b        ; $3d4f 0a      
-   add m         ; $3d50 86      
-   .byte 0x20    ; $3d51 20      
-   daa           ; $3d52 27      
-   stc           ; $3d53 37      
-   dcr h         ; $3d54 25      
-   mvi m,$7e     ; $3d55 36 7e   
-   dcr b         ; $3d57 05      
-   xthl          ; $3d58 e3      
-   mvi m,$d9     ; $3d59 36 d9   
-   .byte 0x08    ; $3d5b 08      
-   sub b         ; $3d5c 90      
-   ldax b        ; $3d5d 0a      
-   mov h,h       ; $3d5e 64      
-   dcr a         ; $3d5f 3d      
-   .byte 0xed    ; $3d60 ed      
-   dad sp        ; $3d61 39      
-   push d        ; $3d62 d5      
-   .byte 0x10    ; $3d63 10      
-   stc           ; $3d64 37      
-   inr a         ; $3d65 3c      
-   dcr d         ; $3d66 15      
-   inx b         ; $3d67 03      
-   mvi b,$45     ; $3d68 06 45   
-   mov b,h       ; $3d6a 44      
-   mov c,c       ; $3d6b 49      
-   mov d,h       ; $3d6c 54      
-   mov c,a       ; $3d6d 4f      
-   mov d,d       ; $3d6e 52      
-   cmp l         ; $3d6f bd      
-   inr a         ; $3d70 3c      
+
+NFA_MSAVE:       ; 3AD0
+   .byte 5,"MSAVE"
+   .word NFA_CSUM         ; 39AD
+_MSAVE:          ; 3AD8 - 3CBD
+   call _FCALL            ; 3AD8
+   .word __27             ; $3adb 1868 - '
+   .word __3ENAME         ; $3add 13DD - >NAME
+   .word _DUP             ; $3adf 03D3 - DUP
+   .word _FENCE           ; $3ae1 01EE - FENCE
+   .word __40             ; $3ae3 0984 - @
+   .word _U_3C            ; $3ae5 04FA - U<
+   .word __28ABORT_22_29  ; $3ae7 114A - (ABORT")
+   .byte 14,"wyhod za FENCE"
+   .word $3A5A            ; $3af8 3A5A
+   .word _DUP             ; $3afa 03D3 - DUP
+   .word $3612            ; $3afc 3612
+   .word _DUP             ; $3afe 03D3 - DUP
+   .word $361E            ; $3b00 361E
+   .word _0               ; $3b02 0EC8 - 0
+   .word $362A            ; $3b04 362A
+   .word _TRUE            ; $3b06 0EE6 - TRUE
+   .word $36E8            ; $3b08 36E8
+   .word __2D1            ; $3b0a 0EBF - -1
+   .word $3943            ; $3b0c 3943
+   .word _LIT             ; $3b0e 0A2B - LIT
+   .word $36FB            ; $3b10 36FB
+   .word $3727            ; $3b12 3727
+   .word _LIT             ; $3b14 0A2B - LIT
+   .word $39A0            ; $3b16 39A0
+   .word $3646            ; $3b18 3646
+   .word _LIT             ; $3b1a 0A2B - LIT
+   .word _NOOP            ; $3b1c 2086 - NOOP
+   .word $3893            ; $3b1e 3893
+   .word _LIT             ; $3b20 0A2B - LIT
+   .word $389A            ; $3b22 389A
+   .word $3636            ; $3b24 3636
+   .word _V_2DLIST        ; $3b26 366D - V-LIST
+   .word $393E            ; $3b28 393E
+   .word _0_3E            ; $3b2a 0550 - 0>
+   .word __3FBRANCH       ; $3b2c 0A7A - ?BRANCH
+   .word $3B34            ; $3b2e 3B34
+   .word _FALSE           ; $3b30 0EF3 - FALSE
+   .word $36E8            ; $3b32 36E8
+   .word _CR              ; $3b34 1566 - CR
+   .word _CR              ; $3b36 1566 - CR
+   .word $36E3            ; $3b38 36E3
+   .word _N_3FBRANCH      ; $3b3a 0A90 - N?BRANCH
+   .word $3B40            ; $3b3c 3B40
+   .word $39ED            ; $3b3e 39ED
+   .word _HERE            ; $3b40 0EFF - HERE
+   .word $360D            ; $3b42 360D
+   .word __2D             ; $3b44 0455 - -
+   .word _DUP             ; $3b46 03D3 - DUP
+   .word $3A92            ; $3b48 3A92
+   .word _2DUP            ; $3b4a 03F2 - 2DUP
+   .word _CSUM            ; $3b4c 39B4 - CSUM
+   .word $39E6            ; $3b4e 39E6
+   .word _OVER            ; $3b50 0362 - OVER
+   .word _CR              ; $3b52 1566 - CR
+   .word _ID_2E           ; $3b54 16ED - ID.
+   .word __28_2E_22_29    ; $3b56 183E - (.")
+   .byte 16," ",0x1c,0x1c,0x0e," ml (Y/...) "
+   .word _KEY             ; $3b69 1554 - KEY
+   .word _DUP             ; $3b6b 03D3 - DUP
+   .word _EMIT            ; $3b6d 153D - EMIT
+   .word _LIT             ; $3b6f 0A2B - LIT
+   .word $0059            ; $3b71 0059
+   .word __3C_3E          ; $3b73 1094 - <>
+   .word __3FBRANCH       ; $3b75 0A7A - ?BRANCH
+   .word $3B7D            ; $3b77 3B7D
+   .word _2DROP           ; $3b79 0403 - 2DROP
+   .word _EXIT            ; $3b7b 0315 - EXIT
+   .word _OVER            ; $3b7d 0362 - OVER
+   .word _LIT             ; $3b7f 0A2B - LIT
+   .word $0020            ; $3b81 0020
+   .word $3AA5            ; $3b83 3AA5
+   .word _VOC_2DLINK      ; $3b85 01E1 - VOC-LINK
+   .word __40             ; $3b87 0984 - @
+   .word _DUP             ; $3b89 03D3 - DUP
+   .word $360D            ; $3b8b 360D
+   .word _U_3C            ; $3b8d 04FA - U<
+   .word __3FBRANCH       ; $3b8f 0A7A - ?BRANCH
+   .word $3B95            ; $3b91 3B95
+   .word _0_3D            ; $3b93 057E - 0=
+   .word $3A9E            ; $3b95 3A9E
+   .word _0               ; $3b97 0EC8 - 0
+   .word _VOC_2DLINK      ; $3b99 01E1 - VOC-LINK
+   .word _PRESS           ; $3b9b 0410 - PRESS
+   .word _DUP             ; $3b9d 03D3 - DUP
+   .word __40             ; $3b9f 0984 - @
+   .word _DUP             ; $3ba1 03D3 - DUP
+   .word $360D            ; $3ba3 360D
+   .word _U_3C            ; $3ba5 04FA - U<
+   .word __3FBRANCH       ; $3ba7 0A7A - ?BRANCH
+   .word $3B9B            ; $3ba9 3B9B
+   .word _DROP            ; $3bab 0382 - DROP
+   .word _DUP             ; $3bad 03D3 - DUP
+   .word _VOC_2DLINK      ; $3baf 01E1 - VOC-LINK
+   .word __3D             ; $3bb1 0566 - =
+   .word __3FBRANCH       ; $3bb3 0A7A - ?BRANCH
+   .word $3BB9            ; $3bb5 3BB9
+   .word _0_3D            ; $3bb7 057E - 0=
+   .word $39DA            ; $3bb9 39DA
+   .word $39E1            ; $3bbb 39E1
+   .word $360D            ; $3bbd 360D
+   .word $3A8D            ; $3bbf 3A8D
+   .word $36E3            ; $3bc1 36E3
+   .word $3A99            ; $3bc3 3A99
+   .word $39D5            ; $3bc5 39D5
+   .word _LATEST          ; $3bc7 1720 - LATEST
+   .word _0               ; $3bc9 0EC8 - 0
+   .word _SP_40           ; $3bcb 0433 - SP@
+   .word _LIT             ; $3bcd 0A2B - LIT
+   .word $0010            ; $3bcf 0010
+   .word __28OUT_29       ; $3bd1 298A - (OUT)
+   .word _2DROP           ; $3bd3 0403 - 2DROP
+   .word _2DROP           ; $3bd5 0403 - 2DROP
+   .word _2DROP           ; $3bd7 0403 - 2DROP
+   .word _2DROP           ; $3bd9 0403 - 2DROP
+   .word $3AA5            ; $3bdb 3AA5
+   .word _EXIT            ; $3bdd 0315 - EXIT
+
+   .word $7C01            ; $3bdf 7C01
+   .word $3AD0            ; $3be1 3AD0
+   .word $E4CD            ; $3be3 E4CD
+   .word $0402            ; $3be5 0402
+   .word $6639            ; $3be7 6639
+   .word $8615            ; $3be9 8615
+   .word $1536            ; $3beb 1536
+   .word $0103            ; $3bed 0103
+   .word $DF63            ; $3bef DF63
+   .word $CD3B            ; $3bf1 CD3B
+   .word $02E4            ; $3bf3 02E4
+   .word _LIT             ; $3bf5 0A2B - LIT
+   .word __40EXECUTE      ; $3bf7 1ADB - @EXECUTE
+   .word _OVER            ; $3bf9 0362 - OVER
+   .word $36CC            ; $3bfb 36CC
+   .word __3FBRANCH       ; $3bfd 0A7A - ?BRANCH
+   .word $3C0B            ; $3bff 3C0B
+   .word _DUP             ; $3c01 03D3 - DUP
+   .word __3EBODY         ; $3c03 133A - >BODY
+   .word $364D            ; $3c05 364D
+   .word _DROP            ; $3c07 0382 - DROP
+   .word _EXIT            ; $3c09 0315 - EXIT
+   .word _LIT             ; $3c0b 0A2B - LIT
+   .word $2F2B            ; $3c0d 2F2B
+   .word _OVER            ; $3c0f 0362 - OVER
+   .word $36CC            ; $3c11 36CC
+   .word __3FBRANCH       ; $3c13 0A7A - ?BRANCH
+   .word $3C31            ; $3c15 3C31
+   .word _DUP             ; $3c17 03D3 - DUP
+   .word __3EBODY         ; $3c19 133A - >BODY
+   .word _DUP             ; $3c1b 03D3 - DUP
+   .word __40             ; $3c1d 0984 - @
+   .word __2D1            ; $3c1f 0EBF - -1
+   .word __3C_3E          ; $3c21 1094 - <>
+   .word __3FBRANCH       ; $3c23 0A7A - ?BRANCH
+   .word $3C2F            ; $3c25 3C2F
+   .word $364D            ; $3c27 364D
+   .word _2_2B            ; $3c29 0482 - 2+
+   .word _BRANCH          ; $3c2b 0A68 - BRANCH
+   .word $3C1B            ; $3c2d 3C1B
+   .word _DROP            ; $3c2f 0382 - DROP
+   .word _EXIT            ; $3c31 0315 - EXIT
+
+   .word $7101            ; $3c33 7101
+   .word $3AD0            ; $3c35 3AD0
+   .word $E4CD            ; $3c37 E4CD
+   .word $FF02            ; $3c39 FF02
+   .word $8D0E            ; $3c3b 8D0E
+   .word $C83A            ; $3c3d C83A
+   .word $290E            ; $3c3f 290E
+   .word $822E            ; $3c41 822E
+   .word $1903            ; $3c43 1903
+   .word $8D36            ; $3c45 8D36
+   .word $B43A            ; $3c47 B43A
+   .word $E139            ; $3c49 E139
+   .word $9439            ; $3c4b 9439
+   .word $4A10            ; $3c4d 4A10
+   .word $0611            ; $3c4f 0611
+   .word $7B6F            ; $3c51 7B6F
+   .word $6269            ; $3c53 6269
+   .word $616B            ; $3c55 616B
+   .word $3A8D            ; $3c57 3A8D
+   .word _ALLOT           ; $3c59 0F10 - ALLOT
+   .word $3A99            ; $3c5b 3A99
+   .word __3FBRANCH       ; $3c5d 0A7A - ?BRANCH
+   .word $3C97            ; $3c5f 3C97
+   .word _VOC_2DLINK      ; $3c61 01E1 - VOC-LINK
+   .word __40             ; $3c63 0984 - @
+   .word $3A99            ; $3c65 3A99
+   .word $3625            ; $3c67 3625
+   .word __2B             ; $3c69 044A - +
+   .word _VOC_2DLINK      ; $3c6b 01E1 - VOC-LINK
+   .word __21             ; $3c6d 099D - !
+   .word $39D5            ; $3c6f 39D5
+   .word $3625            ; $3c71 3625
+   .word __2B             ; $3c73 044A - +
+   .word _DUP             ; $3c75 03D3 - DUP
+   .word __2DROT          ; $3c77 03C5 - -ROT
+   .word __21             ; $3c79 099D - !
+   .word _VOC_2DLINK      ; $3c7b 01E1 - VOC-LINK
+   .word __40             ; $3c7d 0984 - @
+   .word _2_2D            ; $3c7f 0499 - 2-
+   .word $364D            ; $3c81 364D
+   .word _2_2B            ; $3c83 0482 - 2+
+   .word _2DUP            ; $3c85 03F2 - 2DUP
+   .word _U_3C            ; $3c87 04FA - U<
+   .word __3FBRANCH       ; $3c89 0A7A - ?BRANCH
+   .word $3C95            ; $3c8b 3C95
+   .word $364D            ; $3c8d 364D
+   .word __40             ; $3c8f 0984 - @
+   .word _BRANCH          ; $3c91 0A68 - BRANCH
+   .word $3C7F            ; $3c93 3C7F
+   .word _2DROP           ; $3c95 0403 - 2DROP
+   .word _LATEST          ; $3c97 1720 - LATEST
+   .word $3AC8            ; $3c99 3AC8
+   .word $3625            ; $3c9b 3625
+   .word __2B             ; $3c9d 044A - +
+   .word _CURRENT         ; $3c9f 0233 - CURRENT
+   .word __40             ; $3ca1 0984 - @
+   .word __21             ; $3ca3 099D - !
+   .word $3619            ; $3ca5 3619
+   .word _N_3ELINK        ; $3ca7 137B - N>LINK
+   .word __21             ; $3ca9 099D - !
+   .word _VOC_2DLINK      ; $3cab 01E1 - VOC-LINK
+   .word __40             ; $3cad 0984 - @
+   .word __3FDUP          ; $3caf 03E0 - ?DUP
+   .word __3FBRANCH       ; $3cb1 0A7A - ?BRANCH
+   .word $3CBB            ; $3cb3 3CBB
+   .word $3BE3            ; $3cb5 3BE3
+   .word _BRANCH          ; $3cb7 0A68 - BRANCH
+   .word $3CAD            ; $3cb9 3CAD
+   .word _EXIT            ; $3cbb 0315 - EXIT
+
+NFA_MLOAD:       ; 3CBD
+   .byte 5,"MLOAD"
+   .word NFA_MSAVE        ; 3AD0
+_MLOAD:          ; 3CC5 - 3D68
+   call _FCALL            ; 3CC5
+   .word __28_2E_22_29    ; $3cc8 183E - (.")
+   .byte 15,"ml ",0x1c,0x1c,0x0e," (Y/...) "
+   .word _KEY             ; $3cda 1554 - KEY
+   .word _DUP             ; $3cdc 03D3 - DUP
+   .word _EMIT            ; $3cde 153D - EMIT
+   .word _LIT             ; $3ce0 0A2B - LIT
+   .word $0059            ; $3ce2 0059
+   .word __3C_3E          ; $3ce4 1094 - <>
+   .word __3FBRANCH       ; $3ce6 0A7A - ?BRANCH
+   .word $3CEC            ; $3ce8 3CEC
+   .word _EXIT            ; $3cea 0315 - EXIT
+   .word _SPACE           ; $3cec 16C4 - SPACE
+   .word _PAD             ; $3cee 0F5A - PAD
+   .word _DUP             ; $3cf0 03D3 - DUP
+   .word _LIT             ; $3cf2 0A2B - LIT
+   .word $0020            ; $3cf4 0020
+   .word _0               ; $3cf6 0EC8 - 0
+   .word __28IN_29        ; $3cf8 2E29 - (IN)
+   .word _DROP            ; $3cfa 0382 - DROP
+   .word _ID_2E           ; $3cfc 16ED - ID.
+   .word _CR              ; $3cfe 1566 - CR
+   .word _CALL            ; $3d00 0309 - CALL
+   .word _0               ; $3d02 0EC8 - 0
+   .word __28DO_29        ; $3d04 0AE5 - (DO)
+   .word $3D0E            ; $3d06 3D0E
+   .word _BREAK           ; $3d08 1F35 - BREAK
+   .word __28LOOP_29      ; $3d0a 0B2E - (LOOP)
+   .word $3D08            ; $3d0c 3D08
+   .word _0               ; $3d0e 0EC8 - 0
+   .word _DUP             ; $3d10 03D3 - DUP
+   .word _2DUP            ; $3d12 03F2 - 2DUP
+   .word _2DUP            ; $3d14 03F2 - 2DUP
+   .word _DUP             ; $3d16 03D3 - DUP
+   .word _SP_40           ; $3d18 0433 - SP@
+   .word _LIT             ; $3d1a 0A2B - LIT
+   .word $000E            ; $3d1c 000E
+   .word _0               ; $3d1e 0EC8 - 0
+   .word __28IN_29        ; $3d20 2E29 - (IN)
+   .word _DROP            ; $3d22 0382 - DROP
+   .word $3ACD            ; $3d24 3ACD
+   .word $39DA            ; $3d26 39DA
+   .word $3A9E            ; $3d28 3A9E
+   .word $36E8            ; $3d2a 36E8
+   .word $3A92            ; $3d2c 3A92
+   .word $3612            ; $3d2e 3612
+   .word $39E6            ; $3d30 39E6
+   .word _HERE            ; $3d32 0EFF - HERE
+   .word $361E            ; $3d34 361E
+   .word $3619            ; $3d36 3619
+   .word $360D            ; $3d38 360D
+   .word __2D             ; $3d3a 0455 - -
+   .word $362A            ; $3d3c 362A
+   .word _TRUE            ; $3d3e 0EE6 - TRUE
+   .word $36F4            ; $3d40 36F4
+   .word _LIT             ; $3d42 0A2B - LIT
+   .word $3BF2            ; $3d44 3BF2
+   .word $3893            ; $3d46 3893
+   .word _LIT             ; $3d48 0A2B - LIT
+   .word $389A            ; $3d4a 389A
+   .word $3636            ; $3d4c 3636
+   .word _LIT             ; $3d4e 0A2B - LIT
+   .word _NOOP            ; $3d50 2086 - NOOP
+   .word $3727            ; $3d52 3727
+   .word $3625            ; $3d54 3625
+   .word _0_3D            ; $3d56 057E - 0=
+   .word $36E3            ; $3d58 36E3
+   .word _OR              ; $3d5a 08D9 - OR
+   .word _N_3FBRANCH      ; $3d5c 0A90 - N?BRANCH
+   .word $3D64            ; $3d5e 3D64
+   .word $39ED            ; $3d60 39ED
+   .word _ABORT           ; $3d62 10D5 - ABORT
+   .word $3C37            ; $3d64 3C37
+   .word _EXIT            ; $3d66 0315 - EXIT
+
+NFA_EDITOR:      ; 3D68
+   .byte 6,"EDITOR"
+   .word NFA_MLOAD        ; 3CBD
+_EDITOR:         ; 3D71 - 4386
    call $1b95    ; $3d71 cd 95 1b
    lxi b,$6f80   ; $3d74 01 80 6f
    mov b,e       ; $3d77 43      
@@ -12836,650 +10411,228 @@ l3448:
    mov b,d       ; $4383 42      
    dcr d         ; $4384 15      
    inx b         ; $4385 03      
-   inr b         ; $4386 04      
-   mov b,l       ; $4387 45      
-   mov b,h       ; $4388 44      
-   mov c,c       ; $4389 49      
-   mov d,h       ; $438a 54      
-   mov l,b       ; $438b 68      
-   dcr a         ; $438c 3d      
-   call $02e4    ; $438d cd e4 02
-   .byte 0xd9    ; $4390 d9      
-   inr e         ; $4391 1c      
-   mov a,d       ; $4392 7a      
-   ldax b        ; $4393 0a      
-   sbb d         ; $4394 9a      
-   mov b,e       ; $4395 43      
-   sui $2a       ; $4396 d6 2a   
-   sbb l         ; $4398 9d      
-   dad b         ; $4399 09      
-   sui $2a       ; $439a d6 2a   
-   add h         ; $439c 84      
-   dad b         ; $439d 09      
-   rz            ; $439e c8      
-   mvi c,$de     ; $439f 0e de   
-   inr b         ; $43a1 04      
-   .byte 0xfd    ; $43a2 fd      
-   inr l         ; $43a3 2c      
-   add d         ; $43a4 82      
-   inx b         ; $43a5 03      
-   hlt           ; $43a6 76      
-   cma           ; $43a7 2f      
-   mov a,a       ; $43a8 7f      
-   dcr a         ; $43a9 3d      
-   cm $c809      ; $43aa fc 09 c8
-   mvi c,$8e     ; $43ad 0e 8e   
-   dcr a         ; $43af 3d      
-   sub m         ; $43b0 96      
-   dcr a         ; $43b1 3d      
-   cm $2b09      ; $43b2 fc 09 2b
-   ldax b        ; $43b5 0a      
-   ldax b        ; $43b6 0a      
-   nop           ; $43b7 00      
-   rz            ; $43b8 c8      
-   mvi c,$51     ; $43b9 0e 51   
-   cma           ; $43bb 2f      
-   mvi a,$18     ; $43bc 3e 18   
-   mvi b,$7c     ; $43be 06 7c   
-   mov l,e       ; $43c0 6b      
-   mov m,d       ; $43c1 72      
-   mov h,c       ; $43c2 61      
-   mov l,m       ; $43c3 6e      
-   dcr a         ; $43c4 3d      
-   sui $2a       ; $43c5 d6 2a   
-   add h         ; $43c7 84      
-   dad b         ; $43c8 09      
-   dcx h         ; $43c9 2b      
-   ldax b        ; $43ca 0a      
-   dcr b         ; $43cb 05      
-   nop           ; $43cc 00      
-   xra e         ; $43cd ab      
-   stax d        ; $43ce 12      
-   dcx h         ; $43cf 2b      
-   ldax b        ; $43d0 0a      
-   inr b         ; $43d1 04      
-   nop           ; $43d2 00      
-   sui $16       ; $43d3 d6 16   
-   mvi a,$18     ; $43d5 3e 18   
-   rlc           ; $43d7 07      
-   mov e,b       ; $43d8 58      
-   dcr a         ; $43d9 3d      
-   .byte 0x20    ; $43da 20      
-   .byte 0x20    ; $43db 20      
-   .byte 0x20    ; $43dc 20      
-   mov e,c       ; $43dd 59      
-   dcr a         ; $43de 3d      
-   dcx h         ; $43df 2b      
-   ldax b        ; $43e0 0a      
-   ora c         ; $43e1 b1      
-   mov b,d       ; $43e2 42      
-   cm $6442      ; $43e3 fc 42 64
-   lhld $3dc5    ; $43e6 2a c5 3d
-   mov h,m       ; $43e9 66      
-   dcr d         ; $43ea 15      
-   cnz $3e16     ; $43eb c4 16 3e
-   .byte 0x18    ; $43ee 18      
-   mvi a,$46     ; $43ef 3e 46   
-   inx sp        ; $43f1 33      
-   cma           ; $43f2 2f      
-   mov b,m       ; $43f3 46      
-   dcr m         ; $43f4 35      
-   dcr l         ; $43f5 2d      
-   dcr e         ; $43f6 1d      
-   cma           ; $43f7 2f      
-   mvi c,$20     ; $43f8 0e 20   
-   mov b,c       ; $43fa 41      
-   mov d,b       ; $43fb 50      
-   sta $492d     ; $43fc 32 2d 49
-   mov c,m       ; $43ff 4e      
-   mov d,e       ; $4400 53      
-   .byte 0x20    ; $4401 20      
-   mov b,m       ; $4402 46      
-   sta $532d     ; $4403 32 2d 53
-   mov d,b       ; $4406 50      
-   mov c,h       ; $4407 4c      
-   mov c,c       ; $4408 49      
-   mov d,h       ; $4409 54      
-   .byte 0x20    ; $440a 20      
-   mov e,m       ; $440b 5e      
-   mov c,a       ; $440c 4f      
-   dcr l         ; $440d 2d      
-   mov b,h       ; $440e 44      
-   mov b,l       ; $440f 45      
-   mov c,h       ; $4410 4c      
-   .byte 0x20    ; $4411 20      
-   mov e,m       ; $4412 5e      
-   mov a,m       ; $4413 7e      
-   dcr l         ; $4414 2d      
-   mov b,h       ; $4415 44      
-   mov b,l       ; $4416 45      
-   mov c,h       ; $4417 4c      
-   mov d,a       ; $4418 57      
-   mov c,a       ; $4419 4f      
-   mov d,d       ; $441a 52      
-   mov b,h       ; $441b 44      
-   .byte 0x20    ; $441c 20      
-   mov m,b       ; $441d 70      
-   mov m,e       ; $441e 73      
-   dcr l         ; $441f 2d      
-   mov b,h       ; $4420 44      
-   mov b,l       ; $4421 45      
-   mov c,h       ; $4422 4c      
-   mov c,h       ; $4423 4c      
-   mov c,c       ; $4424 49      
-   mov c,m       ; $4425 4e      
-   mov b,l       ; $4426 45      
-   .byte 0x20    ; $4427 20      
-   mov b,m       ; $4428 46      
-   inr m         ; $4429 34      
-   dcr l         ; $442a 2d      
-   mov b,l       ; $442b 45      
-   mov c,m       ; $442c 4e      
-   mov b,h       ; $442d 44      
-   rz            ; $442e c8      
-   mvi c,$8e     ; $442f 0e 8e   
-   dcr a         ; $4431 3d      
-   rz            ; $4432 c8      
-   mvi c,$2b     ; $4433 0e 2b   
-   cmc           ; $4435 3f      
-   mov h,m       ; $4436 66      
-   mov b,d       ; $4437 42      
-   dad b         ; $4438 09      
-   cmc           ; $4439 3f      
-   mov m,e       ; $443a 73      
-   mov b,e       ; $443b 43      
-   mov l,b       ; $443c 68      
-   ldax b        ; $443d 0a      
-   mvi m,$44     ; $443e 36 44   
-   dcr d         ; $4440 15      
-   inx b         ; $4441 03      
-   dcr b         ; $4442 05      
-   mov l,h       ; $4443 6c      
-   mov h,l       ; $4444 65      
-   mov l,d       ; $4445 6a      
-   mov h,h       ; $4446 64      
-   mov l,c       ; $4447 69      
-   add m         ; $4448 86      
-   mov b,e       ; $4449 43      
-   call $02e4    ; $444a cd e4 02
-   out $03       ; $444d d3 03   
-   sui $16       ; $444f d6 16   
-   mvi a,$18     ; $4451 3e 18   
-   dad d         ; $4453 19      
-   .byte 0x20    ; $4454 20      
-   .byte 0x20    ; $4455 20      
-   .byte 0x20    ; $4456 20      
-   .byte 0x20    ; $4457 20      
-   .byte 0x20    ; $4458 20      
-   .byte 0x20    ; $4459 20      
-   .byte 0x20    ; $445a 20      
-   .byte 0x20    ; $445b 20      
-   .byte 0x20    ; $445c 20      
-   .byte 0x20    ; $445d 20      
-   .byte 0x20    ; $445e 20      
-   inx b         ; $445f 03      
-   .byte 0x20    ; $4460 20      
-   .byte 0x20    ; $4461 20      
-   .byte 0x20    ; $4462 20      
-   .byte 0x20    ; $4463 20      
-   .byte 0x20    ; $4464 20      
-   .byte 0x20    ; $4465 20      
-   .byte 0x20    ; $4466 20      
-   .byte 0x20    ; $4467 20      
-   .byte 0x20    ; $4468 20      
-   .byte 0x20    ; $4469 20      
-   .byte 0x20    ; $446a 20      
-   .byte 0x20    ; $446b 20      
-   .byte 0x20    ; $446c 20      
-   mov h,m       ; $446d 66      
-   dcr d         ; $446e 15      
-   out $03       ; $446f d3 03   
-   sui $16       ; $4471 d6 16   
-   mvi a,$18     ; $4473 3e 18   
-   dad d         ; $4475 19      
-   .byte 0x20    ; $4476 20      
-   .byte 0x20    ; $4477 20      
-   ral           ; $4478 17      
-   ral           ; $4479 17      
-   .byte 0x20    ; $447a 20      
-   mvi b,$17     ; $447b 06 17   
-   ral           ; $447d 17      
-   lxi d,$1117   ; $447e 11 17 11
-   mvi b,$17     ; $4481 06 17   
-   ral           ; $4483 17      
-   .byte 0x20    ; $4484 20      
-   .byte 0x20    ; $4485 20      
-   ral           ; $4486 17      
-   ral           ; $4487 17      
-   .byte 0x20    ; $4488 20      
-   .byte 0x20    ; $4489 20      
-   ral           ; $448a 17      
-   lxi d,$1706   ; $448b 11 06 17
-   ral           ; $448e 17      
-   mov h,m       ; $448f 66      
-   dcr d         ; $4490 15      
-   out $03       ; $4491 d3 03   
-   sui $16       ; $4493 d6 16   
-   mvi a,$18     ; $4495 3e 18   
-   dad d         ; $4497 19      
-   .byte 0x20    ; $4498 20      
-   inr b         ; $4499 04      
-   lxi d,$1006   ; $449a 11 06 10
-   mvi b,$17     ; $449d 06 17   
-   .byte 0x20    ; $449f 20      
-   .byte 0x20    ; $44a0 20      
-   ral           ; $44a1 17      
-   lxi d,$7f17   ; $44a2 11 17 7f
-   ral           ; $44a5 17      
-   .byte 0x20    ; $44a6 20      
-   inr b         ; $44a7 04      
-   lxi d,$1006   ; $44a8 11 06 10
-   .byte 0x20    ; $44ab 20      
-   ral           ; $44ac 17      
-   lxi d,$7f17   ; $44ad 11 17 7f
-   ral           ; $44b0 17      
-   mov h,m       ; $44b1 66      
-   dcr d         ; $44b2 15      
-   out $03       ; $44b3 d3 03   
-   sui $16       ; $44b5 d6 16   
-   mvi a,$18     ; $44b7 3e 18   
-   dad d         ; $44b9 19      
-   .byte 0x20    ; $44ba 20      
-   mvi b,$11     ; $44bb 06 11   
-   mvi b,$11     ; $44bd 06 11   
-   mvi b,$17     ; $44bf 06 17   
-   ral           ; $44c1 17      
-   lxi d,$1517   ; $44c2 11 17 15
-   ral           ; $44c5 17      
-   mvi b,$17     ; $44c6 06 17   
-   .byte 0x20    ; $44c8 20      
-   mvi d,$11     ; $44c9 16 11   
-   mvi b,$15     ; $44cb 06 15   
-   .byte 0x20    ; $44cd 20      
-   ral           ; $44ce 17      
-   dcr d         ; $44cf 15      
-   ral           ; $44d0 17      
-   mvi b,$17     ; $44d1 06 17   
-   mov h,m       ; $44d3 66      
-   dcr d         ; $44d4 15      
-   out $03       ; $44d5 d3 03   
-   sui $16       ; $44d7 d6 16   
-   mvi a,$18     ; $44d9 3e 18   
-   dad d         ; $44db 19      
-   .byte 0x20    ; $44dc 20      
-   ral           ; $44dd 17      
-   lxi b,$1702   ; $44de 01 02 17
-   mvi b,$17     ; $44e1 06 17   
-   .byte 0x20    ; $44e3 20      
-   .byte 0x20    ; $44e4 20      
-   ral           ; $44e5 17      
-   ral           ; $44e6 17      
-   lxi d,$1706   ; $44e7 11 06 17
-   .byte 0x20    ; $44ea 20      
-   ral           ; $44eb 17      
-   .byte 0x20    ; $44ec 20      
-   .byte 0x20    ; $44ed 20      
-   ral           ; $44ee 17      
-   .byte 0x20    ; $44ef 20      
-   ral           ; $44f0 17      
-   ral           ; $44f1 17      
-   lxi d,$1706   ; $44f2 11 06 17
-   mov h,m       ; $44f5 66      
-   dcr d         ; $44f6 15      
-   out $03       ; $44f7 d3 03   
-   sui $16       ; $44f9 d6 16   
-   mvi a,$18     ; $44fb 3e 18   
-   dad d         ; $44fd 19      
-   inr b         ; $44fe 04      
-   ral           ; $44ff 17      
-   .byte 0x20    ; $4500 20      
-   .byte 0x20    ; $4501 20      
-   ral           ; $4502 17      
-   mvi b,$17     ; $4503 06 17   
-   ral           ; $4505 17      
-   lxi d,$1717   ; $4506 11 17 17
-   lxi b,$1706   ; $4509 01 06 17
-   mvi b,$17     ; $450c 06 17   
-   ral           ; $450e 17      
-   ral           ; $450f 17      
-   ral           ; $4510 17      
-   lxi d,$1717   ; $4511 11 17 17
-   lxi b,$1706   ; $4514 01 06 17
-   mov h,m       ; $4517 66      
-   dcr d         ; $4518 15      
-   out $03       ; $4519 d3 03   
-   sui $16       ; $451b d6 16   
-   mvi a,$18     ; $451d 3e 18   
-   dad d         ; $451f 19      
-   .byte 0x20    ; $4520 20      
-   .byte 0x20    ; $4521 20      
-   .byte 0x20    ; $4522 20      
-   .byte 0x20    ; $4523 20      
-   .byte 0x20    ; $4524 20      
-   .byte 0x20    ; $4525 20      
-   .byte 0x20    ; $4526 20      
-   .byte 0x20    ; $4527 20      
-   .byte 0x20    ; $4528 20      
-   .byte 0x20    ; $4529 20      
-   .byte 0x20    ; $452a 20      
-   .byte 0x20    ; $452b 20      
-   .byte 0x20    ; $452c 20      
-   .byte 0x20    ; $452d 20      
-   stax b        ; $452e 02      
-   lxi b,$2020   ; $452f 01 20 20
-   stax b        ; $4532 02      
-   lxi b,$2020   ; $4533 01 20 20
-   .byte 0x20    ; $4536 20      
-   .byte 0x20    ; $4537 20      
-   .byte 0x20    ; $4538 20      
-   mov h,m       ; $4539 66      
-   dcr d         ; $453a 15      
-   dcr d         ; $453b 15      
-   inx b         ; $453c 03      
-   mvi b,$74     ; $453d 06 74   
-   mov m,l       ; $453f 75      
-   mov h,m       ; $4540 66      
-   mov h,l       ; $4541 65      
-   mov l,h       ; $4542 6c      
-   mov a,b       ; $4543 78      
-   mov b,d       ; $4544 42      
-   mov b,h       ; $4545 44      
-   call $02e4    ; $4546 cd e4 02
-   out $03       ; $4549 d3 03   
-   sui $16       ; $454b d6 16   
-   mvi a,$18     ; $454d 3e 18   
-   dcr c         ; $454f 0d      
-   .byte 0x20    ; $4550 20      
-   .byte 0x20    ; $4551 20      
-   .byte 0x20    ; $4552 20      
-   .byte 0x20    ; $4553 20      
-   .byte 0x20    ; $4554 20      
-   .byte 0x20    ; $4555 20      
-   .byte 0x20    ; $4556 20      
-   .byte 0x20    ; $4557 20      
-   .byte 0x20    ; $4558 20      
-   mvi d,$17     ; $4559 16 17   
-   dcr d         ; $455b 15      
-   .byte 0x20    ; $455c 20      
-   mov h,m       ; $455d 66      
-   dcr d         ; $455e 15      
-   out $03       ; $455f d3 03   
-   sui $16       ; $4561 d6 16   
-   mvi a,$18     ; $4563 3e 18   
-   dcr c         ; $4565 0d      
-   .byte 0x20    ; $4566 20      
-   .byte 0x20    ; $4567 20      
-   .byte 0x20    ; $4568 20      
-   .byte 0x20    ; $4569 20      
-   .byte 0x20    ; $456a 20      
-   .byte 0x20    ; $456b 20      
-   .byte 0x20    ; $456c 20      
-   .byte 0x20    ; $456d 20      
-   mvi d,$17     ; $456e 16 17   
-   ral           ; $4570 17      
-   ral           ; $4571 17      
-   ral           ; $4572 17      
-   mov h,m       ; $4573 66      
-   dcr d         ; $4574 15      
-   out $03       ; $4575 d3 03   
-   sui $16       ; $4577 d6 16   
-   mvi a,$18     ; $4579 3e 18   
-   dcr c         ; $457b 0d      
-   .byte 0x20    ; $457c 20      
-   .byte 0x20    ; $457d 20      
-   .byte 0x20    ; $457e 20      
-   mov m,e       ; $457f 73      
-   ral           ; $4580 17      
-   mov h,m       ; $4581 66      
-   mov m,h       ; $4582 74      
-   .byte 0x20    ; $4583 20      
-   .byte 0x20    ; $4584 20      
-   .byte 0x20    ; $4585 20      
-   .byte 0x20    ; $4586 20      
-   ral           ; $4587 17      
-   lxi b,$1566   ; $4588 01 66 15
-   out $03       ; $458b d3 03   
-   sui $16       ; $458d d6 16   
-   mvi a,$18     ; $458f 3e 18   
-   dcr c         ; $4591 0d      
-   .byte 0x20    ; $4592 20      
-   .byte 0x20    ; $4593 20      
-   .byte 0x20    ; $4594 20      
-   inr b         ; $4595 04      
-   ral           ; $4596 17      
-   ral           ; $4597 17      
-   lxi b,$2020   ; $4598 01 20 20
-   .byte 0x20    ; $459b 20      
-   mvi b,$11     ; $459c 06 11   
-   .byte 0x20    ; $459e 20      
-   mov h,m       ; $459f 66      
-   dcr d         ; $45a0 15      
-   out $03       ; $45a1 d3 03   
-   sui $16       ; $45a3 d6 16   
-   mvi a,$18     ; $45a5 3e 18   
-   dcr c         ; $45a7 0d      
-   inr b         ; $45a8 04      
-   inr d         ; $45a9 14      
-   ral           ; $45aa 17      
-   ral           ; $45ab 17      
-   ral           ; $45ac 17      
-   lxi b,$2020   ; $45ad 01 20 20
-   .byte 0x20    ; $45b0 20      
-   .byte 0x20    ; $45b1 20      
-   mvi b,$20     ; $45b2 06 20   
-   .byte 0x20    ; $45b4 20      
-   mov h,m       ; $45b5 66      
-   dcr d         ; $45b6 15      
-   dcr d         ; $45b7 15      
-   inx b         ; $45b8 03      
-   inr b         ; $45b9 04      
-   mov m,e       ; $45ba 73      
-   mov l,a       ; $45bb 6f      
-   mov h,m       ; $45bc 66      
-   mov m,h       ; $45bd 74      
-   dcr a         ; $45be 3d      
-   mov b,l       ; $45bf 45      
-   call $02e4    ; $45c0 cd e4 02
-   out $03       ; $45c3 d3 03   
-   sui $16       ; $45c5 d6 16   
-   mvi a,$18     ; $45c7 3e 18   
-   stax d        ; $45c9 12      
-   inr b         ; $45ca 04      
-   ral           ; $45cb 17      
-   ral           ; $45cc 17      
-   lxi d,$1704   ; $45cd 11 04 17
-   ral           ; $45d0 17      
-   dcr d         ; $45d1 15      
-   .byte 0x20    ; $45d2 20      
-   inr d         ; $45d3 14      
-   mvi d,$17     ; $45d4 16 17   
-   inr d         ; $45d6 14      
-   .byte 0x10    ; $45d7 10      
-   mvi b,$17     ; $45d8 06 17   
-   ral           ; $45da 17      
-   ral           ; $45db 17      
-   mov h,m       ; $45dc 66      
-   dcr d         ; $45dd 15      
-   out $03       ; $45de d3 03   
-   sui $16       ; $45e0 d6 16   
-   mvi a,$18     ; $45e2 3e 18   
-   stax d        ; $45e4 12      
-   mvi b,$17     ; $45e5 06 17   
-   mvi b,$15     ; $45e7 06 15   
-   mvi b,$17     ; $45e9 06 17   
-   mvi b,$17     ; $45eb 06 17   
-   mvi b,$17     ; $45ed 06 17   
-   ral           ; $45ef 17      
-   ral           ; $45f0 17      
-   ral           ; $45f1 17      
-   ral           ; $45f2 17      
-   .byte 0x20    ; $45f3 20      
-   mvi b,$17     ; $45f4 06 17   
-   .byte 0x20    ; $45f6 20      
-   mov h,m       ; $45f7 66      
-   dcr d         ; $45f8 15      
-   out $03       ; $45f9 d3 03   
-   sui $16       ; $45fb d6 16   
-   mvi a,$18     ; $45fd 3e 18   
-   stax d        ; $45ff 12      
-   mvi b,$17     ; $4600 06 17   
-   .byte 0x20    ; $4602 20      
-   .byte 0x20    ; $4603 20      
-   mvi b,$17     ; $4604 06 17   
-   mvi b,$17     ; $4606 06 17   
-   mvi b,$17     ; $4608 06 17   
-   mvi b,$17     ; $460a 06 17   
-   mvi b,$17     ; $460c 06 17   
-   .byte 0x20    ; $460e 20      
-   mvi b,$17     ; $460f 06 17   
-   .byte 0x20    ; $4611 20      
-   mov h,m       ; $4612 66      
-   dcr d         ; $4613 15      
-   out $03       ; $4614 d3 03   
-   sui $16       ; $4616 d6 16   
-   mvi a,$18     ; $4618 3e 18   
-   stax d        ; $461a 12      
-   mvi b,$17     ; $461b 06 17   
-   mvi b,$13     ; $461d 06 13   
-   mvi b,$17     ; $461f 06 17   
-   mvi b,$17     ; $4621 06 17   
-   mvi b,$17     ; $4623 06 17   
-   mvi d,$17     ; $4625 16 17   
-   mvi d,$17     ; $4627 16 17   
-   .byte 0x20    ; $4629 20      
-   mvi b,$17     ; $462a 06 17   
-   .byte 0x20    ; $462c 20      
-   mov h,m       ; $462d 66      
-   dcr d         ; $462e 15      
-   out $03       ; $462f d3 03   
-   sui $16       ; $4631 d6 16   
-   mvi a,$18     ; $4633 3e 18   
-   stax d        ; $4635 12      
-   stax b        ; $4636 02      
-   ral           ; $4637 17      
-   ral           ; $4638 17      
-   lxi d,$1702   ; $4639 11 02 17
-   ral           ; $463c 17      
-   inx d         ; $463d 13      
-   .byte 0x20    ; $463e 20      
-   inx b         ; $463f 03      
-   ral           ; $4640 17      
-   ral           ; $4641 17      
-   inx b         ; $4642 03      
-   lxi b,$0620   ; $4643 01 20 06
-   ral           ; $4646 17      
-   .byte 0x20    ; $4647 20      
-   mov h,m       ; $4648 66      
-   dcr d         ; $4649 15      
-   dcr d         ; $464a 15      
-   inx b         ; $464b 03      
-   ldax b        ; $464c 0a      
-   mov d,h       ; $464d 54      
-   mov d,d       ; $464e 52      
-   mov b,c       ; $464f 41      
-   mov b,h       ; $4650 44      
-   mov b,l       ; $4651 45      
-   dcr l         ; $4652 2d      
-   mov c,l       ; $4653 4d      
-   mov b,c       ; $4654 41      
-   mov d,d       ; $4655 52      
-   mov c,e       ; $4656 4b      
-   cmp c         ; $4657 b9      
-   mov b,l       ; $4658 45      
+
+NFA_EDIT:        ; 4386
+   .byte 4,"EDIT"
+   .word NFA_EDITOR       ; 3D68
+_EDIT:           ; 438D - 4442
+   call _FCALL            ; 438D
+   .word _DEPTH           ; $4390 1CD9 - DEPTH
+   .word __3FBRANCH       ; $4392 0A7A - ?BRANCH
+   .word $439A            ; $4394 439A
+   .word _SCR             ; $4396 2AD6 - SCR
+   .word __21             ; $4398 099D - !
+   .word _SCR             ; $439a 2AD6 - SCR
+   .word __40             ; $439c 0984 - @
+   .word _0               ; $439e 0EC8 - 0
+   .word _MAX             ; $43a0 04DE - MAX
+   .word _BLOCK           ; $43a2 2CFD - BLOCK
+   .word _DROP            ; $43a4 0382 - DROP
+   .word _CLS             ; $43a6 2F76 - CLS
+   .word $3D7F            ; $43a8 3D7F
+   .word _0_21            ; $43aa 09FC - 0!
+   .word _0               ; $43ac 0EC8 - 0
+   .word $3D8E            ; $43ae 3D8E
+   .word $3D96            ; $43b0 3D96
+   .word _0_21            ; $43b2 09FC - 0!
+   .word _LIT             ; $43b4 0A2B - LIT
+   .word $000A            ; $43b6 000A
+   .word _0               ; $43b8 0EC8 - 0
+   .word _CUR             ; $43ba 2F51 - CUR
+   .word __28_2E_22_29    ; $43bc 183E - (.")
+   .byte 6,"|kran="
+   .word _SCR             ; $43c5 2AD6 - SCR
+   .word __40             ; $43c7 0984 - @
+   .word _LIT             ; $43c9 0A2B - LIT
+   .word $0005            ; $43cb 0005
+   .word __2ER            ; $43cd 12AB - .R
+   .word _LIT             ; $43cf 0A2B - LIT
+   .word $0004            ; $43d1 0004
+   .word _SPACES          ; $43d3 16D6 - SPACES
+   .word __28_2E_22_29    ; $43d5 183E - (.")
+   .byte 7,"X=   Y="
+   .word _LIT             ; $43df 0A2B - LIT
+   .word $42B1            ; $43e1 42B1
+   .word $42FC            ; $43e3 42FC
+   .word _B_2FBUF         ; $43e5 2A64 - B/BUF
+   .word $3DC5            ; $43e7 3DC5
+   .word _CR              ; $43e9 1566 - CR
+   .word _SPACE           ; $43eb 16C4 - SPACE
+   .word __28_2E_22_29    ; $43ed 183E - (.")
+   .byte 62,"F3/F5-",0x1d,"/",0x0e," AP2-INS F2-SPLIT ^O-DEL ^~-DELWORD ps-DELLINE F4-END"
+   .word _0               ; $442e 0EC8 - 0
+   .word $3D8E            ; $4430 3D8E
+   .word _0               ; $4432 0EC8 - 0
+   .word $3F2B            ; $4434 3F2B
+   .word $4266            ; $4436 4266
+   .word $3F09            ; $4438 3F09
+   .word $4373            ; $443a 4373
+   .word _BRANCH          ; $443c 0A68 - BRANCH
+   .word $4436            ; $443e 4436
+   .word _EXIT            ; $4440 0315 - EXIT
+
+NFA__6C_65_6A_64_69:; 4442
+   .byte 5,"lejdi"
+   .word $4386   ; NFA_EDIT         ; 4386
+__6C_65_6A_64_69:; 444A - 453D
+   call _FCALL            ; 444A
+   .word _DUP             ; $444d 03D3 - DUP
+   .word _SPACES          ; $444f 16D6 - SPACES
+   .word __28_2E_22_29    ; $4451 183E - (.")
+   .byte 25,"           ",0x03,"             "
+   .word _CR              ; $446d 1566 - CR
+   .word _DUP             ; $446f 03D3 - DUP
+   .word _SPACES          ; $4471 16D6 - SPACES
+   .word __28_2E_22_29    ; $4473 183E - (.")
+   .byte 25,"  ",0x17,0x17," ",0x06,0x17,0x17,0x11,0x17,0x11,0x06,0x17,0x17,"  ",0x17,0x17,"  ",0x17,0x11,0x06,0x17,0x17
+   .word _CR              ; $448f 1566 - CR
+   .word _DUP             ; $4491 03D3 - DUP
+   .word _SPACES          ; $4493 16D6 - SPACES
+   .word __28_2E_22_29    ; $4495 183E - (.")
+   .byte 25," ",0x04,0x11,0x06,0x10,0x06,0x17,"  ",0x17,0x11,0x17,0x7f,0x17," ",0x04,0x11,0x06,0x10," ",0x17,0x11,0x17,0x7f,0x17
+   .word _CR              ; $44b1 1566 - CR
+   .word _DUP             ; $44b3 03D3 - DUP
+   .word _SPACES          ; $44b5 16D6 - SPACES
+   .word __28_2E_22_29    ; $44b7 183E - (.")
+   .byte 25," ",0x06,0x11,0x06,0x11,0x06,0x17,0x17,0x11,0x17,0x15,0x17,0x06,0x17," ",0x16,0x11,0x06,0x15," ",0x17,0x15,0x17,0x06,0x17
+   .word _CR              ; $44d3 1566 - CR
+   .word _DUP             ; $44d5 03D3 - DUP
+   .word _SPACES          ; $44d7 16D6 - SPACES
+   .word __28_2E_22_29    ; $44d9 183E - (.")
+   .byte 25," ",0x17,0x01,0x02,0x17,0x06,0x17,"  ",0x17,0x17,0x11,0x06,0x17," ",0x17,"  ",0x17," ",0x17,0x17,0x11,0x06,0x17
+   .word _CR              ; $44f5 1566 - CR
+   .word _DUP             ; $44f7 03D3 - DUP
+   .word _SPACES          ; $44f9 16D6 - SPACES
+   .word __28_2E_22_29    ; $44fb 183E - (.")
+   .byte 25,0x04,0x17,"  ",0x17,0x06,0x17,0x17,0x11,0x17,0x17,0x01,0x06,0x17,0x06,0x17,0x17,0x17,0x17,0x11,0x17,0x17,0x01,0x06,0x17
+   .word _CR              ; $4517 1566 - CR
+   .word _DUP             ; $4519 03D3 - DUP
+   .word _SPACES          ; $451b 16D6 - SPACES
+   .word __28_2E_22_29    ; $451d 183E - (.")
+   .byte 25,"              ",0x02,0x01,"  ",0x02,0x01,"     "
+   .word _CR              ; $4539 1566 - CR
+   .word _EXIT            ; $453b 0315 - EXIT
+
+NFA__74_75_66_65_6C_78:; 453D
+   .byte 6,"tufelx"
+   .word NFA__6C_65_6A_64_69        ; 4442
+__74_75_66_65_6C_78:; 4546 - 45B9
+   call _FCALL            ; 4546
+   .word _DUP             ; $4549 03D3 - DUP
+   .word _SPACES          ; $454b 16D6 - SPACES
+   .word __28_2E_22_29    ; $454d 183E - (.")
+   .byte 13,"         ",0x16,0x17,0x15," "
+   .word _CR              ; $455d 1566 - CR
+   .word _DUP             ; $455f 03D3 - DUP
+   .word _SPACES          ; $4561 16D6 - SPACES
+   .word __28_2E_22_29    ; $4563 183E - (.")
+   .byte 13,"        ",0x16,0x17,0x17,0x17,0x17
+   .word _CR              ; $4573 1566 - CR
+   .word _DUP             ; $4575 03D3 - DUP
+   .word _SPACES          ; $4577 16D6 - SPACES
+   .word __28_2E_22_29    ; $4579 183E - (.")
+   .byte 13,"   s",0x17,"ft    ",0x17,0x01
+   .word _CR              ; $4589 1566 - CR
+   .word _DUP             ; $458b 03D3 - DUP
+   .word _SPACES          ; $458d 16D6 - SPACES
+   .word __28_2E_22_29    ; $458f 183E - (.")
+   .byte 13,"   ",0x04,0x17,0x17,0x01,"   ",0x06,0x11," "
+   .word _CR              ; $459f 1566 - CR
+   .word _DUP             ; $45a1 03D3 - DUP
+   .word _SPACES          ; $45a3 16D6 - SPACES
+   .word __28_2E_22_29    ; $45a5 183E - (.")
+   .byte 13,0x04,0x14,0x17,0x17,0x17,0x01,"    ",0x06,"  "
+   .word _CR              ; $45b5 1566 - CR
+   .word _EXIT            ; $45b7 0315 - EXIT
+
+NFA__73_6F_66_74:; 45B9
+   .byte 4,"soft"
+   .word NFA__74_75_66_65_6C_78       ; 453D
+__73_6F_66_74:   ; 45C0 - 464C
+   call _FCALL            ; 45C0
+   .word _DUP             ; $45c3 03D3 - DUP
+   .word _SPACES          ; $45c5 16D6 - SPACES
+   .word __28_2E_22_29    ; $45c7 183E - (.")
+   .byte 18,0x04,0x17,0x17,0x11,0x04,0x17,0x17,0x15," ",0x14,0x16,0x17,0x14,0x10,0x06,0x17,0x17,0x17
+   .word _CR              ; $45dc 1566 - CR
+   .word _DUP             ; $45de 03D3 - DUP
+   .word _SPACES          ; $45e0 16D6 - SPACES
+   .word __28_2E_22_29    ; $45e2 183E - (.")
+   .byte 18,0x06,0x17,0x06,0x15,0x06,0x17,0x06,0x17,0x06,0x17,0x17,0x17,0x17,0x17," ",0x06,0x17," "
+   .word _CR              ; $45f7 1566 - CR
+   .word _DUP             ; $45f9 03D3 - DUP
+   .word _SPACES          ; $45fb 16D6 - SPACES
+   .word __28_2E_22_29    ; $45fd 183E - (.")
+   .byte 18,0x06,0x17,"  ",0x06,0x17,0x06,0x17,0x06,0x17,0x06,0x17,0x06,0x17," ",0x06,0x17," "
+   .word _CR              ; $4612 1566 - CR
+   .word _DUP             ; $4614 03D3 - DUP
+   .word _SPACES          ; $4616 16D6 - SPACES
+   .word __28_2E_22_29    ; $4618 183E - (.")
+   .byte 18,0x06,0x17,0x06,0x13,0x06,0x17,0x06,0x17,0x06,0x17,0x16,0x17,0x16,0x17," ",0x06,0x17," "
+   .word _CR              ; $462d 1566 - CR
+   .word _DUP             ; $462f 03D3 - DUP
+   .word _SPACES          ; $4631 16D6 - SPACES
+   .word __28_2E_22_29    ; $4633 183E - (.")
+   .byte 18,0x02,0x17,0x17,0x11,0x02,0x17,0x17,0x13," ",0x03,0x17,0x17,0x03,0x01," ",0x06,0x17," "
+   .word _CR              ; $4648 1566 - CR
+   .word _EXIT            ; $464a 0315 - EXIT
+
+NFA_TRADE_2DMARK:; 464C
+   .byte 10,"TRADE-MARK"
+   .word NFA__73_6F_66_74         ; 45B9
+_TRADE_2DMARK:   ; 4659 - None
    call $02e4    ; $4659 cd e4 02
-   hlt           ; $465c 76      
-   cma           ; $465d 2f      
-   dcx h         ; $465e 2b      
-   ldax b        ; $465f 0a      
-   mvi c,$00     ; $4660 0e 00   
-   mov c,d       ; $4662 4a      
-   mov b,h       ; $4663 44      
-   mov h,m       ; $4664 66      
-   dcr d         ; $4665 15      
-   mov h,m       ; $4666 66      
-   dcr d         ; $4667 15      
-   dcx h         ; $4668 2b      
-   ldax b        ; $4669 0a      
-   mvi b,$00     ; $466a 06 00   
-   mov c,d       ; $466c 4a      
-   inr b         ; $466d 04      
-   mov b,m       ; $466e 46      
-   mov b,l       ; $466f 45      
-   mov h,m       ; $4670 66      
-   dcr d         ; $4671 15      
-   mov h,m       ; $4672 66      
-   dcr d         ; $4673 15      
-   mov h,m       ; $4674 66      
-   dcr d         ; $4675 15      
-   dcx h         ; $4676 2b      
-   ldax b        ; $4677 0a      
-   inx b         ; $4678 03      
-   nop           ; $4679 00      
-   mov d,l       ; $467a 55      
-   inr b         ; $467b 04      
-   rnz           ; $467c c0      
-   mov b,l       ; $467d 45      
-   adc c         ; $467e 89      
-   .byte 0x30    ; $467f 30      
-   dcx h         ; $4680 2b      
-   ldax b        ; $4681 0a      
-   mvi m,$00     ; $4682 36 00   
-   dcx h         ; $4684 2b      
-   ldax b        ; $4685 0a      
-   dcr h         ; $4686 25      
-   nop           ; $4687 00      
-   mov e,a       ; $4688 5f      
-   inx sp        ; $4689 33      
-   dcx h         ; $468a 2b      
-   ldax b        ; $468b 0a      
-   lda $2b00     ; $468c 3a 00 2b
-   ldax b        ; $468f 0a      
-   dcr h         ; $4690 25      
-   nop           ; $4691 00      
-   mov e,a       ; $4692 5f      
-   inx sp        ; $4693 33      
-   dcx h         ; $4694 2b      
-   ldax b        ; $4695 0a      
-   mvi m,$00     ; $4696 36 00   
-   dcx h         ; $4698 2b      
-   ldax b        ; $4699 0a      
-   dcx h         ; $469a 2b      
-   nop           ; $469b 00      
-   mov e,a       ; $469c 5f      
-   inx sp        ; $469d 33      
-   rz            ; $469e c8      
-   mvi c,$4d     ; $469f 0e 4d   
-   .byte 0x30    ; $46a1 30      
-   rz            ; $46a2 c8      
-   mvi c,$59     ; $46a3 0e 59   
-   .byte 0x30    ; $46a5 30      
-   mov a,d       ; $46a6 7a      
-   .byte 0x30    ; $46a7 30      
-   dcx h         ; $46a8 2b      
-   ldax b        ; $46a9 0a      
-   mov h,m       ; $46aa 66      
-   dcr d         ; $46ab 15      
-   dcx h         ; $46ac 2b      
-   ldax b        ; $46ad 0a      
-   mov a,e       ; $46ae 7b      
-   dcr c         ; $46af 0d      
-   sbb l         ; $46b0 9d      
-   dad b         ; $46b1 09      
-   dcx h         ; $46b2 2b      
-   ldax b        ; $46b3 0a      
-   mov b,b       ; $46b4 40      
-   sbb h         ; $46b5 9c      
-   rz            ; $46b6 c8      
-   mvi c,$e5     ; $46b7 0e e5   
-   ldax b        ; $46b9 0a      
-   rnz           ; $46ba c0      
-   mov b,m       ; $46bb 46      
-   mvi l,$0b     ; $46bc 2e 0b   
-   cmp h         ; $46be bc      
-   mov b,m       ; $46bf 46      
-   hlt           ; $46c0 76      
-   cma           ; $46c1 2f      
-   dcr d         ; $46c2 15      
-   inx b         ; $46c3 03      
+   .word _CLS             ; $465c 2F76 - CLS
+   .word _LIT             ; $465e 0A2B - LIT
+   .word $000E            ; $4660 000E
+   .word __6C_65_6A_64_69 ; $4662 444A - lejdi
+   .word _CR              ; $4664 1566 - CR
+   .word _CR              ; $4666 1566 - CR
+   .word _LIT             ; $4668 0A2B - LIT
+   .word $0006            ; $466a 0006
+   .word __2B             ; $466c 044A - +
+   .word __74_75_66_65_6C_78; $466e 4546 - tufelx
+   .word _CR              ; $4670 1566 - CR
+   .word _CR              ; $4672 1566 - CR
+   .word _CR              ; $4674 1566 - CR
+   .word _LIT             ; $4676 0A2B - LIT
+   .word $0003            ; $4678 0003
+   .word __2D             ; $467a 0455 - -
+   .word __73_6F_66_74    ; $467c 45C0 - soft
+   .word _GUM             ; $467e 3089 - GUM
+   .word _LIT             ; $4680 0A2B - LIT
+   .word $0036            ; $4682 0036
+   .word _LIT             ; $4684 0A2B - LIT
+   .word $0025            ; $4686 0025
+   .word _PLOT            ; $4688 335F - PLOT
+   .word _LIT             ; $468a 0A2B - LIT
+   .word $003A            ; $468c 003A
+   .word _LIT             ; $468e 0A2B - LIT
+   .word $0025            ; $4690 0025
+   .word _PLOT            ; $4692 335F - PLOT
+   .word _LIT             ; $4694 0A2B - LIT
+   .word $0036            ; $4696 0036
+   .word _LIT             ; $4698 0A2B - LIT
+   .word $002B            ; $469a 002B
+   .word _PLOT            ; $469c 335F - PLOT
+   .word _0               ; $469e 0EC8 - 0
+   .word $304D            ; $46a0 304D
+   .word _0               ; $46a2 0EC8 - 0
+   .word $3059            ; $46a4 3059
+   .word _PEN             ; $46a6 307A - PEN
+   .word _LIT             ; $46a8 0A2B - LIT
+   .word _CR              ; $46aa 1566 - CR
+   .word _LIT             ; $46ac 0A2B - LIT
+   .word $0D7B            ; $46ae 0D7B
+   .word __21             ; $46b0 099D - !
+   .word _LIT             ; $46b2 0A2B - LIT
+   .word $9C40            ; $46b4 9C40
+   .word _0               ; $46b6 0EC8 - 0
+   .word __28DO_29        ; $46b8 0AE5 - (DO)
+   .word $46C0            ; $46ba 46C0
+   .word __28LOOP_29      ; $46bc 0B2E - (LOOP)
+   .word $46BC            ; $46be 46BC
+   .word _CLS             ; $46c0 2F76 - CLS
+   .word _EXIT            ; $46c2 0315 - EXIT
 
 .end

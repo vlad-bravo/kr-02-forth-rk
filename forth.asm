@@ -6086,128 +6086,78 @@ __28OUT_29:      ; 298A - 29AB
    jnz $299c     ; $29a4 c2 9c 29
    pop b         ; $29a7 c1      
    jmp $02ef     ; $29a8 c3 ef 02
-   mvi b,$42     ; $29ab 06 42   
-   mov c,a       ; $29ad 4f      
-   mov d,l       ; $29ae 55      
-   mov c,m       ; $29af 4e      
-   mov b,h       ; $29b0 44      
-   mov d,e       ; $29b1 53      
-   add d         ; $29b2 82      
-   dad h         ; $29b3 29      
-   call $02e4    ; $29b4 cd e4 02
-   mov h,d       ; $29b7 62      
-   inx b         ; $29b8 03      
-   mov c,d       ; $29b9 4a      
-   inr b         ; $29ba 04      
-   adc l         ; $29bb 8d      
-   inx b         ; $29bc 03      
-   dcr d         ; $29bd 15      
-   inx b         ; $29be 03      
+
+NFA_BOUNDS:      ; 29AB
+   .byte 6,"BOUNDS"
+   .word NFA__28OUT_29        ; 2982
+_BOUNDS:         ; 29B4 - 29FC
+   call _FCALL            ; 29B4
+   .word _OVER            ; $29b7 0362 - OVER
+   .word __2B             ; $29b9 044A - +
+   .word _SWAP            ; $29bb 038D - SWAP
+   .word _EXIT            ; $29bd 0315 - EXIT
+
    call $02e4    ; $29bf cd e4 02
-   out $03       ; $29c2 d3 03   
-   mov c,h       ; $29c4 4c      
-   lhld $044a    ; $29c5 2a 4a 04
-   rz            ; $29c8 c8      
-   mvi c,$8d     ; $29c9 0e 8d   
-   inx b         ; $29cb 03      
-   mov h,h       ; $29cc 64      
-   lhld $29b4    ; $29cd 2a b4 29
-   inr c         ; $29d0 0c      
-   dcx b         ; $29d1 0b      
-   sbi $29       ; $29d2 de 29   
-   sbb a         ; $29d4 9f      
-   ldax b        ; $29d5 0a      
-   sub c         ; $29d6 91      
-   dad b         ; $29d7 09      
-   mov c,d       ; $29d8 4a      
-   inr b         ; $29d9 04      
-   mvi l,$0b     ; $29da 2e 0b   
-   cnc $1529     ; $29dc d4 29 15
-   inx b         ; $29df 03      
+   .word _DUP             ; $29c2 03D3 - DUP
+   .word _DBH             ; $29c4 2A4C - DBH
+   .word __2B             ; $29c6 044A - +
+   .word _0               ; $29c8 0EC8 - 0
+   .word _SWAP            ; $29ca 038D - SWAP
+   .word _B_2FBUF         ; $29cc 2A64 - B/BUF
+   .word _BOUNDS          ; $29ce 29B4 - BOUNDS
+   .word __28_3FDO_29     ; $29d0 0B0C - (?DO)
+   .word $29DE            ; $29d2 29DE
+   .word _I               ; $29d4 0A9F - I
+   .word _C_40            ; $29d6 0991 - C@
+   .word __2B             ; $29d8 044A - +
+   .word __28LOOP_29      ; $29da 0B2E - (LOOP)
+   .word $29D4            ; $29dc 29D4
+   .word _EXIT            ; $29de 0315 - EXIT
+
    call $02e4    ; $29e0 cd e4 02
-   mvi a,$18     ; $29e3 3e 18   
-   .byte 0x08    ; $29e5 08      
-   .byte 0x28    ; $29e6 28      
-   mov e,c       ; $29e7 59      
-   cma           ; $29e8 2f      
-   mvi l,$2e     ; $29e9 2e 2e   
-   mvi l,$29     ; $29eb 2e 29   
-   .byte 0x20    ; $29ed 20      
-   mov d,h       ; $29ee 54      
-   dcr d         ; $29ef 15      
-   out $03       ; $29f0 d3 03   
-   dcr a         ; $29f2 3d      
-   dcr d         ; $29f3 15      
-   dcx h         ; $29f4 2b      
-   ldax b        ; $29f5 0a      
-   mov e,c       ; $29f6 59      
-   nop           ; $29f7 00      
-   mov h,m       ; $29f8 66      
-   dcr b         ; $29f9 05      
-   dcr d         ; $29fa 15      
-   inx b         ; $29fb 03      
+   .word __28_2E_22_29    ; $29e3 183E - (.")
+   .byte 8,"(Y/...) "
+   .word _KEY             ; $29ee 1554 - KEY
+   .word _DUP             ; $29f0 03D3 - DUP
+   .word _EMIT            ; $29f2 153D - EMIT
+   .word _LIT             ; $29f4 0A2B - LIT
+   .word $0059            ; $29f6 0059
+   .word __3D             ; $29f8 0566 - =
+   .word _EXIT            ; $29fa 0315 - EXIT
 
 NFA_OUT:         ; 29FC
    .byte 3,"OUT"
    .word $29AB   ; NFA_BOUNDS       ; 29AB
 _OUT:            ; 2A02 - 2A46
    call _FCALL            ; 2A02
-   cmp a         ; $2a05 bf      
-   dad h         ; $2a06 29      
-   mov h,d       ; $2a07 62      
-   inx b         ; $2a08 03      
-   .byte 0x20    ; $2a09 20      
-   dcx h         ; $2a0a 2b      
-   sbb l         ; $2a0b 9d      
-   dad b         ; $2a0c 09      
-   mov h,h       ; $2a0d 64      
-   lhld $2a4c    ; $2a0e 2a 4c 2a
-   mov c,d       ; $2a11 4a      
-   inr b         ; $2a12 04      
-   mov h,m       ; $2a13 66      
-   dcr d         ; $2a14 15      
-   mvi a,$18     ; $2a15 3e 18   
-   ldax b        ; $2a17 0a      
-   mov l,l       ; $2a18 6d      
-   mov l,h       ; $2a19 6c      
-   inr a         ; $2a1a 3c      
-   dcr l         ; $2a1b 2d      
-   dcr l         ; $2a1c 2d      
-   mov h,d       ; $2a1d 62      
-   mov l,h       ; $2a1e 6c      
-   mov l,a       ; $2a1f 6f      
-   mov l,e       ; $2a20 6b      
-   .byte 0x20    ; $2a21 20      
-   mov h,d       ; $2a22 62      
-   inx b         ; $2a23 03      
-   add h         ; $2a24 84      
-   dad b         ; $2a25 09      
-   cpi $12       ; $2a26 fe 12   
-   rpo           ; $2a28 e0      
-   dad h         ; $2a29 29      
-   mov a,d       ; $2a2a 7a      
-   ldax b        ; $2a2b 0a      
-   sta $8a2a     ; $2a2c 32 2a 8a
-   dad h         ; $2a2f 29      
-   dcr d         ; $2a30 15      
-   inx b         ; $2a31 03      
-   inx b         ; $2a32 03      
-   inr b         ; $2a33 04      
-   dcr d         ; $2a34 15      
-   inx b         ; $2a35 03      
-   dcr d         ; $2a36 15      
-   inx b         ; $2a37 03      
-   mvi b,$53     ; $2a38 06 53   
-   mov d,h       ; $2a3a 54      
-   mov b,m       ; $2a3b 46      
-   mov c,c       ; $2a3c 49      
-   mov c,h       ; $2a3d 4c      
-   mov b,l       ; $2a3e 45      
-   dad b         ; $2a3f 09      
-   lhld $e4cd    ; $2a40 2a cd e4
-   stax b        ; $2a43 02      
-   dcr d         ; $2a44 15      
-   inx b         ; $2a45 03      
+   .word $29BF            ; $2a05 29BF
+   .word _OVER            ; $2a07 0362 - OVER
+   .word _DBC             ; $2a09 2B20 - DBC
+   .word __21             ; $2a0b 099D - !
+   .word _B_2FBUF         ; $2a0d 2A64 - B/BUF
+   .word _DBH             ; $2a0f 2A4C - DBH
+   .word __2B             ; $2a11 044A - +
+   .word _CR              ; $2a13 1566 - CR
+   .word __28_2E_22_29    ; $2a15 183E - (.")
+   .byte 10,"ml<--blok "
+   .word _OVER            ; $2a22 0362 - OVER
+   .word __40             ; $2a24 0984 - @
+   .word __2E             ; $2a26 12FE - .
+   .word $29E0            ; $2a28 29E0
+   .word __3FBRANCH       ; $2a2a 0A7A - ?BRANCH
+   .word $2A32            ; $2a2c 2A32
+   .word __28OUT_29       ; $2a2e 298A - (OUT)
+   .word _EXIT            ; $2a30 0315 - EXIT
+   .word _2DROP           ; $2a32 0403 - 2DROP
+   .word _EXIT            ; $2a34 0315 - EXIT
+   .word _EXIT            ; $2a36 0315 - EXIT
+
+NFA_STFILE:      ; 2A38
+   .byte 6,"STFILE"
+   .word $2a09   ; NFA_             ; 2A09
+_STFILE:         ; 2A41 - None
+   call $02e4
+   .word _EXIT            ; $2a44 0315 - EXIT
 
 NFA_DBH:         ; 2A46
    .byte 3,"DBH"
@@ -6217,15 +6167,12 @@ _DBH:            ; 2A4C - 2A5C
    inr b         ; $2a4f 04      
    nop           ; $2a50 00      
 
-   inx b         ; $2a51 03      
-   mov b,h       ; $2a52 44      
-   mov b,d       ; $2a53 42      
-   mov d,h       ; $2a54 54      
-   mov b,m       ; $2a55 46      
-   lhld $84cd    ; $2a56 2a cd 84
-   dad b         ; $2a59 09      
-   stax b        ; $2a5a 02      
-   nop           ; $2a5b 00      
+NFA_DBT:         ; 2A51
+   .byte 3,"DBT"
+   .word NFA_DBH          ; 2A46
+_DBT:            ; 2A57 - None
+   call $0984
+   .word $0002
 
 NFA_B_2FBUF:     ; 2A5C
    .byte 5,"B/BUF"
@@ -6242,12 +6189,10 @@ _HDBT:           ; 2A70 - 2A83
    call $0984
    mvi b,$04     ; $2a73 06 04   
 
-   mvi b,$23     ; $2a75 06 23   
-   mov b,d       ; $2a77 42      
-   mov d,l       ; $2a78 55      
-   mov b,m       ; $2a79 46      
-   mov b,m       ; $2a7a 46      
-   lxi sp,$2a69  ; $2a7b 31 69 2a
+NFA__23BUFF1:    ; 2A75
+   .byte 6,"#BUFF1"
+   .word NFA_HDBT         ; 2A69
+__23BUFF1:       ; 2A7E - None
    call $0984    ; $2a7e cd 84 09
    sbb e         ; $2a81 9b      
    dcr m         ; $2a82 35      
@@ -6267,16 +6212,13 @@ _LIMIT1:         ; 2A9A - 2AAB
    call $0984    ; $2a9a cd 84 09
    sbb a         ; $2a9d 9f      
    dcr m         ; $2a9e 35      
-   inr b         ; $2a9f 04      
-   mov d,l       ; $2aa0 55      
-   mov d,d       ; $2aa1 52      
-   cma           ; $2aa2 2f      
-   mov d,a       ; $2aa3 57      
-   sub c         ; $2aa4 91      
-   lhld $84cd    ; $2aa5 2a cd 84
-   dad b         ; $2aa8 09      
-   ana c         ; $2aa9 a1      
-   dcr m         ; $2aaa 35      
+
+NFA_UR_2FW:      ; 2A9F
+   .byte 4,"UR/W"
+   .word NFA_LIMIT1       ; 2A91
+_UR_2FW:         ; 2AA6 - None
+   call $0984
+   .word $35a1
 
 NFA_PREV:        ; 2AAB
    .byte 4,"PREV"
@@ -6286,27 +6228,19 @@ _PREV:           ; 2AB2 - 2AD0
    ana e         ; $2ab5 a3      
    dcr m         ; $2ab6 35      
 
-   inx b         ; $2ab7 03      
-   mov d,l       ; $2ab8 55      
-   mov d,e       ; $2ab9 53      
-   mov b,l       ; $2aba 45      
-   xra e         ; $2abb ab      
-   lhld $84cd    ; $2abc 2a cd 84
-   dad b         ; $2abf 09      
-   ana l         ; $2ac0 a5      
-   dcr m         ; $2ac1 35      
+NFA_USE:         ; 2AB7
+   .byte 3,"USE"
+   .word NFA_PREV         ; 2AAB
+_USE:            ; 2ABD - None
+   call $0984
+   .word $35a5
 
-   mvi b,$42     ; $2ac2 06 42   
-   mov b,d       ; $2ac4 42      
-   dcr l         ; $2ac5 2d      
-   mov b,e       ; $2ac6 43      
-   mov c,m       ; $2ac7 4e      
-   mov d,h       ; $2ac8 54      
-   xra e         ; $2ac9 ab      
-   lhld $84cd    ; $2aca 2a cd 84
-   dad b         ; $2acd 09      
-   ana a         ; $2ace a7      
-   dcr m         ; $2acf 35      
+NFA_BB_2DCNT:    ; 2AC2
+   .byte 6,"BB-CNT"
+   .word NFA_PREV         ; 2AAB
+_BB_2DCNT:       ; 2ACB - None
+   call $0984
+   .word $35a7
 
 NFA_SCR:         ; 2AD0
    .byte 3,"SCR"
@@ -6316,29 +6250,21 @@ _SCR:            ; 2AD6 - 2AF8
    xra c         ; $2ad9 a9      
    dcr m         ; $2ada 35      
 
-   inr b         ; $2adb 04      
-   mov c,h       ; $2adc 4c      
-   mov b,e       ; $2add 43      
-   mov c,m       ; $2ade 4e      
-   mov d,h       ; $2adf 54      
-   rnc           ; $2ae0 d0      
-   lhld $84cd    ; $2ae1 2a cd 84
-   dad b         ; $2ae4 09      
-   xra e         ; $2ae5 ab      
-   dcr m         ; $2ae6 35      
+NFA_LCNT:        ; 2ADB
+   .byte 4,"LCNT"
+   .word NFA_SCR          ; 2AD0
+_LCNT:           ; 2AE2 - 2AE7
+   call $0984
+   .word $35ab
 
-   dcr b         ; $2ae7 05      
-   inx h         ; $2ae8 23      
-   mov b,d       ; $2ae9 42      
-   mov d,l       ; $2aea 55      
-   mov b,m       ; $2aeb 46      
-   mov b,m       ; $2aec 46      
-   in $2a        ; $2aed db 2a   
+NFA__23BUFF:     ; 2AE7
+   .byte 5,"#BUFF"
+   .word NFA_LCNT         ; 2ADB
+__23BUFF:        ; 2AEF - None
    call $02e4    ; $2aef cd e4 02
-   mov a,m       ; $2af2 7e      
-   lhld $0984    ; $2af3 2a 84 09
-   dcr d         ; $2af6 15      
-   inx b         ; $2af7 03      
+   .word $2A7E            ; $2af2 2A7E
+   .word __40             ; $2af4 0984 - @
+   .word _EXIT            ; $2af6 0315 - EXIT
 
 NFA_FIRST:       ; 2AF8
    .byte 5,"FIRST"
@@ -6366,15 +6292,15 @@ _DBC:            ; 2B20 - 2B38
    .word _2_2B            ; $2b23 0482 - 2+
    .word _EXIT            ; $2b25 0315 - EXIT
 
-   .word $5203            ; $2b27 5203
-   .word $572F            ; $2b29 572F
-   .word $2B1A            ; $2b2b 2B1A
-   .word $E4CD            ; $2b2d E4CD
-   .word $A602            ; $2b2f A602
-   .word $842A            ; $2b31 842A
-   .word $2C09            ; $2b33 2C09
-   .word $1503            ; $2b35 1503
-   .byte $03              ; $2b37 03
+NFA_R_2FW:       ; 2B27
+   .byte 3,"R/W"
+   .word NFA_DBC          ; 2B1A
+_R_2FW:          ; 2B2D - None
+   call $02e4
+   .word $2AA6            ; $2b30 2AA6
+   .word __40             ; $2b32 0984 - @
+   .word _EXECUTE         ; $2b34 032C - EXECUTE
+   .word _EXIT            ; $2b36 0315 - EXIT
 
 NFA_EMPTY_2DBUFFERS:; 2B38
    .byte 13,"EMPTY-BUFFERS"
@@ -6408,115 +6334,66 @@ _EMPTY_2DBUFFERS:; 2B48 - 2B7F
    .word __21             ; $2b7b 099D - !
    .word _EXIT            ; $2b7d 0315 - EXIT
 
-   inr c         ; $2b7f 0c      
-   mov d,e       ; $2b80 53      
-   mov b,c       ; $2b81 41      
-   mov d,m       ; $2b82 56      
-   mov b,l       ; $2b83 45      
-   dcr l         ; $2b84 2d      
-   mov b,d       ; $2b85 42      
-   mov d,l       ; $2b86 55      
-   mov b,m       ; $2b87 46      
-   mov b,m       ; $2b88 46      
-   mov b,l       ; $2b89 45      
-   mov d,d       ; $2b8a 52      
-   mov d,e       ; $2b8b 53      
-   .byte 0x38    ; $2b8c 38      
-   dcx h         ; $2b8d 2b      
-   call $02e4    ; $2b8e cd e4 02
-   lxi d,$002b   ; $2b91 11 2b 00
-   dcx h         ; $2b94 2b      
-   push h        ; $2b95 e5      
-   ldax b        ; $2b96 0a      
-   ret           ; $2b97 c9      
-   dcx h         ; $2b98 2b      
-   sbb a         ; $2b99 9f      
-   ldax b        ; $2b9a 0a      
-   add h         ; $2b9b 84      
-   dad b         ; $2b9c 09      
-   dcx h         ; $2b9d 2b      
-   ldax b        ; $2b9e 0a      
-   nop           ; $2b9f 00      
-   add b         ; $2ba0 80      
-   rz            ; $2ba1 c8      
-   .byte 0x08    ; $2ba2 08      
-   mov a,d       ; $2ba3 7a      
-   ldax b        ; $2ba4 0a      
-   jmp $9f2b     ; $2ba5 c3 2b 9f
-   ldax b        ; $2ba8 0a      
-   add h         ; $2ba9 84      
-   dad b         ; $2baa 09      
-   dcx h         ; $2bab 2b      
-   ldax b        ; $2bac 0a      
-   rst 7         ; $2bad ff      
-   mov a,a       ; $2bae 7f      
-   rz            ; $2baf c8      
-   .byte 0x08    ; $2bb0 08      
-   add m         ; $2bb1 86      
-   .byte 0x20    ; $2bb2 20      
-   sbb a         ; $2bb3 9f      
-   ldax b        ; $2bb4 0a      
-   sbb l         ; $2bb5 9d      
-   dad b         ; $2bb6 09      
-   sbb a         ; $2bb7 9f      
-   ldax b        ; $2bb8 0a      
-   add m         ; $2bb9 86      
-   .byte 0x20    ; $2bba 20      
-   add m         ; $2bbb 86      
-   .byte 0x20    ; $2bbc 20      
-   add m         ; $2bbd 86      
-   .byte 0x20    ; $2bbe 20      
-   add m         ; $2bbf 86      
-   .byte 0x20    ; $2bc0 20      
-   stax b        ; $2bc1 02      
-   lhld $2a70    ; $2bc2 2a 70 2a
-   mov h,e       ; $2bc5 63      
-   dcx b         ; $2bc6 0b      
-   sbb c         ; $2bc7 99      
-   dcx h         ; $2bc8 2b      
-   dcr d         ; $2bc9 15      
-   inx b         ; $2bca 03      
-   dcr b         ; $2bcb 05      
-   mov b,m       ; $2bcc 46      
-   mov c,h       ; $2bcd 4c      
-   mov d,l       ; $2bce 55      
-   mov d,e       ; $2bcf 53      
-   mov c,b       ; $2bd0 48      
-   mov a,a       ; $2bd1 7f      
-   dcx h         ; $2bd2 2b      
-   call $02e4    ; $2bd3 cd e4 02
-   adc m         ; $2bd6 8e      
-   dcx h         ; $2bd7 2b      
-   mov c,b       ; $2bd8 48      
-   dcx h         ; $2bd9 2b      
-   dcr d         ; $2bda 15      
-   inx b         ; $2bdb 03      
-   mvi b,$55     ; $2bdc 06 55   
-   mov d,b       ; $2bde 50      
-   mov b,h       ; $2bdf 44      
-   mov b,c       ; $2be0 41      
-   mov d,h       ; $2be1 54      
-   mov b,l       ; $2be2 45      
-   .byte 0xcb    ; $2be3 cb      
-   dcx h         ; $2be4 2b      
-   call $02e4    ; $2be5 cd e4 02
-   ora d         ; $2be8 b2      
-   lhld $0984    ; $2be9 2a 84 09
-   out $03       ; $2bec d3 03   
-   add h         ; $2bee 84      
-   dad b         ; $2bef 09      
-   dcx h         ; $2bf0 2b      
-   ldax b        ; $2bf1 0a      
-   nop           ; $2bf2 00      
-   add b         ; $2bf3 80      
-   .byte 0xd9    ; $2bf4 d9      
-   .byte 0x08    ; $2bf5 08      
-   adc l         ; $2bf6 8d      
-   inx b         ; $2bf7 03      
-   sbb l         ; $2bf8 9d      
-   dad b         ; $2bf9 09      
-   dcr d         ; $2bfa 15      
-   inx b         ; $2bfb 03      
+NFA_SAVE_2DBUFFERS:; 2B7F
+   .byte 12,"SAVE-BUFFERS"
+   .word NFA_EMPTY_2DBUFFERS ; 2B38
+_SAVE_2DBUFFERS: ; 2B8E - 2BCB
+   call _FCALL            ; 2B8E
+   .word _LIMIT           ; $2b91 2B11 - LIMIT
+   .word _FIRST           ; $2b93 2B00 - FIRST
+   .word __28DO_29        ; $2b95 0AE5 - (DO)
+   .word $2BC9            ; $2b97 2BC9
+   .word _I               ; $2b99 0A9F - I
+   .word __40             ; $2b9b 0984 - @
+   .word _LIT             ; $2b9d 0A2B - LIT
+   .word $8000            ; $2b9f 8000
+   .word _AND             ; $2ba1 08C8 - AND
+   .word __3FBRANCH       ; $2ba3 0A7A - ?BRANCH
+   .word $2BC3            ; $2ba5 2BC3
+   .word _I               ; $2ba7 0A9F - I
+   .word __40             ; $2ba9 0984 - @
+   .word _LIT             ; $2bab 0A2B - LIT
+   .word $7FFF            ; $2bad 7FFF
+   .word _AND             ; $2baf 08C8 - AND
+   .word _NOOP            ; $2bb1 2086 - NOOP
+   .word _I               ; $2bb3 0A9F - I
+   .word __21             ; $2bb5 099D - !
+   .word _I               ; $2bb7 0A9F - I
+   .word _NOOP            ; $2bb9 2086 - NOOP
+   .word _NOOP            ; $2bbb 2086 - NOOP
+   .word _NOOP            ; $2bbd 2086 - NOOP
+   .word _NOOP            ; $2bbf 2086 - NOOP
+   .word _OUT             ; $2bc1 2A02 - OUT
+   .word _HDBT            ; $2bc3 2A70 - HDBT
+   .word __28_2BLOOP_29   ; $2bc5 0B63 - (+LOOP)
+   .word $2B99            ; $2bc7 2B99
+   .word _EXIT            ; $2bc9 0315 - EXIT
+
+NFA_FLUSH:       ; 2BCB
+   .byte 5,"FLUSH"
+   .word NFA_SAVE_2DBUFFERS ; 2B7F
+_FLUSH:          ; 2BD3 - 2BDC
+   call _FCALL            ; 2BD3
+   .word _SAVE_2DBUFFERS  ; $2bd6 2B8E - SAVE-BUFFERS
+   .word _EMPTY_2DBUFFERS ; $2bd8 2B48 - EMPTY-BUFFERS
+   .word _EXIT            ; $2bda 0315 - EXIT
+
+NFA_UPDATE:      ; 2BDC
+   .byte 6,"UPDATE"
+   .word NFA_FLUSH        ; 2BCB
+_UPDATE:         ; 2BE5 - 2CBF
+   call _FCALL            ; 2BE5
+   .word _PREV            ; $2be8 2AB2 - PREV
+   .word __40             ; $2bea 0984 - @
+   .word _DUP             ; $2bec 03D3 - DUP
+   .word __40             ; $2bee 0984 - @
+   .word _LIT             ; $2bf0 0A2B - LIT
+   .word $8000            ; $2bf2 8000
+   .word _OR              ; $2bf4 08D9 - OR
+   .word _SWAP            ; $2bf6 038D - SWAP
+   .word __21             ; $2bf8 099D - !
+   .word _EXIT            ; $2bfa 0315 - EXIT
+
    call $02e4    ; $2bfc cd e4 02
    mov m,b       ; $2bff 70      
    lhld $044a    ; $2c00 2a 4a 04
@@ -6654,51 +6531,37 @@ _EMPTY_2DBUFFERS:; 2B48 - 2B7F
    inx b         ; $2cbc 03      
    dcr d         ; $2cbd 15      
    inx b         ; $2cbe 03      
-   mvi b,$42     ; $2cbf 06 42   
-   mov d,l       ; $2cc1 55      
-   mov b,m       ; $2cc2 46      
-   mov b,m       ; $2cc3 46      
-   mov b,l       ; $2cc4 45      
-   mov d,d       ; $2cc5 52      
-   cc $cd2b      ; $2cc6 dc 2b cd
-   cpo $d302     ; $2cc9 e4 02 d3
-   inx b         ; $2ccc 03      
-   dcr e         ; $2ccd 1d      
-   inr l         ; $2cce 2c      
-   mov a,d       ; $2ccf 7a      
-   ldax b        ; $2cd0 0a      
-   .byte 0xd9    ; $2cd1 d9      
-   inr l         ; $2cd2 2c      
-   .byte 0x10    ; $2cd3 10      
-   inr b         ; $2cd4 04      
-   mov l,b       ; $2cd5 68      
-   ldax b        ; $2cd6 0a      
-   rst 4         ; $2cd7 e7      
-   inr l         ; $2cd8 2c      
-   cmp l         ; $2cd9 bd      
-   lhld $0984    ; $2cda 2a 84 09
-   out $03       ; $2cdd d3 03   
-   mov a,l       ; $2cdf 7d      
-   inr l         ; $2ce0 2c      
-   adc l         ; $2ce1 8d      
-   inx b         ; $2ce2 03      
-   mov h,d       ; $2ce3 62      
-   inx b         ; $2ce4 03      
-   sbb l         ; $2ce5 9d      
-   dad b         ; $2ce6 09      
-   out $03       ; $2ce7 d3 03   
-   ora d         ; $2ce9 b2      
-   lhld $099d    ; $2cea 2a 9d 09
-   mov l,b       ; $2ced 68      
-   inr l         ; $2cee 2c      
-   mov c,h       ; $2cef 4c      
-   lhld $044a    ; $2cf0 2a 4a 04
-   dcr d         ; $2cf3 15      
-   inx b         ; $2cf4 03      
+
+NFA_BUFFER:      ; 2CBF
+   .byte 6,"BUFFER"
+   .word NFA_UPDATE       ; 2BDC
+_BUFFER:         ; 2CC8 - 2CF5
+   call _FCALL            ; 2CC8
+   .word _DUP             ; $2ccb 03D3 - DUP
+   .word $2C1D            ; $2ccd 2C1D
+   .word __3FBRANCH       ; $2ccf 0A7A - ?BRANCH
+   .word $2CD9            ; $2cd1 2CD9
+   .word _PRESS           ; $2cd3 0410 - PRESS
+   .word _BRANCH          ; $2cd5 0A68 - BRANCH
+   .word $2CE7            ; $2cd7 2CE7
+   .word $2ABD            ; $2cd9 2ABD
+   .word __40             ; $2cdb 0984 - @
+   .word _DUP             ; $2cdd 03D3 - DUP
+   .word $2C7D            ; $2cdf 2C7D
+   .word _SWAP            ; $2ce1 038D - SWAP
+   .word _OVER            ; $2ce3 0362 - OVER
+   .word __21             ; $2ce5 099D - !
+   .word _DUP             ; $2ce7 03D3 - DUP
+   .word _PREV            ; $2ce9 2AB2 - PREV
+   .word __21             ; $2ceb 099D - !
+   .word $2C68            ; $2ced 2C68
+   .word _DBH             ; $2cef 2A4C - DBH
+   .word __2B             ; $2cf1 044A - +
+   .word _EXIT            ; $2cf3 0315 - EXIT
 
 NFA_BLOCK:       ; 2CF5
    .byte 5,"BLOCK"
-   .word $2CBF   ; NFA_BUFFER       ; 2CBF
+   .word NFA_BUFFER       ; 2CBF
 _BLOCK:          ; 2CFD - 2D38
    call _FCALL            ; 2CFD
    .word _DUP             ; $2d00 03D3 - DUP
@@ -7027,39 +6890,27 @@ _CLS:            ; 2F76 - 2F80
    pop b         ; $2f7c c1      
    jmp $02ef     ; $2f7d c3 ef 02
 
-   inr b         ; $2f80 04      
-   mov b,d       ; $2f81 42      
-   mov b,l       ; $2f82 45      
-   mov b,l       ; $2f83 45      
-   mov d,b       ; $2f84 50      
-   mov m,b       ; $2f85 70      
-   cma           ; $2f86 2f      
-   call $02e4    ; $2f87 cd e4 02
-   dcx h         ; $2f8a 2b      
-   ldax b        ; $2f8b 0a      
-   inr b         ; $2f8c 04      
-   nop           ; $2f8d 00      
-   rz            ; $2f8e c8      
-   mvi c,$e5     ; $2f8f 0e e5   
-   ldax b        ; $2f91 0a      
-   sbb m         ; $2f92 9e      
-   cma           ; $2f93 2f      
-   dcx h         ; $2f94 2b      
-   ldax b        ; $2f95 0a      
-   rlc           ; $2f96 07      
-   nop           ; $2f97 00      
-   dcr a         ; $2f98 3d      
-   dcr d         ; $2f99 15      
-   mvi l,$0b     ; $2f9a 2e 0b   
-   sub h         ; $2f9c 94      
-   cma           ; $2f9d 2f      
-   dcr d         ; $2f9e 15      
-   inx b         ; $2f9f 03      
-   stax b        ; $2fa0 02      
-   mov b,m       ; $2fa1 46      
-   mov e,m       ; $2fa2 5e      
-   add b         ; $2fa3 80      
-   cma           ; $2fa4 2f      
+NFA_BEEP:        ; 2F80
+   .byte 4,"BEEP"
+   .word NFA_CLS          ; 2F70
+_BEEP:           ; 2F87 - 2FA0
+   call _FCALL            ; 2F87
+   .word _LIT             ; $2f8a 0A2B - LIT
+   .word $0004            ; $2f8c 0004
+   .word _0               ; $2f8e 0EC8 - 0
+   .word __28DO_29        ; $2f90 0AE5 - (DO)
+   .word $2F9E            ; $2f92 2F9E
+   .word _LIT             ; $2f94 0A2B - LIT
+   .word $0007            ; $2f96 0007
+   .word _EMIT            ; $2f98 153D - EMIT
+   .word __28LOOP_29      ; $2f9a 0B2E - (LOOP)
+   .word $2F94            ; $2f9c 2F94
+   .word _EXIT            ; $2f9e 0315 - EXIT
+
+NFA_F_5E:        ; 2FA0
+   .byte 2,"F^"
+   .word NFA_BEEP         ; 2F80
+_F_5E:           ; 2FA5 - 2FBB
    pop h         ; $2fa5 e1      
    lxi d,$fff7   ; $2fa6 11 f7 ff
    dad d         ; $2fa9 19      
@@ -7143,8 +6994,10 @@ _2_5E:           ; 3025 - 3044
    .word _2_21            ; $302e 09B5 - 2!
    .word _EXIT            ; $3030 0315 - EXIT
 
-   lxi b,$207c   ; $3032 01 7c 20
-   .byte 0x30    ; $3035 30      
+NFA__7C:         ; 3032
+   .byte 1,"|"
+   .word NFA_2_5E           ; 3020
+__7C:            ; 3036 - None
    call $0984    ; $3036 cd 84 09
    jnz $0177     ; $3039 c2 77 01
    mov c,h       ; $303c 4c      
@@ -7172,15 +7025,19 @@ _Y:              ; 3054 - 3074
    nop           ; $3058 00      
    call $1ac4    ; $3059 cd c4 1a
 
-   lxi b,$5041   ; $305c 01 41 50
-   .byte 0x30    ; $305f 30      
+NFA_A:           ; 305C
+   .byte 1,"A"
+   .word NFA_Y            ; 3050
+_A:              ; 3060 - None
    call $0984    ; $3060 cd 84 09
    nop           ; $3063 00      
    nop           ; $3064 00      
    call $1ac4    ; $3065 cd c4 1a
 
-   lxi b,$5054   ; $3068 01 54 50
-   .byte 0x30    ; $306b 30      
+NFA_T:           ; 3068
+   .byte 1,"T"
+   .word NFA_Y            ; 3050
+_T:              ; 306C - None
    call $0984    ; $306c cd 84 09
    rst 7         ; $306f ff      
    rst 7         ; $3070 ff      
@@ -7208,19 +7065,21 @@ NFA_G:           ; 3092
    .byte 1,"G"
    .word NFA_GUM          ; 3083
 _G:              ; 3096 - None
-   .word $E4CD            ; $3096 E4CD
-   .word $BD02            ; $3098 BD02
-   .word $3F05            ; $309a 3F05
-   .word $9B30            ; $309c 9B30
-   .word $3606            ; $309e 3606
-   .word $4A30            ; $30a0 4A30
-   .word $8D04            ; $30a2 8D04
-   .word $BD03            ; $30a4 BD03
-   .word $4A05            ; $30a6 4A05
-   .word $1504            ; $30a8 1504
-   .word $0203            ; $30aa 0203
-   .word $533F            ; $30ac 533F
-   .word $3083            ; $30ae 3083
+   call $02e4
+   .word _2_2F            ; $3099 05BD - 2/
+   .word $303F            ; $309b 303F
+   .word __2A             ; $309d 069B - *
+   .word $3036            ; $309f 3036
+   .word __2B             ; $30a1 044A - +
+   .word _SWAP            ; $30a3 038D - SWAP
+   .word _2_2F            ; $30a5 05BD - 2/
+   .word __2B             ; $30a7 044A - +
+   .word _EXIT            ; $30a9 0315 - EXIT
+
+NFA__3FS:        ; 30AB
+   .byte 2,"?S"
+   .word NFA_GUM          ; 3083
+__3FS:           ; 30B0 - None
    .word $D1E1            ; $30b0 D1E1
    .word $B77B            ; $30b2 B77B
    .word $C2C2            ; $30b4 C2C2
@@ -7387,10 +7246,13 @@ _G:              ; 3096 - None
    .word __40             ; $31f6 0984 - @
    .word $0000            ; $31f8 0000
    .word $C4CD            ; $31fa C4CD
-   .word $011A            ; $31fc 011A
-   .word $836C            ; $31fe 836C
-   .word $CD30            ; $3200 CD30
-   .word $02E4            ; $3202 02E4
+   .byte $1A              ; $31fc 1A
+
+NFA__6C:         ; 31FD
+   .byte 1,"l"
+   .word NFA_GUM          ; 3083
+__6C:            ; 3201 - None
+   call $02E4             ; $3202 02E4
    .word _0               ; $3204 0EC8 - 0
    .word $3164            ; $3206 3164
    .word $316B            ; $3208 316B

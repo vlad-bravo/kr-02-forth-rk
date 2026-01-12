@@ -39,7 +39,20 @@ def process_nfa_by_adr(dump):
         0x1fda, # NFA_NLIST
         0x20d8, # NFA__3FCURRENT
         0x3092, # NFA_G
-        0
+        0x30ab, # NFA__3FS
+        0x31fd, # NFA__6C
+        0x3068, # NFA_T
+        0x305c, # NFA_A
+        0x3032, # NFA__7C
+        0x2b27, # NFA_R_2FW
+        0x2ae7, # NFA__23BUFF
+        0x2ac2, # NFA_BB_2DCNT
+        0x2ab7, # NFA_USE
+        0x2a9f, # NFA_UR_2FW
+        0x2a75, # NFA__23BUFF1
+        0x2a51, # NFA_DBT
+        0x2a38, # NFA_STFILE
+        0x296f,
     )
     for adr in adr_list:
         process_nfa(dump, adr)

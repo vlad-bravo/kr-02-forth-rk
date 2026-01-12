@@ -6,8 +6,8 @@ from words_clip import process_nfa, process_forth_code
 LAST_NFA = 0x464C
 
 # Адреса CFA-кодов словарных статей (от - до)
-PTR = 0x2283
-LIM = 0x228f
+PTR = 0x28d1
+LIM = 0x28e3
 
 words = {}
 

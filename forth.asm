@@ -65,7 +65,7 @@ l015a:
    .word $016A            ; $0164 016A
    .word _EXECUTE         ; $0166 032C - EXECUTE
    .word _EXIT            ; $0168 0315 - EXIT
-   .word $162A            ; $016a 162A
+   .word _CONSOLE         ; $016a 162A - CONSOLE
    .word _TITLE           ; $016c 0D78 - TITLE
    .word _TRUE            ; $016e 0EE6 - TRUE
    .word _WARNING         ; $0170 02C0 - WARNING
@@ -2236,7 +2236,7 @@ _2:              ; 0EDA - 0EDF
 
 NFA_TRUE:        ; 0EDF
    .byte 4,"TRUE"
-   .word $0ED6   ; NFA_2            ; 0ED6
+   .word NFA_2            ; 0ED6
 _TRUE:           ; 0EE6
    call $0984    ; $0ee6 cd 84 09
    rst 7         ; $0ee9 ff      
@@ -2503,7 +2503,7 @@ _QUIT:           ; 10A4 - 10CD
    .word _R0              ; $10b5 01B4 - R0
    .word __40             ; $10b7 0984 - @
    .word _RP_21           ; $10b9 0950 - RP!
-   .word $162A            ; $10bb 162A
+   .word _CONSOLE         ; $10bb 162A - CONSOLE
    .word __5B             ; $10bd 1771 - [
    .word _FORTH           ; $10bf 3450 - FORTH
    .word _DEFINITIONS     ; $10c1 170A - DEFINITIONS
@@ -3008,7 +3008,7 @@ _C_2FL:          ; 146E - 1473
 
 NFA_ST_2DC:      ; 1473
    .byte 4,"ST-C"
-   .word $1468   ; NFA_C_2FL          ; 1468
+   .word NFA_C_2FL          ; 1468
 _ST_2DC:         ; 147A - 147F
    call $0984    ; $147a cd 84 09
    .word $000d   ; $147d 000d      
@@ -3227,7 +3227,6 @@ NFA_CONSOLE:     ; 1620
    .byte 7,"CONSOLE"
    .word NFA_QUERY        ; 15E9
 _CONSOLE:        ; 162A - None
-l162a:
    call $02e4    ; $162a cd e4 02
    .word _LIT             ; $162d 0A2B - LIT
    .word $3414            ; $162f 3414
@@ -3354,7 +3353,7 @@ _DEFINITIONS:    ; 170A - 1717
 
 NFA_LATEST:      ; 1717
    .byte 6,"LATEST"
-   .word $16FC   ; NFA_DEFINITIONS  ; 16FC
+   .word NFA_DEFINITIONS  ; 16FC
 _LATEST:         ; 1720 - 1757
    call _FCALL            ; 1720
    .word _CURRENT         ; $1723 0233 - CURRENT
@@ -3943,7 +3942,7 @@ _STRING:         ; 1BA9 - 1BB6
 
 NFA__21CSP:      ; 1BB6
    .byte 4,"!CSP"
-   .word $1BA0   ; NFA_STRING       ; 1BA0
+   .word NFA_STRING       ; 1BA0
 __21CSP:         ; 1BBD - 1BC8
    call _FCALL            ; 1BBD
    .word _SP_40           ; $1bc0 0433 - SP@
@@ -3999,7 +3998,7 @@ __3FPAIRS:       ; 1C57 - 1C71
 
 NFA_LEAVE:       ; 1C71
    .byte 5,"LEAVE"
-   .word $1C4E   ; NFA__3FPAIRS       ; 1C4E
+   .word NFA__3FPAIRS       ; 1C4E
 _LEAVE:          ; 1C79 - 1C84
    call $02e4    ; $1c79 cd e4 02
    .word _RDROP           ; 1C7C 0975 - RDROP
@@ -6057,12 +6056,10 @@ _LABEL:          ; 295E - 2982
    push b        ; $2975 c5      
    .byte 0x28    ; $2976 28      
    call $02e4    ; $2977 cd e4 02
-   .byte 0xfd    ; $297a fd      
-   stax b        ; $297b 02      
-   lxi d,$4d27   ; $297c 11 27 4d
-   dad h         ; $297f 29      
-   dcr d         ; $2980 15      
-   inx b         ; $2981 03      
+   .word _NEXT            ; $297a 02FD - NEXT
+   .word $2711            ; $297c 2711
+   .word _END_2DCODE      ; $297e 294D - END-CODE
+   .word _EXIT            ; $2980 0315 - EXIT
 
 NFA__28OUT_29:   ; 2982
    .byte 5,"(OUT)"
@@ -6127,7 +6124,7 @@ _BOUNDS:         ; 29B4 - 29FC
 
 NFA_OUT:         ; 29FC
    .byte 3,"OUT"
-   .word $29AB   ; NFA_BOUNDS       ; 29AB
+   .word NFA_BOUNDS       ; 29AB
 _OUT:            ; 2A02 - 2A46
    call _FCALL            ; 2A02
    .word $29BF            ; $2a05 29BF
@@ -6932,7 +6929,7 @@ _F_5E:           ; 2FA5 - 2FBB
 
 NFA__28AT_29:    ; 2FBB
    .byte 4,"(AT)"
-   .word $2FA0   ; NFA_F_5E           ; 2FA0
+   .word NFA_F_5E           ; 2FA0
 __28AT_29:       ; 2FC2 - 2FCB
    pop h         ; $2fc2 e1      
    lxi d,$fff8   ; $2fc3 11 f8 ff
@@ -7536,8 +7533,7 @@ _PLOT:           ; 335F - 3639
    inr m         ; $341f 34      
    mov b,d       ; $3420 42      
    mov b,h       ; $3421 44      
-   mov a,b       ; $3422 78      
-   dcr a         ; $3423 3d      
+   .word $3d78   ; $3422 VOC-LINK
    mov b,d       ; $3424 42      
    mov b,h       ; $3425 44      
    dcx sp        ; $3426 3b      
@@ -8009,7 +8005,7 @@ _FORTH:          ; 3450 - 01AF
 
 NFA_V_2DACT:     ; 3639
    .byte 5,"V-ACT"
-   .word $3358   ; NFA_PLOT         ; 3358
+   .word NFA_PLOT         ; 3358
 _V_2DACT:        ; 3641 - 3664
    call $1adb    ; $3641 cd db 1a
    ana b         ; $3644 a0      
@@ -8536,7 +8532,7 @@ _V_2DLIST:       ; 366D - 38FD
 
 NFA_VOC_2E:      ; 38FD
    .byte 4,"VOC."
-   .word $3664   ; NFA_V_2DLIST       ; 3664
+   .word NFA_V_2DLIST       ; 3664
 _VOC_2E:         ; 3904 - 39AD
    call _FCALL            ; 3904
    .word _CR              ; $3907 1566 - CR
@@ -10335,7 +10331,7 @@ _EDIT:           ; 438D - 4442
 
 NFA__6C_65_6A_64_69:; 4442
    .byte 5,"lejdi"
-   .word $4386   ; NFA_EDIT         ; 4386
+   .word NFA_EDIT         ; 4386
 __6C_65_6A_64_69:; 444A - 453D
    call _FCALL            ; 444A
    .word _DUP             ; $444d 03D3 - DUP

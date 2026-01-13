@@ -52,7 +52,7 @@ def process_nfa_by_adr(dump):
         0x2a75, # NFA__23BUFF1
         0x2a51, # NFA_DBT
         0x2a38, # NFA_STFILE
-        0x296f,
+        #0x296f,
     )
     for adr in adr_list:
         process_nfa(dump, adr)

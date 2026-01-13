@@ -1,13 +1,13 @@
 import pyperclip
 
 from filtr import filtr_string
-from words_clip import process_nfa, process_forth_code
+from words_clip import process_nfa, process_nfa_by_adr, process_forth_code
 
 LAST_NFA = 0x464C
 
 # Адреса CFA-кодов словарных статей (от - до)
-PTR = 0x28d1
-LIM = 0x28e3
+PTR = 0x364e
+LIM = 0x3664
 
 words = {}
 
@@ -16,6 +16,7 @@ with open('C:\\dev\\kr-02-forth-rk\\memory.bin', 'br') as in_file:
 
 try:
     process_nfa(dump, LAST_NFA)
+    process_nfa_by_adr(dump)
     text = process_forth_code('', PTR, LIM)
     pyperclip.copy(text)
 except pyperclip.PyperclipException:

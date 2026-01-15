@@ -3,19 +3,29 @@ import pyperclip
 from filtr import filtr_string
 
 LAST_NFA = 0x464C
+LAST_NFA_EDITOR = 0x3D75
+LAST_NFA_ASSEMBLER = 0x21FF
+LAST_NFA_LOADER = 0x3AC4
 
 words = {}
 
-def process_nfa(dump, nfa: int):
+def process_nfa(dump, nfa: int, recursive=True):
     global words
     if nfa:
         name_length = dump[nfa] % 32    # Clar IMMEDIATE, SMUDGE flags
         lfa = nfa + name_length + 1
         cfa = nfa + name_length + 3
-        name = dump[nfa+1:lfa].decode('utf-8')
+        if name_length == 0:
+            name = ''
+        else:
+            try:
+                name = dump[nfa+1:lfa].decode('utf-8')
+            except:
+                name = dump[nfa+1:lfa]
         lfa_ref = int.from_bytes(dump[lfa:lfa+2], byteorder='little')
         words[f'{nfa:04X}'] = f'{name_length}', name, f'{lfa_ref:04X}', cfa
-        process_nfa(dump, lfa_ref)
+        if recursive:
+            process_nfa(dump, lfa_ref)
 
 def process_nfa_by_adr(dump):
     adr_list = (
@@ -52,10 +62,17 @@ def process_nfa_by_adr(dump):
         0x2a75, # NFA__23BUFF1
         0x2a51, # NFA_DBT
         0x2a38, # NFA_STFILE
-        #0x296f,
+        0x296f, # NFA_NEXT_3B
+        0x28C5, # NFA_REPEAT
+        0x220f, # NFA_H
+        0x2218, # NFA_L
+        0x2221, # NFA_A
+        0x222a, # NFA_PSW
+        0x2235, # NFA_D
+        0
     )
     for adr in adr_list:
-        process_nfa(dump, adr)
+        process_nfa(dump, adr, recursive=False)
 
 def process_forth_code(text: str, ptr: int, lim: int) -> str:
     while ptr < lim:
@@ -91,8 +108,17 @@ with open('C:\\dev\\kr-02-forth-rk\\memory.bin', 'br') as in_file:
 try:
     nfa = pyperclip.paste().upper()
     process_nfa(dump, LAST_NFA)
+    process_nfa(dump, LAST_NFA_ASSEMBLER)
+    process_nfa(dump, LAST_NFA_EDITOR)
+    process_nfa(dump, LAST_NFA_LOADER)
     process_nfa_by_adr(dump)
     word = words.get(nfa)
+    if not word:
+        try:
+            process_nfa(dump, int(nfa, base=16), recursive=False)
+            word = words.get(nfa)
+        except:
+            pass
     if word:
         name_length, name, lfa, cfa = word
         label = filtr_string(name)

@@ -114,7 +114,7 @@ l019e:
    .byte 5, "FORTH"
    .word 0x0000
 ;_FORTH:
-   call l1b95       ; #01a6 cd 95 1b
+   call VOCABULARY_DOES       ; #01a6 cd 95 1b
    .byte 0x01
    .byte 0x80       ; nfa (empty word)
    .word NFA_EDIT   ; lfa
@@ -4068,7 +4068,7 @@ _VOCABULARY:     ; 1B6E - 1BA0
    .word _VOC_2DLINK      ; #1b8f 01E1 - VOC-LINK
    .word __21             ; #1b91 099D - !
    .word __28DOES_3E_29   ; #1b93 1A7D - (DOES>)
-l1b95:
+VOCABULARY_DOES:
    call _FCALL
    .word _2_2B            ; #1b98 0482 - 2+
    .word _CONTEXT         ; #1b9a 0224 - CONTEXT
@@ -4889,7 +4889,7 @@ NFA_ASSEMBLER:   ; 21EF
    .byte 9,"ASSEMBLER"
    .word NFA_FORGET       ; 2176
 _ASSEMBLER:           ; 21FB - 28E3
-   call l1b95         ; cd 95
+   call VOCABULARY_DOES         ; cd 95
    .byte 0x01         ; #21fe 01
    .byte 0x80         ; #21ff nfa (fake)
    .word NFA_NEXT_3B  ; #2200 lfa
@@ -7649,7 +7649,7 @@ NFA_FORTH:       ; 3448
    .byte 5,"FORTH"
    .word $0000
 _FORTH:          ; 3450 - 01AF
-   call l1b95    ; #3450 cd 95 1b
+   call VOCABULARY_DOES    ; #3450 cd 95 1b
 l3453:
    .byte 0x01
    .byte 0x80    ; nfa (fake)
@@ -8701,7 +8701,7 @@ NFA_EDITOR:      ; 3D68
    .byte 6,"EDITOR"
    .word NFA_MLOAD        ; 3CBD
 _EDITOR:            ; 3D71 - 4386
-   call l1b95       ; #3d71 cd 95 1b
+   call VOCABULARY_DOES       ; #3d71 cd 95 1b
    .byte $01        ; #3d74
    .byte $80        ; #3d75 ; nfa (fake)
    .word NFA__79    ; #3d76 ; lfa
